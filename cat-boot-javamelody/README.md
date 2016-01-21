@@ -5,7 +5,13 @@ so if you are using Spring Boot's @EnableAutoConfiguration, then the configurati
 
 The following configuration parameters are available (here with their default values):
 
-```
-// Set this property to true to entirely disable profiling with JavaMelody
+```ini
+# Set this property to true to entirely disable profiling with JavaMelody
 javamelody.disabled = false
+
+# The path under width JavaMelody should be available
+monitoringPath = /monitoring
+
+# A list of URLs that should not be profiled with JavaMelody
+urlExcludePattern = (/webjars/.*|/css/.*|/images/.*|/fonts/.*|/ui/.*|/js/.*|/views/.*|/monitoring/.*|/lesscss/.*|/favicon.ico)
 ```
