@@ -20,7 +20,7 @@ buildscript {
 
 description = 'Cat-Boot'
 group 'cc.catalysts.boot'
-version '0.1-SNAPSHOT'
+version '0.0.1-SNAPSHOT'
 
 task wrapper(type: Wrapper) {
     gradleVersion = '2.10'
@@ -29,10 +29,12 @@ task wrapper(type: Wrapper) {
 apply plugin: 'jacoco'
 apply plugin: 'org.sonarqube'
 apply plugin: 'build-dashboard'
+apply plugin: 'maven-publish'
 
 subprojects {
     apply plugin: 'java'
     apply plugin: 'jacoco'
+    apply plugin: 'maven-publish'
 
     compileJava.options.encoding = 'UTF-8'
     compileTestJava.options.encoding = 'UTF-8'
@@ -44,10 +46,33 @@ subprojects {
         mavenCentral()
     }
 
-    dependencies {
-        testCompile('org.springframework.boot:spring-boot-starter-test:' + springBootVersion)
-        testCompile group: 'junit', name: 'junit', version: '4.11'
-        testCompile 'org.assertj:assertj-core:3.2.0'
+    task sourceJar(type: Jar) {
+        from sourceSets.main.allJava
+    }
+
+    publishing {
+        publications {
+            mavenJava(MavenPublication) {
+                // TODO why aren't these settings taken from the root project?
+                groupId 'cc.catalysts.boot'
+                version '0.0.1-SNAPSHOT'
+
+                from components.java
+
+                artifact sourceJar {
+                    classifier "sources"
+                }
+            }
+        }
+        repositories {
+            maven {
+                credentials {
+                    username System.getProperty('mavenUser')
+                    password System.getProperty('mavenPassword')
+                }
+                url System.getProperty('mavenRepo')
+            }
+        }
     }
 }
 
