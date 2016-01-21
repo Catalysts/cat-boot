@@ -1,6 +1,18 @@
 # Java-Melody Integration
 
-This module integrates JavaMelody into your Spring-Boot application. It comes with with an AutoConfiguration,
+This module integrates JavaMelody (https://github.com/javamelody/javamelody/wiki) into your Spring-Boot application. 
+
+## Integration
+
+With Gradle
+
+'''
+runtime('cc.catalysts.boot:cat-boot-javamelody:' + catBootVersion)
+'''
+
+## Configuration
+
+It comes with with an AutoConfiguration,
 so if you are using Spring Boot's @EnableAutoConfiguration, then the configuration will be picked up automatically.
 
 The following configuration parameters are available (here with their default values):
