@@ -6,9 +6,9 @@ This module integrates JavaMelody (https://github.com/javamelody/javamelody/wiki
 
 With Gradle
 
-'''
+```
 runtime('cc.catalysts.boot:cat-boot-javamelody:' + catBootVersion)
-'''
+```
 
 ## Configuration
 
