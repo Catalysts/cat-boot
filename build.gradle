@@ -20,7 +20,7 @@ buildscript {
 
 description = 'Cat-Boot'
 group 'cc.catalysts.boot'
-version '0.0.2'
+version '0.0.3-SNAPSHOT'
 
 task wrapper(type: Wrapper) {
     gradleVersion = '2.10'
@@ -55,7 +55,7 @@ subprojects {
             mavenJava(MavenPublication) {
                 // TODO why aren't these settings taken from the root project?
                 groupId 'cc.catalysts.boot'
-                version '0.0.2'
+                version '0.0.3-SNAPSHOT'
 
                 from components.java
 
