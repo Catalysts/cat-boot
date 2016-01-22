@@ -1,20 +1,21 @@
 package cc.catalysts.boot.javamelody.config;
 
 
-import net.bull.javamelody.MonitoringFilter;
-import net.bull.javamelody.Parameter;
-import net.bull.javamelody.SessionListener;
+import net.bull.javamelody.*;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.embedded.FilterRegistrationBean;
 import org.springframework.boot.context.embedded.ServletContextInitializer;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.ImportResource;
 
 import javax.servlet.DispatcherType;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Adds <a href="https://github.com/javamelody/javamelody/wiki">JavaMelody</a> to your application.
@@ -24,15 +25,27 @@ import javax.servlet.ServletException;
  */
 @Configuration
 @EnableConfigurationProperties
+@ConditionalOnProperty(name = "javamelody.disabled", havingValue = "false", matchIfMissing = true)
 @ConfigurationProperties(prefix = "javamelody")
-@ImportResource("classpath:net/bull/javamelody/monitoring-spring.xml")
 public class JavaMelodyAutoConfiguration implements ServletContextInitializer {
 
+    /**
+     * Set this property to <code>true</code> to entirely disable profiling with JavaMelody
+     */
     private boolean disabled = false;
+
+    /**
+     * The path under width JavaMelody should be available
+     */
     private String monitoringPath = "/monitoring";
+
+    /**
+     * A list of URLs that should not be profiled with JavaMelody
+     */
     private String urlExcludePattern = "(/webjars/.*|/css/.*|/images/.*|/fonts/.*|/ui/.*|/js/.*|/views/.*|/monitoring/.*|/lesscss/.*|/favicon.ico)";
     private String storageDirectory = "/tmp/javamelody";
     private String[] urlPatterns = new String[]{"/*"};
+    private String[] excludedDataSources;
 
     @Override
     public void onStartup(ServletContext servletContext) throws ServletException {
@@ -58,6 +71,24 @@ public class JavaMelodyAutoConfiguration implements ServletContextInitializer {
         javaMelody.addUrlPatterns(urlPatterns);
         return javaMelody;
     }
+
+    @Bean
+    public SpringDataSourceBeanPostProcessor monitoringDataSourceBeanPostProcessor(@Value("${javamelody.excludedDataSources:}") String[] excludedDataSourcesArray) {
+        // we cannot use the property excludedDataSources here because this is a bean post processor which is initialized before the ConfigurationProperties
+        SpringDataSourceBeanPostProcessor processor = new SpringDataSourceBeanPostProcessor();
+        Set<String> excludedDataSources = new HashSet<String>();
+        for (String s : excludedDataSourcesArray) {
+            excludedDataSources.add(s);
+        }
+        processor.setExcludedDatasources(excludedDataSources);
+        return processor;
+    }
+
+    @Bean
+    public MonitoringInterceptor monitoringInterceptor() {
+        return new MonitoringInterceptor();
+    }
+
 
     public boolean isDisabled() {
         return disabled;
@@ -97,5 +128,13 @@ public class JavaMelodyAutoConfiguration implements ServletContextInitializer {
 
     public void setUrlPatterns(String[] urlPatterns) {
         this.urlPatterns = urlPatterns;
+    }
+
+    public String[] getExcludedDataSources() {
+        return excludedDataSources;
+    }
+
+    public void setExcludedDataSources(String[] excludedDataSources) {
+        this.excludedDataSources = excludedDataSources;
     }
 }
