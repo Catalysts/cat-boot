@@ -85,8 +85,10 @@ public class JavaMelodyAutoConfiguration implements ServletContextInitializer {
     }
 
     @Bean
-    public MonitoringInterceptor monitoringInterceptor() {
-        return new MonitoringInterceptor();
+    public MonitoringSpringAdvisor monitoringAdvisor() {
+        MonitoringSpringAdvisor interceptor = new MonitoringSpringAdvisor();
+        interceptor.setPointcut(new MonitoredWithAnnotationPointcut());
+        return interceptor;
     }
 
 
