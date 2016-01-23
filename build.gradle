@@ -63,9 +63,18 @@ subprojects {
         apply from: "$rootProject.projectDir/jcenter.gradle"
         apply from: "$rootProject.projectDir/artifactory.gradle"
         apply from: "$rootProject.projectDir/maven.gradle"
+
+        /* artifactory only for snapshots */
+        artifactoryPublish.onlyIf {
+            (version ==~ /.*SNAPSHOT/)
+        }
+
+        /* releases only for bintray */
+        bintrayUpload.onlyIf {
+            !(version ==~ /.*SNAPSHOT/)
+        }
     }
 }
-
 
 task wrapper(type: Wrapper) {
     gradleVersion = '2.10'
