@@ -22,8 +22,8 @@ The following configuration parameters are available (here with their default va
 javamelody.disabled = false
 
 # The path under width JavaMelody should be available
-monitoringPath = /monitoring
+javamelody.monitoringPath = /monitoring
 
 # A list of URLs that should not be profiled with JavaMelody
-urlExcludePattern = (/webjars/.*|/css/.*|/images/.*|/fonts/.*|/ui/.*|/js/.*|/views/.*|/monitoring/.*|/lesscss/.*|/favicon.ico)
+javamelody.urlExcludePattern = (/webjars/.*|/css/.*|/images/.*|/fonts/.*|/ui/.*|/js/.*|/views/.*|/monitoring/.*|/lesscss/.*|/favicon.ico)
 ```
