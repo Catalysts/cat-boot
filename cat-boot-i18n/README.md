@@ -1,7 +1,7 @@
 # I18n Rest-Endpoint
 
 This modules configures your Spring-Boot application with an Rest-Endpoint `/api/i18n` which will list all available properties configured via `spring.messages.basename`.
-The endpoint is usefull for reusing your translation files on the client side, for example within an angular application.
+The endpoint is useful for reusing your translation files on the client side, for example within an angular application.
 
 ## Integration
 
