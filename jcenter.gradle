@@ -17,5 +17,13 @@ bintray {
             name = cbVersion
             desc = cbDescription
         }
+        if(mavenCentralSyncEnabled) {
+            mavenCentralSync {
+                sync = true
+                user = sonatypeUser
+                password = sonatypeKey
+                close = '1'
+            }
+        }
     }
 }
