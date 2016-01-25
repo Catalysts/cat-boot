@@ -1,0 +1,23 @@
+apply plugin: 'java'
+apply plugin: 'propdeps'
+apply plugin: 'propdeps-maven'
+apply plugin: 'propdeps-idea'
+
+apply plugin: 'spring-boot'
+
+bootRepackage {
+    enabled = false
+}
+
+dependencies {
+    compile('org.springframework.boot:spring-boot')
+    compile('org.springframework.boot:spring-boot-autoconfigure')
+
+    provided('org.springframework:spring-web')
+    provided('javax.servlet:javax.servlet-api')
+    provided('com.fasterxml.jackson.core:jackson-annotations')
+
+    optional('org.springframework.boot:spring-boot-configuration-processor')
+}
+
+compileJava.dependsOn(processResources)

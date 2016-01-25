@@ -1,0 +1,2 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+cc.catalysts.boot.i18n.config.I18nAutoConfiguration
