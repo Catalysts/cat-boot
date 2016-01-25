@@ -12,17 +12,18 @@ bintray {
         vcsUrl = cbGit
         desc = cbDescription
         licenses = ['Apache-2.0']
+        publications = ['mavenJava']
         publicDownloadNumbers = true
         version {
             name = cbVersion
             desc = cbDescription
-        }
-        if(mavenCentralSyncEnabled) {
-            mavenCentralSync {
-                sync = true
-                user = sonatypeUser
-                password = sonatypeKey
-                close = '1'
+            if(mavenCentralSyncEnabled) {
+                mavenCentralSync {
+                    sync = true
+                    user = sonatypeUser
+                    password = sonatypeKey
+                    close = '1'
+                }
             }
         }
     }
