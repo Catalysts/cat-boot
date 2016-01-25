@@ -3,14 +3,19 @@ apply plugin: 'propdeps'
 apply plugin: 'propdeps-maven'
 apply plugin: 'propdeps-idea'
 
+apply plugin: 'spring-boot'
+
+bootRepackage {
+    enabled = false
+}
+
 dependencies {
-    compile('org.springframework.boot:spring-boot:' + springBootVersion)
-    compile('org.springframework.boot:spring-boot-autoconfigure:' + springBootVersion)
+    compile('org.springframework.boot:spring-boot')
+    compile('org.springframework.boot:spring-boot-autoconfigure')
     compile('net.bull.javamelody:javamelody-core:1.58.0')
 
     provided('javax.servlet:javax.servlet-api:3.1.0')
 
-    optional('org.springframework.boot:spring-boot-configuration-processor:' + springBootVersion)
+    optional('org.springframework.boot:spring-boot-configuration-processor')
 }
-
 compileJava.dependsOn(processResources)

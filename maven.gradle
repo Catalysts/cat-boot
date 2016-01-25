@@ -23,6 +23,10 @@ project.ext.innerPom = { // used by mavenInstaller
                 name 'Klaus Lehner'
                 organizationUrl 'https://www.catalysts.cc'
             }
+            developer {
+                name 'Thomas Scheinecker'
+                organizationUrl 'https://www.catalysts.cc'
+            }
         }
 
         // http://central.sonatype.org/pages/requirements.html
