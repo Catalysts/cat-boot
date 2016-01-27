@@ -25,8 +25,8 @@ public class I18nIntegrationTest {
     public void fetchAllEntries() {
         final I18nDto allValues = i18nService.getAllValues();
         Assert.assertNotNull(allValues);
-        Assert.assertEquals(1, allValues.getI18n().size());
-        Assert.assertEquals("I'm a message", allValues.getI18n().get("sample.message"));
+        Assert.assertEquals(1, allValues.getMessages().size());
+        Assert.assertEquals("I'm a message", allValues.getMessages().get("sample.message"));
     }
 
     @Configuration

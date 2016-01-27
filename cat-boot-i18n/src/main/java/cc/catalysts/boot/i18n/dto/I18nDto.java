@@ -8,18 +8,18 @@ import java.util.Map;
  */
 public class I18nDto {
     private final Locale locale;
-    private final Map<String, String> i18n;
+    private final Map<String, String> messages;
 
-    public I18nDto(final Locale locale, final Map<String, String> i18n) {
+    public I18nDto(final Locale locale, final Map<String, String> messages) {
         this.locale = locale;
-        this.i18n = i18n;
+        this.messages = messages;
     }
 
     public Locale getLocale() {
         return locale;
     }
 
-    public Map<String, String> getI18n() {
-        return i18n;
+    public Map<String, String> getMessages() {
+        return messages;
     }
 }

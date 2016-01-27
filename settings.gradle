@@ -1,3 +1,4 @@
 include 'cat-boot-javamelody'
 include 'cat-boot-i18n'
+include 'cat-boot-i18n-angular'
 
