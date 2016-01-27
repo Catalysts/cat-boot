@@ -1,7 +1,7 @@
 buildscript {
     ext.bintrayUser    = project.hasProperty('bintrayUser') ? project.bintrayUser : System.getenv('BINTRAY_USER')
     ext.bintrayKey     = project.hasProperty('bintrayKey')  ? project.bintrayKey  : System.getenv('BINTRAY_KEY')
-    ext.bintrayEnabled = true//project.bintrayUser && project.bintrayKey
+    ext.bintrayEnabled = project.bintrayUser && project.bintrayKey
     ext.sonatypeUser   = project.hasProperty('sonatypeUser') ? project.sonatypeUser : System.getenv('SONATYPE_USER')
     ext.sonatypeKey    = project.hasProperty('sonatypeKey') ? project.sonatypeKey : System.getenv('SONATYPE_KEY')
     ext.mavenCentralSyncEnabled = project.sonatypeUser && project.sonatypeKey
