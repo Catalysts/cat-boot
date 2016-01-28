@@ -2,14 +2,11 @@ package cc.catalysts.boot.report.pdf.impl;
 
 import cc.catalysts.boot.report.pdf.PdfReport;
 import cc.catalysts.boot.report.pdf.PdfReportBuilder;
-import cc.catalysts.boot.report.pdf.config.PdfPageLayout;
-import cc.catalysts.boot.report.pdf.config.PdfTextStyle;
-import cc.catalysts.boot.report.pdf.elements.ReportElement;
-import cc.catalysts.boot.report.pdf.elements.ReportPageBreak;
-import cc.catalysts.boot.report.pdf.elements.ReportTextBox;
 import cc.catalysts.boot.report.pdf.ReportTableBuilder;
+import cc.catalysts.boot.report.pdf.config.PdfPageLayout;
 import cc.catalysts.boot.report.pdf.config.PdfStyleSheet;
-import cc.catalysts.boot.report.pdf.elements.ReportPadding;
+import cc.catalysts.boot.report.pdf.config.PdfTextStyle;
+import cc.catalysts.boot.report.pdf.elements.*;
 import org.apache.pdfbox.exceptions.COSVisitorException;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.springframework.core.io.Resource;
@@ -58,7 +55,11 @@ class PdfReportBuilderImpl implements PdfReportBuilder {
     public PdfReport buildReport(PdfPageLayout pageConfig) {
         PdfReport report = new PdfReport(configuration);
         for (ReportElement element : elements) {
-            report.addElement(element);
+            if (element instanceof ReportElementStatic) {
+                report.addStaticElement((ReportElementStatic) element);
+            } else {
+                report.addElement(element);
+            }
         }
         for (AbstractFixedLineGenerator generator : fixedLineGenerators) {
             generator.addFooterToAllPages(report, pageConfig);

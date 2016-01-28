@@ -1,6 +1,7 @@
 package cc.catalysts.boot.report.pdf.elements;
 
 import cc.catalysts.boot.report.pdf.config.PdfStyleSheet;
+import cc.catalysts.boot.report.pdf.utils.ReportAlignType;
 import cc.catalysts.boot.report.pdf.utils.ReportFontType;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.edit.PDPageContentStream;
@@ -111,6 +112,7 @@ public class ReportTable implements ReportElement {
     private void placeBorders(PDPageContentStream stream, float startY, float endY, float x, float allowedWidth) throws IOException {
         if (border) {
             stream.setStrokingColor(0, 0, 0);
+            stream.setLineWidth(0.3f);
             float y0 = startY - BORDER_Y_DELTA;
             float y1 = endY - (BORDER_Y_DELTA + 1);
             if (!noTopBorder) {
@@ -334,6 +336,15 @@ public class ReportTable implements ReportElement {
                 if (reportElement != null) {
                     reportElement.setFontLib(fontLib);
                 }
+            }
+        }
+    }
+
+    public void setTextAlignInColumn(int column, ReportAlignType alignType, boolean excludeHeader) {
+        for (int i = excludeHeader ? 1 : 0; i < elements.length; i++) {
+            ReportElement[] element = elements[i];
+            if (element[column] instanceof ReportTextBox) {
+                ((ReportTextBox) element[column]).setAlign(alignType);
             }
         }
     }
