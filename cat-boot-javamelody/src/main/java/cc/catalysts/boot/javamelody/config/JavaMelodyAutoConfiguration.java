@@ -2,6 +2,7 @@ package cc.catalysts.boot.javamelody.config;
 
 
 import net.bull.javamelody.*;
+import org.springframework.aop.support.annotation.AnnotationMatchingPointcut;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.embedded.FilterRegistrationBean;
@@ -10,6 +11,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Controller;
+import org.springframework.stereotype.Service;
 
 import javax.servlet.DispatcherType;
 import javax.servlet.ServletContext;
@@ -46,6 +49,9 @@ public class JavaMelodyAutoConfiguration implements ServletContextInitializer {
     private String storageDirectory = "/tmp/javamelody";
     private String[] urlPatterns = new String[]{"/*"};
     private String[] excludedDataSources;
+
+    private boolean enableSpringServiceMonitoring = false;
+    private boolean enableSpringControllerMonitoring = false;
 
     @Override
     public void onStartup(ServletContext servletContext) throws ServletException {
@@ -86,11 +92,26 @@ public class JavaMelodyAutoConfiguration implements ServletContextInitializer {
 
     @Bean
     public MonitoringSpringAdvisor monitoringAdvisor() {
-        MonitoringSpringAdvisor interceptor = new MonitoringSpringAdvisor();
+        final MonitoringSpringAdvisor interceptor = new MonitoringSpringAdvisor();
         interceptor.setPointcut(new MonitoredWithAnnotationPointcut());
         return interceptor;
     }
 
+    @ConditionalOnProperty(name = "javamelody.enableSpringServiceMonitoring", havingValue = "true")
+    @Bean
+    public MonitoringSpringAdvisor springServiceMonitoringAdvisor() {
+        final MonitoringSpringAdvisor interceptor = new MonitoringSpringAdvisor();
+        interceptor.setPointcut(new AnnotationMatchingPointcut(Service.class));
+        return interceptor;
+    }
+
+    @ConditionalOnProperty(name = "javamelody.enableSpringControllerMonitoring", havingValue = "true")
+    @Bean
+    public MonitoringSpringAdvisor springControllerMonitoringAdvisor() {
+        final MonitoringSpringAdvisor interceptor = new MonitoringSpringAdvisor();
+        interceptor.setPointcut(new AnnotationMatchingPointcut(Controller.class));
+        return interceptor;
+    }
 
     public boolean isDisabled() {
         return disabled;
@@ -138,5 +159,21 @@ public class JavaMelodyAutoConfiguration implements ServletContextInitializer {
 
     public void setExcludedDataSources(String[] excludedDataSources) {
         this.excludedDataSources = excludedDataSources;
+    }
+
+    public boolean isEnableSpringServiceMonitoring() {
+        return enableSpringServiceMonitoring;
+    }
+
+    public void setEnableSpringServiceMonitoring(boolean enableSpringServiceMonitoring) {
+        this.enableSpringServiceMonitoring = enableSpringServiceMonitoring;
+    }
+
+    public boolean isEnableSpringControllerMonitoring() {
+        return enableSpringControllerMonitoring;
+    }
+
+    public void setEnableSpringControllerMonitoring(boolean enableSpringControllerMonitoring) {
+        this.enableSpringControllerMonitoring = enableSpringControllerMonitoring;
     }
 }

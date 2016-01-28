@@ -26,4 +26,12 @@ javamelody.monitoringPath = /monitoring
 
 # A list of URLs that should not be profiled with JavaMelody
 javamelody.urlExcludePattern = (/webjars/.*|/css/.*|/images/.*|/fonts/.*|/ui/.*|/js/.*|/views/.*|/monitoring/.*|/lesscss/.*|/favicon.ico)
+
+# Enable monitoring of service methods of classes annotated with the spring stereotype annotation @Service
+javamelody.enableSpringServiceMonitoring = false
+
+# Enable monitoring of controller methods of classes annotated with the spring stereotype annotation @Controller
+javamelody.enableSpringControllerMonitoring = false
+
 ```
+ 
