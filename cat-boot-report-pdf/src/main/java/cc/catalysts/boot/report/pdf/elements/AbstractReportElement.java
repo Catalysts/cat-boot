@@ -7,6 +7,13 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 
+/**
+ * <p>Base class all report elements.</p>
+ * <p>
+ * <p><b>IMPORTANT:</b> Although this class is publicly visible, it is subject to change and may not be implemented by clients!</p>
+ *
+ * @author Klaus Lehner
+ */
 public abstract class AbstractReportElement implements ReportElement {
 
     @Override

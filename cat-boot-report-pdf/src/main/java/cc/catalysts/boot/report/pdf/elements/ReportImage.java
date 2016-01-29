@@ -14,6 +14,11 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 
+/**
+ * <p><b>IMPORTANT:</b> Although this class is publicly visible, it is subject to change and may not be implemented by clients!</p>
+ *
+ * @author Klaus Lehner
+ */
 public class ReportImage extends AbstractReportElement implements ReportElement {
 
     private BufferedImage img;

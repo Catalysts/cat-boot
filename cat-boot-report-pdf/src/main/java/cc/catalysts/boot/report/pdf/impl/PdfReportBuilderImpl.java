@@ -48,6 +48,12 @@ class PdfReportBuilderImpl implements PdfReportBuilder {
     }
 
     @Override
+    public PdfReportBuilder addPadding(float padding) {
+        elements.add(new ReportPadding(padding));
+        return this;
+    }
+
+    @Override
     public ReportTableBuilder startTable() {
         return new ReportTableBuilderImpl(configuration, this);
     }

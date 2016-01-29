@@ -9,6 +9,13 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Map;
 
+/**
+ * <p>Interface for all report elements.</p>
+ * <p>
+ * <p><b>IMPORTANT:</b> Although this interface is publicly visible, it is subject to change and may not be implemented by clients!</p>
+ *
+ * @author Klaus Lehner
+ */
 public interface ReportElement {
 
     /**

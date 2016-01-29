@@ -29,6 +29,8 @@ public interface PdfReportBuilder {
 
     PdfReportBuilder withFooterOnAllPages(String left, String middle, String right);
 
+    PdfReportBuilder addPadding(float padding);
+
     ReportTableBuilder startTable();
 
     PdfReport buildReport(PdfPageLayout pageConfig);
