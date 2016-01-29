@@ -97,7 +97,7 @@ class PdfReportBuilderImpl implements PdfReportBuilder {
         response.setContentType("application/pdf");
         response.setHeader("Content-disposition", "attachment; filename=" + fileName);
         try {
-            new PdfReportPrinter(configuration).printToStream(pageConfig, null, report, response.getOutputStream());
+            new PdfReportPrinter(configuration).printToStream(pageConfig, templateResource, report, response.getOutputStream());
         } catch (Exception e) {
             throw new IOException("could not write result pdf", e);
         }
