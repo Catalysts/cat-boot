@@ -1,6 +1,5 @@
 package cc.catalysts.boot.report.pdf.config;
 
-import cc.catalysts.boot.report.pdf.utils.ReportFontType;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 
 import java.awt.*;
@@ -15,13 +14,13 @@ public abstract class PdfStyleSheet {
     private int sectionPadding = 10;
     private int headingPaddingAfter = 4;
 
-    private PdfTextStyle heading1Text = new PdfTextStyle(20, PDType1Font.HELVETICA_BOLD, ReportFontType.BOLD, Color.BLACK);
-    private PdfTextStyle bodyText = new PdfTextStyle(12, PDType1Font.HELVETICA, ReportFontType.NORMAL, Color.BLACK);
+    private PdfTextStyle heading1Text = new PdfTextStyle(20, PDType1Font.HELVETICA_BOLD, Color.BLACK);
+    private PdfTextStyle bodyText = new PdfTextStyle(12, PDType1Font.HELVETICA, Color.BLACK);
 
-    private PdfTextStyle tableTitleText = new PdfTextStyle(12, PDType1Font.HELVETICA_BOLD, ReportFontType.BOLD, Color.BLACK);
-    private PdfTextStyle tableBodyText = new PdfTextStyle(12, PDType1Font.HELVETICA, ReportFontType.NORMAL, Color.BLACK);
+    private PdfTextStyle tableTitleText = new PdfTextStyle(12, PDType1Font.HELVETICA_BOLD, Color.BLACK);
+    private PdfTextStyle tableBodyText = new PdfTextStyle(12, PDType1Font.HELVETICA, Color.BLACK);
 
-    private PdfTextStyle footerText = new PdfTextStyle(7, PDType1Font.HELVETICA, ReportFontType.NORMAL, Color.BLACK);
+    private PdfTextStyle footerText = new PdfTextStyle(7, PDType1Font.HELVETICA, Color.BLACK);
 
     public int getSectionPadding() {
         return sectionPadding;

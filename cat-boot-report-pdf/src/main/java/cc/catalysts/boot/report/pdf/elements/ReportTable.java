@@ -2,16 +2,14 @@ package cc.catalysts.boot.report.pdf.elements;
 
 import cc.catalysts.boot.report.pdf.config.PdfStyleSheet;
 import cc.catalysts.boot.report.pdf.utils.ReportAlignType;
-import cc.catalysts.boot.report.pdf.utils.ReportFontType;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.edit.PDPageContentStream;
-import org.apache.pdfbox.pdmodel.font.PDFont;
 
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
-import java.util.Map;
+
 /**
  * <p><b>IMPORTANT:</b> Although this class is publicly visible, it is subject to change and may not be implemented by clients!</p>
  *
@@ -96,14 +94,14 @@ public class ReportTable implements ReportElement {
     }
 
     @Override
-    public float print(PDDocument document, PDPageContentStream stream, int pageNumber, float startX, float startY, float allowedWidth, Map<ReportFontType, PDFont> fontLibrary) throws IOException {
+    public float print(PDDocument document, PDPageContentStream stream, int pageNumber, float startX, float startY, float allowedWidth) throws IOException {
         if (title != null) {
             throw new IllegalStateException("title not implemented!");
         }
         float y = startY;
         int i = 0;
         for (ReportElement[] line : elements) {
-            y = printLine(document, stream, pageNumber, startX, y, allowedWidth, line, fontLibrary);
+            y = printLine(document, stream, pageNumber, startX, y, allowedWidth, line);
             if (i == elements.length - 1 && noBottomBorder) {
                 placeLastBorder = false;
             }
@@ -135,12 +133,12 @@ public class ReportTable implements ReportElement {
         }
     }
 
-    private float printLine(PDDocument document, PDPageContentStream stream, int pageNumber, float startX, float y, float allowedWidth, ReportElement[] line, Map<ReportFontType, PDFont> fontLibrary) throws IOException {
+    private float printLine(PDDocument document, PDPageContentStream stream, int pageNumber, float startX, float y, float allowedWidth, ReportElement[] line) throws IOException {
         float x = startX + cellPaddingX;
         float minY = y;
         for (int i = 0; i < cellWidths.length; i++) {
             if (line[i] != null) {
-                float yi = line[i].print(document, stream, pageNumber, x, y - cellPaddingY, cellWidths[i] * allowedWidth - cellPaddingX * 2, fontLibrary);
+                float yi = line[i].print(document, stream, pageNumber, x, y - cellPaddingY, cellWidths[i] * allowedWidth - cellPaddingX * 2);
                 intents.addAll(line[i].getImageIntents());
                 minY = Math.min(minY, yi);
             }
@@ -331,17 +329,6 @@ public class ReportTable implements ReportElement {
         ReportTable nextLines = createNewTableWithClonedSettings(next);
 
         return new ReportElement[]{firstLine, nextLines};
-    }
-
-    @Override
-    public void setFontLib(Map<ReportFontType, PDFont> fontLib) {
-        for (ReportElement[] elementLine : elements) {
-            for (ReportElement reportElement : elementLine) {
-                if (reportElement != null) {
-                    reportElement.setFontLib(fontLib);
-                }
-            }
-        }
     }
 
     public void setTextAlignInColumn(int column, ReportAlignType alignType, boolean excludeHeader) {

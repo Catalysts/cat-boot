@@ -1,13 +1,10 @@
 package cc.catalysts.boot.report.pdf.elements;
 
-import cc.catalysts.boot.report.pdf.utils.ReportFontType;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.edit.PDPageContentStream;
-import org.apache.pdfbox.pdmodel.font.PDFont;
 
 import java.io.IOException;
 import java.util.Collection;
-import java.util.Map;
 
 /**
  * <p>Interface for all report elements.</p>
@@ -28,7 +25,7 @@ public interface ReportElement {
      * @return the Y position of the next line
      * @throws java.io.IOException
      */
-    float print(PDDocument document, PDPageContentStream stream, int pageNumber, float startX, float startY, float allowedWidth, Map<ReportFontType, PDFont> fontLibrary) throws IOException;
+    float print(PDDocument document, PDPageContentStream stream, int pageNumber, float startX, float startY, float allowedWidth) throws IOException;
 
     /**
      * Height of this segment
@@ -77,10 +74,4 @@ public interface ReportElement {
      */
     Collection<ReportImage.ImagePrintIntent> getImageIntents();
 
-    /**
-     * Will be called before element is used
-     *
-     * @param fontLib map with all the usable fonts
-     */
-    void setFontLib(Map<ReportFontType, PDFont> fontLib);
 }

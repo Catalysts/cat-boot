@@ -1,14 +1,11 @@
 package cc.catalysts.boot.report.pdf.elements;
 
-import cc.catalysts.boot.report.pdf.utils.ReportFontType;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.edit.PDPageContentStream;
-import org.apache.pdfbox.pdmodel.font.PDFont;
 
 import java.io.IOException;
 import java.util.Collection;
-import java.util.Map;
 
 /**
  * <p><b>IMPORTANT:</b> Although this class is publicly visible, it is subject to change and may not be implemented by clients!</p>
@@ -53,10 +50,10 @@ public class ReportElementStatic implements ReportElement {
      * @throws java.io.IOException
      */
     @Override
-    public float print(PDDocument document, PDPageContentStream stream, int pageNumber, float startX, float startY, float allowedWidth, Map<ReportFontType, PDFont> fontLibrary) throws IOException {
+    public float print(PDDocument document, PDPageContentStream stream, int pageNumber, float startX, float startY, float allowedWidth) throws IOException {
         PDPage currPage = (PDPage) document.getDocumentCatalog().getAllPages().get(pageNo);
         PDPageContentStream pageStream = new PDPageContentStream(document, currPage, true, false);
-        base.print(document, pageStream, pageNo, x, y, width, fontLibrary);
+        base.print(document, pageStream, pageNo, x, y, width);
         pageStream.close();
         return 0F;
     }
@@ -107,8 +104,4 @@ public class ReportElementStatic implements ReportElement {
         return pageNo;
     }
 
-    @Override
-    public void setFontLib(Map<ReportFontType, PDFont> fontLib) {
-        getBase().setFontLib(fontLib);
-    }
 }

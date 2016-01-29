@@ -1,11 +1,7 @@
 package cc.catalysts.boot.report.pdf.elements;
 
-import cc.catalysts.boot.report.pdf.utils.ReportFontType;
-import org.apache.pdfbox.pdmodel.font.PDFont;
-
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Map;
 
 /**
  * <p>Base class all report elements.</p>
@@ -41,8 +37,4 @@ public abstract class AbstractReportElement implements ReportElement {
         return Collections.emptyList();
     }
 
-    @Override
-    public void setFontLib(Map<ReportFontType, PDFont> fontLib) {
-        //do nothing in most cases
-    }
 }

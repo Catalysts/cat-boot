@@ -2,7 +2,6 @@ package cc.catalysts.boot.report.pdf.elements;
 
 import cc.catalysts.boot.report.pdf.config.PdfTextStyle;
 import cc.catalysts.boot.report.pdf.utils.ReportAlignType;
-import cc.catalysts.boot.report.pdf.utils.ReportFontType;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.edit.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.font.PDFont;
@@ -46,7 +45,7 @@ public class ReportTextBox implements ReportElement {
     }
 
     @Override
-    public float print(PDDocument document, PDPageContentStream stream, int pageNumber, float textX, float textY, float allowedWidth, Map<ReportFontType, PDFont> fontLibrary) {
+    public float print(PDDocument document, PDPageContentStream stream, int pageNumber, float textX, float textY, float allowedWidth) {
         return PdfBoxHelper.addText(stream, textConfig, textX, textY, allowedWidth, lineDistance, align, text);
     }
 
@@ -104,11 +103,6 @@ public class ReportTextBox implements ReportElement {
     @Override
     public Collection<ReportImage.ImagePrintIntent> getImageIntents() {
         return Collections.emptyList();
-    }
-
-    @Override
-    public void setFontLib(Map<ReportFontType, PDFont> fontLib) {
-        textConfig.useFontLib(fontLib);
     }
 
     private String[] split(float allowedWidth, String text) {

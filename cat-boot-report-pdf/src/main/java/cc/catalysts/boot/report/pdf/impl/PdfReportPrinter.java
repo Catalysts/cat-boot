@@ -2,23 +2,23 @@ package cc.catalysts.boot.report.pdf.impl;
 
 import cc.catalysts.boot.report.pdf.PdfReport;
 import cc.catalysts.boot.report.pdf.config.PdfPageLayout;
-import cc.catalysts.boot.report.pdf.elements.ReportElement;
-import cc.catalysts.boot.report.pdf.elements.ReportTable;
-import cc.catalysts.boot.report.pdf.utils.ReportFontType;
-import cc.catalysts.boot.report.pdf.elements.ReportImage;
 import cc.catalysts.boot.report.pdf.config.PdfStyleSheet;
+import cc.catalysts.boot.report.pdf.elements.ReportElement;
 import cc.catalysts.boot.report.pdf.elements.ReportElementStatic;
+import cc.catalysts.boot.report.pdf.elements.ReportImage;
+import cc.catalysts.boot.report.pdf.elements.ReportTable;
 import org.apache.pdfbox.exceptions.COSVisitorException;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.edit.PDPageContentStream;
-import org.apache.pdfbox.pdmodel.font.PDFont;
-import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.springframework.core.io.Resource;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
 
 /**
  * @author Paul Klingelhuber
@@ -26,18 +26,11 @@ import java.util.*;
 class PdfReportPrinter {
 
     private final PdfStyleSheet configuration;
-    private Map<ReportFontType, PDFont> fontLibrary = new HashMap<>();
 
     public PdfReportPrinter(PdfStyleSheet configuration) {
         this.configuration = configuration;
-        initDefaultFontTypes();
     }
 
-    private void initDefaultFontTypes() {
-        fontLibrary.put(ReportFontType.NORMAL, PDType1Font.HELVETICA);
-        fontLibrary.put(ReportFontType.ITALIC, PDType1Font.HELVETICA_OBLIQUE);
-        fontLibrary.put(ReportFontType.BOLD, PDType1Font.HELVETICA_BOLD);
-    }
 
     public void printToStream(PdfPageLayout pageConfig, Resource templateResource, PdfReport report, OutputStream stream) throws IOException, COSVisitorException {
         PDDocument page = print(pageConfig, templateResource, report);
@@ -94,7 +87,7 @@ class PdfReportPrinter {
                     continue;
                 }
             }
-            float nextY = currentReportElement.print(document, cursor.currentStream, cursor.currentPageNumber, cursor.xPos, cursor.yPos, maxWidth, fontLibrary);
+            float nextY = currentReportElement.print(document, cursor.currentStream, cursor.currentPageNumber, cursor.xPos, cursor.yPos, maxWidth);
             nextY -= pageConfig.getLineDistance();
             cursor.imageList.addAll(currentReportElement.getImageIntents());
 
@@ -113,7 +106,7 @@ class PdfReportPrinter {
         report.expandPagesStaticElements(cursor.currentPageNumber + 1);
 
         for (ReportElementStatic staticElem : report.getStaticElements()) {
-            staticElem.print(document, null, 0, 0, 0, 0, fontLibrary);
+            staticElem.print(document, null, 0, 0, 0, 0);
         }
 
         printImages(document, cursor);
