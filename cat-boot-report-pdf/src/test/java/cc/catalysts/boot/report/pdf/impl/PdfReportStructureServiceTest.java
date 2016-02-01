@@ -48,7 +48,7 @@ public class PdfReportStructureServiceTest {
                 .beginNewSection("foo", true)
                 .beginNewSection("bar", true)
                 .buildReport("example.pdf", PdfPageLayout.getLandscapeA4Page(), null);
-        PdfReportFilePrinter.getInstance().print(pdfReport, outDirectory);
+        new PdfReportFilePrinter().print(pdfReport, outDirectory);
         Assert.assertTrue(new File(outDirectory, "example.pdf").exists());
     }
 
