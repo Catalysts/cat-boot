@@ -1,0 +1,33 @@
+apply plugin: 'java'
+apply plugin: 'propdeps'
+apply plugin: 'propdeps-maven'
+apply plugin: 'propdeps-idea'
+
+apply plugin: 'spring-boot'
+
+bootRepackage {
+    enabled = false
+}
+
+dependencies {
+    compile 'org.slf4j:slf4j-api'
+
+    compile 'org.apache.pdfbox:pdfbox:1.8.10'
+
+    compile 'org.springframework:spring-core'
+    compile 'commons-io:commons-io:2.4'
+
+    compile 'org.springframework.boot:spring-boot'
+    compile 'org.springframework.boot:spring-boot-autoconfigure'
+
+    provided 'javax.servlet:javax.servlet-api'
+
+    runtime 'org.yaml:snakeyaml:1.14'
+
+    optional('org.springframework.boot:spring-boot-configuration-processor')
+
+    testCompile 'org.springframework:spring-test'
+    testCompile group: 'junit', name: 'junit', version: '4.11'
+}
+
+compileJava.dependsOn(processResources)

@@ -1,0 +1,15 @@
+cat:
+  reporting:
+    pdf:
+      default:
+        lineDistance: 1
+        sectionPadding: 10
+        headingPaddingAfter: 3
+
+        heading1Text: 20,Arial,bold,#000000
+        bodyText: 12,Helvetica,normal,#000000
+
+        tableTitleText: 12,Helvetica-Bold,bold,#000000
+        tableBodyText: 12,Helvetica,normal,#000000
+
+        footerText: 12,Helvetica,normal,#000000

@@ -47,3 +47,5 @@ com_crashlytics_export_strings.xml
 crashlytics.properties
 crashlytics-build.properties
 
+cat-boot-report-pdf/build
+cat-boot-report-pdf/pdf-out
