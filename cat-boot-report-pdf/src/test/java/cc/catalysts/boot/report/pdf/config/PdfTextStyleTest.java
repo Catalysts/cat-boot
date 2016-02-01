@@ -12,7 +12,7 @@ public class PdfTextStyleTest {
 
     @Test
     public void fromConstructor() {
-        PdfTextStyle config = new PdfTextStyle("10,Times-Roman,normal,#000000");
+        PdfTextStyle config = new PdfTextStyle("10,Times-Roman,#000000");
 
         Assert.assertEquals(10, config.getFontSize());
         Assert.assertEquals("Times-Roman", config.getFont().getBaseFont());
