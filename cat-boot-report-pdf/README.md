@@ -12,13 +12,13 @@ More documentation will also follow, this module is yet work-in-progress.
 
 With Gradle
 
-```
+```groovy
 compile('cc.catalysts.boot:cat-boot-report-pdf:' + catBootVersion)
 ```
 
 ## Example
 
-```
+```java
 final DefaultPdfStyleSheet styleSheet = new DefaultPdfStyleSheet();
 styleSheet.setLineDistance(1.1f);
 styleSheet.setHeading1Text(new PdfTextStyle(9, PDType1Font.HELVETICA_BOLD, Color.BLACK));
