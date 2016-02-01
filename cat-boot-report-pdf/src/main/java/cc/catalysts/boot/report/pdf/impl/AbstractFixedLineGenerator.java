@@ -1,6 +1,5 @@
 package cc.catalysts.boot.report.pdf.impl;
 
-import cc.catalysts.boot.report.pdf.PdfReport;
 import cc.catalysts.boot.report.pdf.config.PdfPageLayout;
 import cc.catalysts.boot.report.pdf.elements.ReportTextBox;
 import cc.catalysts.boot.report.pdf.utils.ReportAlignType;
@@ -36,7 +35,7 @@ public abstract class AbstractFixedLineGenerator {
     /**
      * adds a footer to all pages
      */
-    public void addFooterToAllPages(PdfReport report, PdfPageLayout pageConfig) {
+    public void addFooterToAllPages(PdfReportStructure report, PdfPageLayout pageConfig) {
         float x = pageConfig.getStartX();
         float y = getVerticalPosition(pageConfig);
         float w = pageConfig.getUsableWidth();

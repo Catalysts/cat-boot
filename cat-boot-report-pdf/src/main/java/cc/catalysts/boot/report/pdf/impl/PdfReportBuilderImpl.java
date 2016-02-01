@@ -7,11 +7,9 @@ import cc.catalysts.boot.report.pdf.config.PdfPageLayout;
 import cc.catalysts.boot.report.pdf.config.PdfStyleSheet;
 import cc.catalysts.boot.report.pdf.config.PdfTextStyle;
 import cc.catalysts.boot.report.pdf.elements.*;
-import org.apache.pdfbox.exceptions.COSVisitorException;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.springframework.core.io.Resource;
 
-import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -58,8 +56,8 @@ class PdfReportBuilderImpl implements PdfReportBuilder {
         return new ReportTableBuilderImpl(configuration, this);
     }
 
-    public PdfReport buildReport(PdfPageLayout pageConfig) {
-        PdfReport report = new PdfReport(configuration);
+    public PdfReportStructure buildReport(PdfPageLayout pageConfig) {
+        PdfReportStructure report = new PdfReportStructure(configuration);
         for (ReportElement element : elements) {
             if (element instanceof ReportElementStatic) {
                 report.addStaticElement((ReportElementStatic) element);
@@ -74,33 +72,16 @@ class PdfReportBuilderImpl implements PdfReportBuilder {
     }
 
     @Override
+    public PdfReport buildReport(String fileName, PdfPageLayout pageConfig, Resource templateResource) throws IOException {
+        PdfReportStructure report = this.buildReport(pageConfig);
+        PDDocument document = new PdfReportGenerator().generate(pageConfig, templateResource, report);
+        return new PdfReport(fileName, document);
+    }
+
+    @Override
     public void printToFile(File outputFile, PdfPageLayout pageConfig, Resource templateResource) throws IOException {
-        try {
-            PDDocument document = printToPDDocument(pageConfig, templateResource);
-            document.save(outputFile);
-            document.close();
-        } catch (COSVisitorException e) {
-            throw new IOException("Error on generating PDF", e);
-        }
-    }
-
-    @Override
-    public PDDocument printToPDDocument(PdfPageLayout pageConfig, Resource templateResource) throws IOException {
-        PdfReport report = this.buildReport(pageConfig);
-        PDDocument document = new PdfReportPrinter(configuration).print(pageConfig, templateResource, report);
-        return document;
-    }
-
-    @Override
-    public void printToHttpServletResponse(HttpServletResponse response, String fileName, PdfPageLayout pageConfig, Resource templateResource) throws IOException {
-        PdfReport report = this.buildReport(pageConfig);
-        response.setContentType("application/pdf");
-        response.setHeader("Content-disposition", "attachment; filename=" + fileName);
-        try {
-            new PdfReportPrinter(configuration).printToStream(pageConfig, templateResource, report, response.getOutputStream());
-        } catch (Exception e) {
-            throw new IOException("could not write result pdf", e);
-        }
+        final PdfReport pdfReport = buildReport(outputFile.getName(), pageConfig, templateResource);
+        new PdfReportFilePrinter().print(pdfReport, outputFile.getParentFile());
     }
 
     @Override
@@ -116,7 +97,7 @@ class PdfReportBuilderImpl implements PdfReportBuilder {
     @Override
     public PdfReportBuilderImpl addHeading(String heading) {
         addElement(new ReportTextBox(configuration.getHeading1Text(), configuration.getLineDistance(), heading));
-        addElement(new ReportPadding(configuration.getHeadingPaddingAfter()));
+        addPadding(configuration.getHeadingPaddingAfter());
         return this;
     }
 

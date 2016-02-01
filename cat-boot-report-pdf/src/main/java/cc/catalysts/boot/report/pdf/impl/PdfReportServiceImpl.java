@@ -1,6 +1,5 @@
 package cc.catalysts.boot.report.pdf.impl;
 
-import cc.catalysts.boot.report.pdf.PdfReport;
 import cc.catalysts.boot.report.pdf.PdfReportBuilder;
 import cc.catalysts.boot.report.pdf.config.PdfPageLayout;
 import cc.catalysts.boot.report.pdf.PdfReportService;
@@ -38,14 +37,5 @@ public class PdfReportServiceImpl implements PdfReportService {
         return new PdfReportBuilderImpl(config);
     }
 
-    @Override
-    public void printToFile(PdfReport report, File outputFile, PdfPageLayout pageConfig, Resource templateResource) throws IOException {
-        try {
-            PDDocument document = new PdfReportPrinter(report.getConfiguration()).print(pageConfig, templateResource, report);
-            document.save(outputFile);
-            document.close();
-        } catch (COSVisitorException e) {
-            throw new IOException("Error on generating PDF", e);
-        }
-    }
+
 }

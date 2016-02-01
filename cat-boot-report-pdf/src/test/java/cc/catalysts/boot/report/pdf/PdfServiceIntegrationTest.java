@@ -1,6 +1,7 @@
 package cc.catalysts.boot.report.pdf;
 
 import cc.catalysts.boot.report.pdf.config.DefaultPdfStyleSheet;
+import cc.catalysts.boot.report.pdf.config.PdfReportAutoConfiguration;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,7 +13,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  * @author Klaus Lehner
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = PdfReportModule.class)
+@ContextConfiguration(classes = PdfReportAutoConfiguration.class)
 public class PdfServiceIntegrationTest {
 
     @Autowired

@@ -1,5 +1,6 @@
 package cc.catalysts.boot.report.pdf.impl;
 
+import cc.catalysts.boot.report.pdf.PdfReport;
 import cc.catalysts.boot.report.pdf.PdfReportBuilder;
 import cc.catalysts.boot.report.pdf.PdfReportService;
 import cc.catalysts.boot.report.pdf.config.DefaultPdfStyleSheet;
@@ -22,7 +23,7 @@ import java.io.IOException;
 /**
  * @author Klaus Lehner
  */
-public class PdfReportServiceTest {
+public class PdfReportStructureServiceTest {
 
     private PdfReportService pdfReportService;
     private static File outDirectory = new File("pdf-out");
@@ -42,13 +43,13 @@ public class PdfReportServiceTest {
 
     @Test
     public void buildReport() throws IOException {
-        File file = new File(outDirectory, "example.pdf");
         PdfReportBuilder builder = pdfReportService.createBuilder();
-        builder.beginNewSection("test", true)
+        final PdfReport pdfReport = builder.beginNewSection("test", true)
                 .beginNewSection("foo", true)
                 .beginNewSection("bar", true)
-                .printToFile(file, PdfPageLayout.getLandscapeA4Page(), null);
-        Assert.assertTrue(file.exists());
+                .buildReport("example.pdf", PdfPageLayout.getLandscapeA4Page(), null);
+        PdfReportFilePrinter.getInstance().print(pdfReport, outDirectory);
+        Assert.assertTrue(new File(outDirectory, "example.pdf").exists());
     }
 
     @Test

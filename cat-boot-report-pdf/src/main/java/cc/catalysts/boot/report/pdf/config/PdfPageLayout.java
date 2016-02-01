@@ -2,6 +2,11 @@ package cc.catalysts.boot.report.pdf.config;
 
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 
+/**
+ * Layout for a PDF document. Provides static methods to reuse standard layouts like A4 portrait or landscape.
+ *
+ * @author Klaus Lehner
+ */
 public class PdfPageLayout {
 
     private float width;

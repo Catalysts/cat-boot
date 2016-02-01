@@ -3,10 +3,9 @@ package cc.catalysts.boot.report.pdf;
 import cc.catalysts.boot.report.pdf.config.PdfPageLayout;
 import cc.catalysts.boot.report.pdf.config.PdfTextStyle;
 import cc.catalysts.boot.report.pdf.elements.ReportElement;
-import org.apache.pdfbox.pdmodel.PDDocument;
+import cc.catalysts.boot.report.pdf.impl.PdfReportFilePrinter;
 import org.springframework.core.io.Resource;
 
-import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
 
@@ -33,11 +32,11 @@ public interface PdfReportBuilder {
 
     ReportTableBuilder startTable();
 
-    PdfReport buildReport(PdfPageLayout pageConfig);
+    PdfReport buildReport(String fileName, PdfPageLayout pageConfig, Resource templateResource) throws IOException;
 
+    /**
+     * @deprecated use {@link PdfReportFilePrinter} instead
+     */
+    @Deprecated
     void printToFile(File outputFile, PdfPageLayout pageConfig, Resource templateResource) throws IOException;
-
-    PDDocument printToPDDocument(PdfPageLayout pageConfig, Resource templateResource) throws IOException;
-
-    void printToHttpServletResponse(HttpServletResponse response, String fileName, PdfPageLayout pageConfig, Resource templateResource) throws IOException;
 }

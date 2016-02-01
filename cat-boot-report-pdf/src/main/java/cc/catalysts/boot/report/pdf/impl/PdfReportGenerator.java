@@ -1,8 +1,6 @@
 package cc.catalysts.boot.report.pdf.impl;
 
-import cc.catalysts.boot.report.pdf.PdfReport;
 import cc.catalysts.boot.report.pdf.config.PdfPageLayout;
-import cc.catalysts.boot.report.pdf.config.PdfStyleSheet;
 import cc.catalysts.boot.report.pdf.elements.ReportElement;
 import cc.catalysts.boot.report.pdf.elements.ReportElementStatic;
 import cc.catalysts.boot.report.pdf.elements.ReportImage;
@@ -23,17 +21,13 @@ import java.util.Queue;
 /**
  * @author Paul Klingelhuber
  */
-class PdfReportPrinter {
+class PdfReportGenerator {
 
-    private final PdfStyleSheet configuration;
-
-    public PdfReportPrinter(PdfStyleSheet configuration) {
-        this.configuration = configuration;
+    public PdfReportGenerator() {
     }
 
-
-    public void printToStream(PdfPageLayout pageConfig, Resource templateResource, PdfReport report, OutputStream stream) throws IOException, COSVisitorException {
-        PDDocument page = print(pageConfig, templateResource, report);
+    public void printToStream(PdfPageLayout pageConfig, Resource templateResource, PdfReportStructure report, OutputStream stream) throws IOException, COSVisitorException {
+        PDDocument page = generate(pageConfig, templateResource, report);
         page.save(stream);
         page.close();
     }
@@ -44,8 +38,8 @@ class PdfReportPrinter {
      * @return the printed PdfBox document
      * @throws java.io.IOException
      */
-    public PDDocument print(PdfPageLayout pageConfig, Resource templateResource, PdfReport report) throws IOException {
-        pageConfig.setFooter(configuration.getFooterText().getFontSize() + pageConfig.getLineDistance());
+    public PDDocument generate(PdfPageLayout pageConfig, Resource templateResource, PdfReportStructure report) throws IOException {
+        pageConfig.setFooter(report.getConfiguration().getFooterText().getFontSize() + pageConfig.getLineDistance());
 
         PrintData printData = new PrintData(templateResource, pageConfig);
         PrintCursor cursor = new PrintCursor();

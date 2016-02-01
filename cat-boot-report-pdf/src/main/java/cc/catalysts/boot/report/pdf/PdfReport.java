@@ -1,72 +1,24 @@
 package cc.catalysts.boot.report.pdf;
 
-import cc.catalysts.boot.report.pdf.elements.ReportElement;
-import cc.catalysts.boot.report.pdf.config.PdfStyleSheet;
-import cc.catalysts.boot.report.pdf.elements.ReportElementStatic;
-import cc.catalysts.boot.report.pdf.elements.ReportPage;
-import cc.catalysts.boot.report.pdf.elements.ReportTextBox;
+import org.apache.pdfbox.pdmodel.PDDocument;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
+/**
+ * @author Klaus Lehner
+ */
 public class PdfReport {
+    private final String fileName;
+    private final PDDocument document;
 
-    private final PdfStyleSheet configuration;
-    private List<ReportElement> elements = new ArrayList<ReportElement>();
-    private List<ReportElementStatic> staticElements = new ArrayList<ReportElementStatic>();
-    private List<ReportElementStatic> staticElementsForEachPage = new ArrayList<ReportElementStatic>();
-
-    public PdfReport(PdfStyleSheet configuration) {
-        this.configuration = configuration;
+    public PdfReport(String fileName, PDDocument document) {
+        this.fileName = fileName;
+        this.document = document;
     }
 
-    public PdfStyleSheet getConfiguration() {
-        return configuration;
+    public String getFileName() {
+        return fileName;
     }
 
-    public void addElement(ReportElement elem) {
-        elements.add(elem);
+    public PDDocument getDocument() {
+        return document;
     }
-
-    public List<ReportElement> getElements() {
-        return elements;
-    }
-
-    public void addPage(ReportPage page) {
-        for (ReportElement element : page.getPageElements()) {
-            addElement(element);
-        }
-    }
-
-    public void addStaticElement(ReportElementStatic elem) {
-        staticElements.add(elem);
-    }
-
-    public List<ReportElementStatic> getStaticElements() {
-        return staticElements;
-    }
-
-    public void addStaticElementsForEachPage(ReportElementStatic... elements) {
-        staticElementsForEachPage.addAll(Arrays.asList(elements));
-    }
-
-    public void expandPagesStaticElements(int totalPages) {
-        for (ReportElementStatic elem : staticElementsForEachPage) {
-            ReportElement baseElement = elem.getBase();
-            for (int i = 0; i < totalPages; i++) {
-                ReportElement newElement;
-                if (baseElement instanceof ReportTextBox) {
-                    ReportTextBox oldTextBox = (ReportTextBox) baseElement;
-                    String changedText = oldTextBox.getText().replaceAll("%PAGE_NUMBER%", i + 1 + "").replaceAll("%TOTAL_PAGES%", totalPages + "");
-                    newElement = new ReportTextBox(oldTextBox, changedText);
-                } else {
-                    newElement = baseElement;
-                }
-
-                addStaticElement(new ReportElementStatic(newElement, i, elem.getX(), elem.getY(), elem.getWidth()));
-            }
-        }
-    }
-
 }
