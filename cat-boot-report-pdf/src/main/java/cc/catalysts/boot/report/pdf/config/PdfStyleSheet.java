@@ -9,12 +9,29 @@ import java.awt.*;
  */
 public abstract class PdfStyleSheet {
 
+    /**
+     * the vertical line distance
+     */
     private float lineDistance = 1;
 
+    /**
+     * the padding after sections (see {@link cc.catalysts.boot.report.pdf.PdfReportBuilder#beginNewSection(String, boolean)}
+     */
     private int sectionPadding = 10;
+
+    /**
+     * the padding after headings
+     */
     private int headingPaddingAfter = 4;
 
+    /**
+     * the text style for heading1 (h1)
+     */
     private PdfTextStyle heading1Text = new PdfTextStyle(20, PDType1Font.HELVETICA_BOLD, Color.BLACK);
+
+    /**
+     * the text style for the body text
+     */
     private PdfTextStyle bodyText = new PdfTextStyle(12, PDType1Font.HELVETICA, Color.BLACK);
 
     private PdfTextStyle tableTitleText = new PdfTextStyle(12, PDType1Font.HELVETICA_BOLD, Color.BLACK);
