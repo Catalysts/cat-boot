@@ -40,8 +40,10 @@ public class ReportTable implements ReportElement {
     private float cellPaddingY = DEFAULT_CELL_PADDING_TOP_BOTTOM;
 
     /**
-     * @param cellWidths width of each column (the sum of elements must be 1)
-     * @param elements   elements of each cell
+     * @param cellWidths    width of each column (the sum of elements must be 1)
+     * @param elements      elements of each cell
+     * @param pdfStyleSheet the stylesheet to be used for this table
+     * @param title         the titles for the report (first row)
      */
     public ReportTable(PdfStyleSheet pdfStyleSheet, float[] cellWidths, ReportElement[][] elements, ReportElement[] title) {
         this.pdfStyleSheet = pdfStyleSheet;

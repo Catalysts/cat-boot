@@ -8,7 +8,6 @@ import java.util.Collection;
 
 /**
  * <p>Interface for all report elements.</p>
- * <p>
  * <p><b>IMPORTANT:</b> Although this interface is publicly visible, it is subject to change and may not be implemented by clients!</p>
  *
  * @author Klaus Lehner
@@ -23,7 +22,7 @@ public interface ReportElement {
      * @param startY       starting y
      * @param allowedWidth maximal width of segment
      * @return the Y position of the next line
-     * @throws java.io.IOException
+     * @throws java.io.IOException in case something happens during printing
      */
     float print(PDDocument document, PDPageContentStream stream, int pageNumber, float startX, float startY, float allowedWidth) throws IOException;
 
@@ -45,6 +44,7 @@ public interface ReportElement {
     /**
      * in case isSplitable is true, this method will be called.
      *
+     * @param allowedWidth the maximum allowed width for this element
      * @return the height of the first nonSplitable segment
      */
     float getFirstSegmentHeight(float allowedWidth);

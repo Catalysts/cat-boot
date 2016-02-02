@@ -1,10 +1,10 @@
 package cc.catalysts.boot.report.pdf.impl;
 
 import cc.catalysts.boot.report.pdf.config.PdfPageLayout;
-import cc.catalysts.boot.report.pdf.elements.ReportTextBox;
-import cc.catalysts.boot.report.pdf.utils.ReportAlignType;
 import cc.catalysts.boot.report.pdf.config.PdfStyleSheet;
 import cc.catalysts.boot.report.pdf.elements.ReportElementStatic;
+import cc.catalysts.boot.report.pdf.elements.ReportTextBox;
+import cc.catalysts.boot.report.pdf.utils.ReportAlignType;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
@@ -34,6 +34,9 @@ public abstract class AbstractFixedLineGenerator {
 
     /**
      * adds a footer to all pages
+     *
+     * @param report     the report where the footer should be added.
+     * @param pageConfig the page layout of the page
      */
     public void addFooterToAllPages(PdfReportStructure report, PdfPageLayout pageConfig) {
         float x = pageConfig.getStartX();

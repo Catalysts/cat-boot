@@ -5,7 +5,6 @@ import java.util.Collections;
 
 /**
  * <p>Base class all report elements.</p>
- * <p>
  * <p><b>IMPORTANT:</b> Although this class is publicly visible, it is subject to change and may not be implemented by clients!</p>
  *
  * @author Klaus Lehner

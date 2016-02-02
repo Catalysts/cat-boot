@@ -54,21 +54,27 @@ public class PdfReportStructureServiceTest {
 
     @Test
     public void generateAndSavePlainExample() throws Exception {
-        createTestReport().printToFile(new File(outDirectory, "example-plain.pdf"), PdfPageLayout.getPortraitA4Page(), null);
+        final PdfReport pdfReport = createTestReport().buildReport("example-plain.pdf", PdfPageLayout.getPortraitA4Page(), null);
+
+        new PdfReportFilePrinter().print(pdfReport, outDirectory);
     }
 
     @Test
     public void specialCharactersExample() throws Exception {
-        pdfReportService.createBuilder()
+        final PdfReport pdfReport = pdfReportService.createBuilder()
                 .addHeading("special chars test")
                 .addText("start 1€ foo@bar.at öäü !\"§$%&%&//()=?`îôâ Ružomberok " + (char) 8220 + "123456789" + (char) 8222 + " - end")
-                .printToFile(new File(outDirectory, "example-special.pdf"), PdfPageLayout.getPortraitA4Page(), null);
+                .buildReport("example-special.pdf", PdfPageLayout.getPortraitA4Page(), null);
+
+        new PdfReportFilePrinter().print(pdfReport, outDirectory);
     }
 
     @Test
     public void generateAndSaveTemplateExample() throws Exception {
         Resource template = new ClassPathResource("template.pdf");
-        createTestReport().printToFile(new File(outDirectory, "example-template.pdf"), PdfPageLayout.getPortraitA4Page(), template);
+        final PdfReport pdfReport = createTestReport().buildReport("example-template.pdf", PdfPageLayout.getPortraitA4Page(), template);
+
+        new PdfReportFilePrinter().print(pdfReport, outDirectory);
     }
 
     @Test
@@ -78,7 +84,8 @@ public class PdfReportStructureServiceTest {
                 .withFooterOnAllPages("left", "center", "right: " + PdfFooterGenerator.PAGE_TEMPLATE_CURR + "/"
                         + PdfFooterGenerator.PAGE_TEMPLATE_TOTAL);
 
-        report.printToFile(new File(outDirectory, "example-header-footer.pdf"), PdfPageLayout.getPortraitA4Page(), null);
+        final PdfReport pdfReport = report.buildReport("example-header-footer.pdf", PdfPageLayout.getPortraitA4Page(), null);
+        new PdfReportFilePrinter().print(pdfReport, outDirectory);
     }
 
     PdfReportBuilder createTestReport() {

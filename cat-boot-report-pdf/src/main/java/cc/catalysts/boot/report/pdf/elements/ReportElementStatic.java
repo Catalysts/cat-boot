@@ -26,6 +26,7 @@ public class ReportElementStatic implements ReportElement {
      * @param pageNo 0-based number of page, where to print element
      * @param x      starting X coordinate of print location
      * @param y      starting Y coordinate of print location
+     * @param width  the width of the static element
      */
     public ReportElementStatic(ReportElement base, int pageNo, float x, float y, float width) {
         this.base = base;
@@ -47,7 +48,7 @@ public class ReportElementStatic implements ReportElement {
      * @param startY       IGNORED (taken from constructor)
      * @param allowedWidth IGNORED (taken from constructor)
      * @return 0
-     * @throws java.io.IOException
+     * @throws java.io.IOException in case something happens in the underlying pdf implementation
      */
     @Override
     public float print(PDDocument document, PDPageContentStream stream, int pageNumber, float startX, float startY, float allowedWidth) throws IOException {

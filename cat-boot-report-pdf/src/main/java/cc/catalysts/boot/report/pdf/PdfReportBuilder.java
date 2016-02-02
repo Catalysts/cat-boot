@@ -33,10 +33,4 @@ public interface PdfReportBuilder {
     ReportTableBuilder startTable();
 
     PdfReport buildReport(String fileName, PdfPageLayout pageConfig, Resource templateResource) throws IOException;
-
-    /**
-     * @deprecated use {@link PdfReportFilePrinter} instead
-     */
-    @Deprecated
-    void printToFile(File outputFile, PdfPageLayout pageConfig, Resource templateResource) throws IOException;
 }

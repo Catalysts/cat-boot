@@ -1,10 +1,10 @@
 package cc.catalysts.boot.report.pdf.impl;
 
 import cc.catalysts.boot.report.pdf.PdfReportBuilder;
-import cc.catalysts.boot.report.pdf.elements.ReportElement;
 import cc.catalysts.boot.report.pdf.ReportTableBuilder;
 import cc.catalysts.boot.report.pdf.ReportTableRowBuilder;
 import cc.catalysts.boot.report.pdf.config.PdfStyleSheet;
+import cc.catalysts.boot.report.pdf.elements.ReportElement;
 import cc.catalysts.boot.report.pdf.elements.ReportTable;
 import cc.catalysts.boot.report.pdf.elements.ReportTextBox;
 
@@ -25,6 +25,9 @@ public class ReportTableBuilderImpl implements ReportTableBuilder {
 
     /**
      * init with default style
+     *
+     * @param pdfStyleSheet the stylesheet to be used in this table
+     * @param reportBuilder the underlying {@link PdfReportBuilder} to be able to jump back after table construction has been finished
      */
     public ReportTableBuilderImpl(PdfStyleSheet pdfStyleSheet, PdfReportBuilder reportBuilder) {
         this.pdfStyleSheet = pdfStyleSheet;

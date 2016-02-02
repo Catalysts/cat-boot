@@ -56,7 +56,7 @@ public class ReportImage extends AbstractReportElement implements ReportElement 
      * @param pageNumber page of image
      * @param x          location of image
      * @param y          location of image
-     * @throws java.io.IOException
+     * @throws java.io.IOException in case there are problems at reading or writing the image
      */
     public void printImage(PDDocument document, int pageNumber, float x, float y) throws IOException {
         PDJpeg obj = new PDJpeg(document, img);
