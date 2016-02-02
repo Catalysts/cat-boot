@@ -5,14 +5,12 @@ import cc.catalysts.boot.report.pdf.PdfReportService;
 import cc.catalysts.boot.report.pdf.config.DefaultPdfStyleSheet;
 import cc.catalysts.boot.report.pdf.config.PdfPageLayout;
 import cc.catalysts.boot.report.pdf.config.PdfTextStyle;
-import cc.catalysts.boot.report.pdf.elements.ReportImage;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
+import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
 
-import javax.imageio.ImageIO;
 import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.io.File;
 
 /**
@@ -56,6 +54,8 @@ public class DemoTest {
                         new ClassPathResource("demo-template.pdf"));
 
 
-        pdfReportFilePrinter.print(pdfReport, new File("pdf-out"));
+        final File target = new File("pdf-out");
+        Assert.assertTrue(target.mkdirs());
+        pdfReportFilePrinter.print(pdfReport, target);
     }
 }
