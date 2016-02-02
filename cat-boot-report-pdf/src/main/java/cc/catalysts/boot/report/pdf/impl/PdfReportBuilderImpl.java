@@ -10,6 +10,7 @@ import cc.catalysts.boot.report.pdf.elements.*;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.springframework.core.io.Resource;
 
+import javax.imageio.ImageIO;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -75,6 +76,11 @@ class PdfReportBuilderImpl implements PdfReportBuilder {
         PdfReportStructure report = this.buildReport(pageConfig);
         PDDocument document = new PdfReportGenerator().generate(pageConfig, templateResource, report);
         return new PdfReport(fileName, document);
+    }
+
+    @Override
+    public PdfReportBuilder addImage(Resource resource, float width, float height) throws IOException {
+        return addElement(new ReportImage(ImageIO.read(resource.getFile()), width, height));
     }
 
     @Override

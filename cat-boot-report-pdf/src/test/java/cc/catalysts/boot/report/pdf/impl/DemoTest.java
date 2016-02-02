@@ -47,7 +47,7 @@ public class DemoTest {
                 .beginNewSection("Images", false)
                 .addText("Images are also supported out-of-the-box:")
                 .addPadding(10)
-                .addElement(new ReportImage(ImageIO.read(new ClassPathResource("github_icon.png").getFile()), 100, 100))
+                .addImage(new ClassPathResource("github_icon.png"), 100, 100)
                 .withFooterOnAllPages("Demo-PDF", "cat-boot-report-pdf", PdfFooterGenerator.PAGE_TEMPLATE_CURR + "/"
                         + PdfFooterGenerator.PAGE_TEMPLATE_TOTAL)
 
