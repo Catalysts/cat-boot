@@ -11,7 +11,7 @@ interfaces might change.
 
 Which framework would you use if you had the requirement to create a PDF report like this: 
 
-![ReportScreenshot](https://github.com/Catalysts/cat-boot/tree/master/cat-boot-report-pdf/reportScreenshot.png)
+![ReportScreenshot](https://github.com/Catalysts/cat-boot/raw/master/cat-boot-report-pdf/reportScreenshot.png)
 
 How much code and configuration files would you expect?
 
@@ -54,8 +54,8 @@ final PdfReport pdfReport = pdfReportService.createBuilder(styleSheet)
 pdfReportFilePrinter.print(pdfReport, new File("pdf-out"));
 ```
 
-All you need is the [demo-template.pdf](https://github.com/Catalysts/cat-boot/tree/master/cat-boot-report-pdf/src/test/resources/demo-template.pdf) and
- as a result you will get this [demo.pdf](https://github.com/Catalysts/cat-boot/tree/master/cat-boot-report-pdf/demo.pdf).
+All you need is the [demo-template.pdf](https://github.com/Catalysts/cat-boot/raw/master/cat-boot-report-pdf/src/test/resources/demo-template.pdf) and
+ as a result you will get this [demo.pdf](https://github.com/Catalysts/cat-boot/raw/master/cat-boot-report-pdf/demo.pdf).
  
 You can also browse and execute the [DemoTest.java](https://github.com/Catalysts/cat-boot/tree/master/cat-boot-report-pdf/src/test/java/cc/catalysts/boot/report/pdf/impl/DemoTest.java) yourself. 
  
