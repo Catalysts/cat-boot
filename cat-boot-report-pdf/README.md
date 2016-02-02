@@ -6,6 +6,27 @@ from Java code.
 This module has been extracted from previous projects and wide parts of it are still subject to change, so
 interfaces might change.
 
+## Description
+
+This framework is not a full-fledged reporting engine, but it should help you in printing simple reports
+for your Java apps without digging into complicated reporting engines.
+
+You can easily add:
+
+* Text
+* Heading
+* Tables
+* Images
+* Padding
+* Static element (on a fixed position)
+* Headers and Footers (including page numbers)
+* Simple stylesheets
+* Various page layouts
+
+Stylesheets can be added per document or per element, configurable via code or external property files.
+
+If you're running in a Spring-Boot-Application, using @EnableAutoConfiguration, the required services will be
+ injected automatically.
 
 ## Example
 
@@ -43,7 +64,7 @@ final PdfReport pdfReport = pdfReportService.createBuilder(styleSheet)
         .beginNewSection("Images", false)
         .addText("Images are also supported out-of-the-box:")
         .addPadding(10)
-        .addElement(new ReportImage(ImageIO.read(new ClassPathResource("github_icon.png").getFile()), 100, 100))
+        .addImage(new ClassPathResource("github_icon.png"), 100, 100)
         .withFooterOnAllPages("Demo-PDF", "cat-boot-report-pdf", PdfFooterGenerator.PAGE_TEMPLATE_CURR + "/"
                 + PdfFooterGenerator.PAGE_TEMPLATE_TOTAL)
         .buildReport("demo.pdf",
