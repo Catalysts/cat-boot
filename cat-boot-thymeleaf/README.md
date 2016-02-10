@@ -52,8 +52,8 @@ to upgrade the bootstrap webjar, you need to be careful to not forget it in all 
 And even worse, if your webjar is updated due to a transitive dependency, then you even won't recognize that you have
 to update your templates.
 
-The module cat-boot-thymeleaf helps you there in connection with the cat-boot-webjar Gradle plugin. This plugin creates
-the following class for you as part of the build process: (see the official docu for more information)
+The module cat-boot-thymeleaf helps you there in connection with the cat-boot-webjar Gradle plugin. This plugin generates
+the following class for you as part of the build process: (see the official docu for more information https://github.com/Catalysts/cat-gradle-plugins#webjars)
 
 ```java
 public class Webjars {
@@ -80,6 +80,8 @@ public class Webjars {
     }
 }
 ```
+
+What it does in behind is to analyze your dependency graph and collect all WebJars that your application will finally consist of.
 
 All you need to do now with cat-boot-thymeleaf is to register this class in your ApplicationContext:
 
