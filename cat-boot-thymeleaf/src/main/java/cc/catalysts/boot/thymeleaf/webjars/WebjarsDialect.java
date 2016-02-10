@@ -31,13 +31,11 @@ public class WebjarsDialect extends AbstractDialect implements IExpressionEnhanc
 
     @Override
     public Map<String, Object> getAdditionalExpressionObjects(IProcessingContext processingContext) {
-        Map<String, Object> map = new HashMap<>();
         Map<String, Object> webjars = new HashMap<>();
-        if (webjarRegistrars != null) {
-            for (WebjarRegistrar webjarRegistrar : webjarRegistrars) {
-                webjars.putAll(webjarRegistrar.getWebjarMap());
-            }
+        for (WebjarRegistrar webjarRegistrar : webjarRegistrars) {
+            webjars.putAll(webjarRegistrar.getWebjarMap());
         }
+        Map<String, Object> map = new HashMap<>();
         map.put("webjars", webjars);
         return map;
     }
