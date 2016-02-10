@@ -1,0 +1,15 @@
+apply plugin: 'java'
+apply plugin: 'spring-boot'
+
+bootRepackage {
+    enabled = false
+}
+
+dependencies {
+    compile('org.springframework.boot:spring-boot-starter-thymeleaf')
+
+    testCompile('junit:junit:4.11')
+    testCompile('org.assertj:assertj-core:3.2.0')
+    testCompile('org.springframework.boot:spring-boot-starter-test')
+    testCompile('commons-logging:commons-logging:1.2')
+}
