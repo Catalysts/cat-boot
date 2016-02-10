@@ -6,7 +6,7 @@ This modules enhances `spring-boot-starter-thymeleaf` by some useful dialects an
 
 With Gradle
 
-```
+```groovy
 runtime('cc.catalysts.boot:cat-boot-thymeleaf:' + catBootVersion)
 ```
 
@@ -22,7 +22,7 @@ that you require for your web page (CSS, JS, LESS,...).
 
 Adding WebJars to your application is simple as well, all you need to do is to add the JAR to your classpath, i.e. with Gradle:
 
-```
+```groovy
 dependenciey {
    compile 'org.webjars.bower:bootstrap:3.3.6'
 }
@@ -30,7 +30,7 @@ dependenciey {
 
 In your Thymeleaf-Templates you can then refer to the artifacts in that classpath like that:
 
-```
+```html
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -55,7 +55,7 @@ to update your templates.
 The module cat-boot-thymeleaf helps you there in connection with the cat-boot-webjar Gradle plugin. This plugin creates
 the following class for you as part of the build process: (see the official docu for more information)
 
-```
+```java
 public class Webjars {
     public static class Webjar {
         public final String group;
@@ -83,7 +83,7 @@ public class Webjars {
 
 All you need to do now with cat-boot-thymeleaf is to register this class in your ApplicationContext:
 
-```
+```java
 @Bean
 public WebjarRegistrar wpcWebjars() {
     return () -> Webjars.webjars;
@@ -92,7 +92,7 @@ public WebjarRegistrar wpcWebjars() {
 
 Only by doing this, you can then modify your Thymeleaf template as follows:
 
-```
+```html
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
