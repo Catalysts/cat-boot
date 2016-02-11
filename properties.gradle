@@ -1,5 +1,5 @@
 ext.cbGroup       = 'cc.catalysts.boot'
-ext.cbVersion     = '0.0.7-SNAPSHOT'
+ext.cbVersion     = '0.0.7'
 ext.cbWebsite     = 'https://github.com/Catalysts/cat-boot'
 ext.cbTracker     = 'https://github.com/Catalysts/cat-boot/issues'
 ext.cbGit         = 'https://github.com/Catalysts/cat-boot.git'
