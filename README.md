@@ -22,3 +22,7 @@ See [`/cat-boot-thymeleaf`](/cat-boot-thymeleaf)
 ## PDF Reporting engine
 
 See [`/cat-boot-report-pdf`](/cat-boot-report-pdf)
+
+## Redis-Clustering
+
+See [`/cat-boot-cluster`](/cat-boot-cluster)

@@ -1,0 +1,31 @@
+apply plugin: 'java'
+apply plugin: 'propdeps'
+apply plugin: 'propdeps-maven'
+apply plugin: 'propdeps-idea'
+
+apply plugin: 'spring-boot'
+
+bootRepackage {
+    enabled = false
+}
+
+dependencies {
+    compile('org.slf4j:slf4j-api')
+    compile('org.springframework.boot:spring-boot')
+    compile('org.springframework.boot:spring-boot-autoconfigure')
+    compile('org.springframework.boot:spring-boot-starter-actuator')
+    // spring session clustering support
+    compile('org.springframework.boot:spring-boot-starter-redis')
+    compile('org.springframework.session:spring-session-data-redis')
+
+    provided('javax.servlet:javax.servlet-api')
+    provided('org.springframework:spring-web')
+
+    testCompile( 'junit:junit:4.11')
+    testCompile( 'org.mockito:mockito-core')
+    testCompile( 'org.springframework:spring-test')
+    testCompile( 'commons-logging:commons-logging:1.2')
+
+}
+
+compileJava.dependsOn processResources
