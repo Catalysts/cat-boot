@@ -48,7 +48,7 @@ public class SpringSessionConfig {
     @Bean
     public JedisConnectionFactory connectionFactory(RedisConfig config) {
         if (StringUtils.isEmpty(config.getHost()) || StringUtils.isEmpty(config.getPort())) {
-            throw new IllegalStateException("missing required redis configuraiton properties " +
+            throw new IllegalStateException("missing required redis configuration properties " +
                     "(spring.redis.host or spring.redis.port)");
         }
         JedisShardInfo shardInfo = new JedisShardInfo(config.host, config.port, "redisServer");
