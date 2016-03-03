@@ -34,4 +34,10 @@ javamelody.enableSpringServiceMonitoring = false
 javamelody.enableSpringControllerMonitoring = false
 
 ```
- 
+
+If you run multiple applications using this module on the same machine, you can run into problems with concurrent access to the storage folder.
+To solve this by giving them separate javamelody storage folders, simply set the following configuration option:
+
+```ini
+javamelody.storageDirectory = /tmp/javamelody-${server.port:0000}
+```
