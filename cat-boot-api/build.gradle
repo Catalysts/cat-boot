@@ -1,0 +1,17 @@
+apply plugin: 'java'
+apply plugin: 'propdeps'
+apply plugin: 'propdeps-maven'
+apply plugin: 'propdeps-idea'
+
+apply plugin: 'spring-boot'
+
+bootRepackage {
+    enabled = false
+}
+
+dependencies {
+    compile 'com.fasterxml.jackson.core:jackson-annotations:2.6.5'
+    compile 'javax.validation:validation-api:1.1.0.Final'
+
+    compile 'org.springframework:spring-web'
+}
