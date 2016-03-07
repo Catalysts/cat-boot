@@ -37,7 +37,7 @@ public class ClientEnumController implements ClientEnumRegistry {
     public List<NamedDto<String>> getEnumValues(@PathVariable(value = "name") String name) {
         final Locale locale = LocaleContextHolder.getLocale();
         checkIfCurrentLocaleRegistered(locale);
-        if (clientEnums.containsKey(name)) {
+        if (clientEnums.get(locale).containsKey(name)) {
             return clientEnums.get(locale).get(name);
         } else {
             throw new NotFoundException(name);
