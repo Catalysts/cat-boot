@@ -3,6 +3,7 @@
 CAT-Boot: A set of libraries on top of the famous and fabolous [Spring Boot](https://projects.spring.io/spring-boot/)
 
 [![Build Status](https://travis-ci.org/Catalysts/cat-boot.svg?branch=master)](https://travis-ci.org/Catalysts/cat-boot)
+[![Coverage Status](https://coveralls.io/repos/github/Catalysts/cat-boot/badge.svg?branch=master)](https://coveralls.io/github/Catalysts/cat-boot?branch=master)
 
 ## Java-Melody
 
