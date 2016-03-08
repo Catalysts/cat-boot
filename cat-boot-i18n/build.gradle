@@ -10,6 +10,7 @@ bootRepackage {
 }
 
 dependencies {
+    compile project(':cat-boot-api')
     compile('org.springframework.boot:spring-boot')
     compile('org.springframework.boot:spring-boot-autoconfigure')
 
@@ -22,6 +23,7 @@ dependencies {
     testCompile('junit:junit:4.11')
     testCompile('org.springframework:spring-test')
     testCompile('commons-logging:commons-logging:1.2')
+    testCompile('org.hibernate:hibernate-validator')
 
 }
 

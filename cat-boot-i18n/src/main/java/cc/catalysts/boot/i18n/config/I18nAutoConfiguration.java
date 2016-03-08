@@ -1,5 +1,6 @@
 package cc.catalysts.boot.i18n.config;
 
+import cc.catalysts.boot.i18n.controller.ClientEnumController;
 import cc.catalysts.boot.i18n.controller.I18nController;
 import cc.catalysts.boot.i18n.service.I18nService;
 import cc.catalysts.boot.i18n.service.ListResourceBundleMessageSource;
@@ -67,5 +68,10 @@ public class I18nAutoConfiguration extends MessageSourceAutoConfiguration {
     @Bean
     I18nController i18nController(I18nService i18NService) {
         return new I18nController(i18NService);
+    }
+
+    @Bean
+    ClientEnumController clientEnumController(MessageSource messageSource) {
+        return new ClientEnumController(messageSource);
     }
 }
