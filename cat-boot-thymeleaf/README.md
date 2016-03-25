@@ -23,7 +23,7 @@ that you require for your web page (CSS, JS, LESS,...).
 Adding WebJars to your application is simple as well, all you need to do is to add the JAR to your classpath, i.e. with Gradle:
 
 ```groovy
-dependenciey {
+dependencies {
    compile 'org.webjars.bower:bootstrap:3.3.6'
 }
 ```
