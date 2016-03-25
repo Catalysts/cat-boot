@@ -10,48 +10,50 @@ define([
     function CatBootEnumService(cbEnumEndpoint, cbEnums) {
         var that = this;
         var loadingPromise;
-        var initialized = false;
 
         this.init = function () {
-            if (initialized) {
-                throw new Error('Already initialized!');
-            }
             if (!!loadingPromise) {
-                throw new Error('Initialization already in progress!');
+                throw new Error('Initialization already started!');
             }
 
             loadingPromise = cbEnumEndpoint.list()
-                .then(function (enumValues) {
-                    cbEnums = enumValues;
-                    initialized = true;
-                    loadingPromise = undefined;
+                .then(function (allEnumValues) {
+                    cbEnums = allEnumValues;
                 });
 
             return loadingPromise;
         };
 
         this.list = function (name) {
-            if (!initialized) {
-                throw new Error('Not yet initialized!');
+            if (!loadingPromise) {
+                throw new Error('Initialization not yet started!');
             }
 
-            var enumValues = cbEnums[name];
-            if (!enumValues) {
-                throw new Error('No enum with name \'' + name + '\' was registered!');
-            }
-            return enumValues;
+            return loadingPromise.then(function (allEnumValues) {
+                var enumValues = cbEnums[name];
+                if (!enumValues) {
+                    throw new Error('No enum with name \'' + name + '\' was registered!');
+                }
+                return enumValues;
+            });
         };
 
         this.get = function (name, value) {
-            var enumValues = that.list(name);
-            for (var i = 0; i < enumValues.length; i++) {
-                var enumValue = enumValues[i];
-                if (value === enumValue.id) {
-                    return enumValue;
-                }
+            if (!loadingPromise) {
+                throw new Error('Initialization not yet started!');
             }
 
-            throw new Error('No enum for \'' + value + '\' of type \'' + name + '\'');
+            return loadingPromise.then(function (allEnumValues) {
+                var enumValues = that.list(name);
+                for (var i = 0; i < enumValues.length; i++) {
+                    var enumValue = enumValues[i];
+                    if (value === enumValue.id) {
+                        return enumValue;
+                    }
+                }
+
+                throw new Error('No enum for \'' + value + '\' of type \'' + name + '\'');
+            });
         };
     }
 

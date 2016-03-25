@@ -25,15 +25,21 @@ define([
                 }
 
                 var enumName = $attrs.cbEnum;
-                var enumValues = cbEnumService.list(enumName);
-
-                for (var i = 0; i < enumValues.length; i++) {
-                    var optionScope = $scope.$new(true);
-                    var enumValue = enumValues[i];
-                    optionScope.value = enumValue.id;
-                    optionScope.name = enumValue.name;
-                    $element.append($compile('<option value="{{::value}}">{{name}}</option>')(optionScope));
-                }
+                cbEnumService.list(enumName)
+                    .then(function(enumValues) {
+                        $element.empty();
+                        for (var i = 0; i < enumValues.length; i++) {
+                            var optionScope = $scope.$new(true);
+                            var enumValue = enumValues[i];
+                            optionScope.value = enumValue.id;
+                            optionScope.name = enumValue.name;
+                            optionScope.selected = (i === 0);
+                            $element.append($compile('<option value="{{::value}}" ng-selected="{{selected}}">{{name}}</option>')(optionScope));
+                            if (optionScope.selected) {
+                                ngModel.$setViewValue(optionScope.value);
+                            }
+                        }
+                    });
             }
         };
     }
