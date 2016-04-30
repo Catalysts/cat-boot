@@ -1,0 +1,21 @@
+apply plugin: 'java'
+
+apply plugin: 'spring-boot'
+
+bootRepackage {
+    enabled = false
+}
+
+dependencies {
+    compile 'org.slf4j:slf4j-api'
+    compile('org.springframework.boot:spring-boot-autoconfigure')
+    compile 'org.springframework:spring-core'
+    compile 'org.springframework:spring-context'
+    compile 'org.apache.commons:commons-lang3:3.3.2'
+    compile 'org.aspectj:aspectjweaver'
+
+    testCompile 'org.springframework:spring-test'
+    testCompile 'junit:junit:4.11'
+    testCompile 'commons-logging:commons-logging:1.2'
+    testCompile 'ch.qos.logback:logback-classic'
+}

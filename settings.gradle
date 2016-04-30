@@ -5,3 +5,5 @@ include 'cat-boot-report-pdf'
 include 'cat-boot-thymeleaf'
 include 'cat-boot-cluster'
 include 'cat-boot-api'
+include 'cat-boot-profiling'
+
