@@ -9,6 +9,10 @@ CAT-Boot: A set of libraries on top of the famous and fabolous [Spring Boot](htt
 
 See [`/cat-boot-javamelody`](/cat-boot-javamelody)
 
+## Profiling
+
+See [`/cat-boot-profiling`](/cat-boot-profiling)
+
 ## I18n Handling
 
 We have two modules here:
