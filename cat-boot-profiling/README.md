@@ -25,18 +25,18 @@ annotation are accumulated. As an example, if you have those two beans:
 public class SimpleBean {
 
     @Autowired
-    SimpleBean2 simpleBean2;
+    NestedBean nestedBean;
 
     public String callMe() {
-        return simpleBean2.callMeAgain();
+        return nestedBean.callMeAgain();
     }
 }
 
 @MethodProfiling
 @Component
-public class SimpleBean2 {
+public class NestedBean {
 
-    public String callMeAgain() {
+    public String callSubMethod() {
         return "Test";
     }
 }
@@ -50,7 +50,7 @@ And you then perform a call to simpleBean.callMe(), then you might run into log 
    calls     avg ms   total ms      %   Signature
 ----------------------------------------------------------------------------------
        1      59,00         59  98,33   SimpleBean.callMe()
-       1      29,00         29  48,33     SimpleBean2.callMeAgain()
+       1      29,00         29  48,33     NestedBean.callSubMethod()
 ```
 
 Don't forget to set the log level of your target bean (the bean that holds the annotation) to TRACE.
