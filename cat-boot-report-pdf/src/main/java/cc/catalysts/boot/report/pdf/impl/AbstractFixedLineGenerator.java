@@ -62,6 +62,6 @@ public abstract class AbstractFixedLineGenerator {
         report.addStaticElementsForEachPage(staticElements.toArray(new ReportElementStatic[staticElements.size()]));
     }
 
-    abstract float getVerticalPosition(PdfPageLayout pageConfig);
+    protected abstract float getVerticalPosition(PdfPageLayout pageConfig);
 
 }

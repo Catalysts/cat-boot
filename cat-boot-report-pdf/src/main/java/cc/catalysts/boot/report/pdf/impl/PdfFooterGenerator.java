@@ -15,7 +15,7 @@ public class PdfFooterGenerator extends AbstractFixedLineGenerator {
     }
 
     @Override
-    float getVerticalPosition(PdfPageLayout pageConfig) {
+    protected float getVerticalPosition(PdfPageLayout pageConfig) {
         return pageConfig.getLastY();
     }
 
