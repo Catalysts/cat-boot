@@ -18,7 +18,7 @@ public class PdfHeaderGenerator extends AbstractFixedLineGenerator {
     }
 
     @Override
-    float getVerticalPosition(PdfPageLayout pageConfig) {
+    protected float getVerticalPosition(PdfPageLayout pageConfig) {
         return pageConfig.getHeight();
     }
 
