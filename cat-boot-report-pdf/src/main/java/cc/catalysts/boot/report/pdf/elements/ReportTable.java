@@ -140,9 +140,20 @@ public class ReportTable implements ReportElement {
         float minY = y;
         for (int i = 0; i < cellWidths.length; i++) {
             if (line[i] != null) {
-                float yi = line[i].print(document, stream, pageNumber, x, y - cellPaddingY, cellWidths[i] * allowedWidth - cellPaddingX * 2);
+                float yi = 0;
+                if (line[i] instanceof ReportImage) {
+                    //stream.close();
+                    ((ReportImage) line[i]).setWidth(cellWidths[i] * allowedWidth - cellPaddingX * 2);
+                    ((ReportImage) line[i]).setHeight(((ReportImage) line[i]).getHeight() * (cellWidths[i] * allowedWidth - cellPaddingX * 2) / ((ReportImage) line[i]).getHeight());
+                    yi = line[i].print(document, stream, pageNumber, x, y - cellPaddingY, cellWidths[i] * allowedWidth - cellPaddingX * 2);
+                    ((ReportImage) line[i]).printImage(document, pageNumber, x, y - cellPaddingY);
+                    //stream = new PDPageContentStream(document, (PDPage) document.getDocumentCatalog().getAllPages().get(pageNumber), true, false);
+                }else {
+                    yi = line[i].print(document, stream, pageNumber, x, y - cellPaddingY, cellWidths[i] * allowedWidth - cellPaddingX * 2);
+                }
                 intents.addAll(line[i].getImageIntents());
                 minY = Math.min(minY, yi);
+
             }
             x += cellWidths[i] * allowedWidth;
         }

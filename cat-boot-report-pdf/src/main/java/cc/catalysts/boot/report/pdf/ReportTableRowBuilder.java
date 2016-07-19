@@ -1,11 +1,13 @@
 package cc.catalysts.boot.report.pdf;
 
+import cc.catalysts.boot.report.pdf.elements.ReportTableCellElement;
+
 /**
  * @author Klaus Lehner, Catalysts GmbH
  */
 public interface ReportTableRowBuilder {
 
-    ReportTableRowBuilder addValue(String value);
+    ReportTableRowBuilder addValue(ReportTableCellElement value);
 
     /**
      * sets the row values and finishes the row
@@ -13,7 +15,7 @@ public interface ReportTableRowBuilder {
      * @param rowValues the values for the current row
      * @return the surrounding report builder
      */
-    ReportTableBuilder withValues(String... rowValues);
+    ReportTableBuilder withValues(ReportTableCellElement... rowValues);
 
     ReportTableBuilder endRow();
 }
