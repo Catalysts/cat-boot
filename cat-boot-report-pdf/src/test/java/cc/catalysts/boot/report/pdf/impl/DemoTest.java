@@ -71,7 +71,7 @@ public class DemoTest {
         pdfReport.getDocument().save("demo.pdf");
 
         final File target = new File("pdf-out");
-        //Assert.assertTrue(target.mkdirs());
+        Assert.assertTrue(target.mkdirs());
         pdfReportFilePrinter.print(pdfReport, target);
 
     }
