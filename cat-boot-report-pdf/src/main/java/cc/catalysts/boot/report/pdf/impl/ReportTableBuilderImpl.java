@@ -4,9 +4,7 @@ import cc.catalysts.boot.report.pdf.PdfReportBuilder;
 import cc.catalysts.boot.report.pdf.ReportTableBuilder;
 import cc.catalysts.boot.report.pdf.ReportTableRowBuilder;
 import cc.catalysts.boot.report.pdf.config.PdfStyleSheet;
-import cc.catalysts.boot.report.pdf.elements.ReportElement;
-import cc.catalysts.boot.report.pdf.elements.ReportTable;
-import cc.catalysts.boot.report.pdf.elements.ReportTextBox;
+import cc.catalysts.boot.report.pdf.elements.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -20,7 +18,7 @@ public class ReportTableBuilderImpl implements ReportTableBuilder {
     private final PdfStyleSheet pdfStyleSheet;
     private List<String> columnNames = new ArrayList<>();
     private List<Float> columnWeights = new ArrayList<>();
-    private List<List<String>> tableValues = new ArrayList<>();
+    private List<List<ReportTableCellElement>> tableValues = new ArrayList<>();
     private PdfReportBuilder reportBuilder;
 
     /**
@@ -61,7 +59,7 @@ public class ReportTableBuilderImpl implements ReportTableBuilder {
         return new ReportTableRowBuilderImpl(this);
     }
 
-    void addRow(List<String> values) {
+    void addRow(List<ReportTableCellElement> values) {
         if (values.size() != columnNames.size()) {
             throw new IllegalArgumentException("invalid value count, must match column count: " + columnNames.size());
         }
@@ -86,7 +84,7 @@ public class ReportTableBuilderImpl implements ReportTableBuilder {
 
     public ReportTable buildTableWithWidths(float[] widths) {
         ReportTable reportTable = new ReportTable(pdfStyleSheet, widths, toArray(), null);
-        reportTable.setBorder(true);
+        //reportTable.setBorder(true);
         return reportTable;
     }
 
@@ -101,10 +99,17 @@ public class ReportTableBuilderImpl implements ReportTableBuilder {
         }
         row++;
         // body
-        for (List<String> rowValues : tableValues) {
+        for (List<ReportTableCellElement> rowValues : tableValues) {
             col = 0;
-            for (String value : rowValues) {
-                result[row][col] = new ReportTextBox(pdfStyleSheet.getTableBodyText(), pdfStyleSheet.getLineDistance(), value);
+            for (ReportTableCellElement value : rowValues) {
+                if (value.getText() != null) {
+                    result[row][col] = new ReportTextBox(pdfStyleSheet.getTableBodyText(), pdfStyleSheet.getLineDistance(), value.getText());
+                }
+                else if (value.getImg() != null){
+                    result[row][col] = new ReportImage(value.getImg(), value.getImg().getWidth(), value.getImg().getHeight());
+                }else{
+                    result[row][col] = value.getTable();
+                }
                 col++;
             }
             row++;
@@ -121,19 +126,19 @@ public class ReportTableBuilderImpl implements ReportTableBuilder {
     public static class ReportTableRowBuilderImpl implements ReportTableRowBuilder {
         private final ReportTableBuilderImpl parent;
 
-        private List<String> values = new ArrayList<>();
+        private List<ReportTableCellElement> values = new ArrayList<>();
 
         ReportTableRowBuilderImpl(ReportTableBuilderImpl parent) {
             this.parent = parent;
         }
 
-        public ReportTableRowBuilderImpl addValue(String value) {
+        public ReportTableRowBuilderImpl addValue(ReportTableCellElement value) {
             values.add(value);
             return this;
         }
 
 
-        public ReportTableBuilderImpl withValues(String... rowValues) {
+        public ReportTableBuilderImpl withValues(ReportTableCellElement... rowValues) {
             values.addAll(Arrays.asList(rowValues));
             return endRow();
         }

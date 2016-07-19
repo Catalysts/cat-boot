@@ -6,6 +6,7 @@ import cc.catalysts.boot.report.pdf.PdfReportService;
 import cc.catalysts.boot.report.pdf.config.DefaultPdfStyleSheet;
 import cc.catalysts.boot.report.pdf.config.PdfPageLayout;
 import cc.catalysts.boot.report.pdf.config.PdfTextStyle;
+import cc.catalysts.boot.report.pdf.elements.ReportTableCellElement;
 import cc.catalysts.boot.report.pdf.elements.ReportTextBox;
 import org.apache.commons.io.FileUtils;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
@@ -102,9 +103,9 @@ public class PdfReportStructureServiceTest {
                 .startTable()
                 .addColumn("COL1", 2).addColumn("COL2", 2).addColumn("COL3", 4)
                 .createRow()
-                .addValue("val1").addValue("val2").addValue("val3").endRow()
-                .createRow().withValues("x1", "x2", "x3")
-                .createRow().withValues("y1", "y2", "y3")
+                .addValue(new ReportTableCellElement("val1", null, null)).addValue(new ReportTableCellElement("val2", null, null)).addValue(new ReportTableCellElement("val3", null, null)).endRow()
+                .createRow().withValues(new ReportTableCellElement("x1", null, null), new ReportTableCellElement("x2", null, null), new ReportTableCellElement("x3", null, null))
+                .createRow().withValues(new ReportTableCellElement("y1", null, null), new ReportTableCellElement("y2", null, null), new ReportTableCellElement("y3", null, null))
                 .endTable()
                 .beginNewSection("Test 2, Long text", true)
                 .addElement(new ReportTextBox(otherConfig, 1, longText.toString()))

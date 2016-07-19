@@ -5,13 +5,17 @@ import cc.catalysts.boot.report.pdf.PdfReportService;
 import cc.catalysts.boot.report.pdf.config.DefaultPdfStyleSheet;
 import cc.catalysts.boot.report.pdf.config.PdfPageLayout;
 import cc.catalysts.boot.report.pdf.config.PdfTextStyle;
+import cc.catalysts.boot.report.pdf.elements.ReportTableCellElement;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 
 /**
  * @author Klaus Lehner
@@ -27,6 +31,13 @@ public class DemoTest {
         DefaultPdfStyleSheet styleSheet = new DefaultPdfStyleSheet();
         styleSheet.setBodyText(new PdfTextStyle(10, PDType1Font.HELVETICA, Color.BLACK));
 
+        BufferedImage img = null;
+        try{
+            img = ImageIO.read(new ClassPathResource("/github_icon.png").getInputStream());
+        }catch(IOException e){
+
+        }
+
         final PdfReport pdfReport = pdfReportService.createBuilder(styleSheet)
                 .addHeading("Dear Github users")
                 .addText("In this simple showcase you see most of the cool features that you can do with cat-boot-report.pdf. " +
@@ -37,8 +48,9 @@ public class DemoTest {
                 .addPadding(10)
                 .startTable()
                 .addColumn("COL1", 2).addColumn("COL2", 2).addColumn("COL3", 4)
-                .createRow().withValues("x1", "x2", "x3")
-                .createRow().withValues("y1", "y2", "y3")
+                .createRow().withValues(new ReportTableCellElement("x1", null, null), new ReportTableCellElement(null, img, null), new ReportTableCellElement("x3", null, null))
+                .createRow().withValues(new ReportTableCellElement("y1", null, null), new ReportTableCellElement("y3", null, null), new ReportTableCellElement(null, null, new ReportTableBuilderImpl(styleSheet, null)
+                        .addColumn("1",1).addColumn("2", 3).createRow().withValues(new ReportTableCellElement("z1", null, null), new ReportTableCellElement("z2", null, null)).build()))
                 .endTable()
                 .beginNewSection("Formatting", false)
                 .addText("You can also format text as you can see here.", new PdfTextStyle(13, PDType1Font.TIMES_BOLD_ITALIC, Color.BLUE))
@@ -54,8 +66,11 @@ public class DemoTest {
                         new ClassPathResource("demo-template.pdf"));
 
 
+        pdfReport.getDocument().save("demo.pdf");
+
         final File target = new File("pdf-out");
         Assert.assertTrue(target.mkdirs());
         pdfReportFilePrinter.print(pdfReport, target);
+
     }
 }
