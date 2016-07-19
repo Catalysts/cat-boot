@@ -5,8 +5,8 @@ import cc.catalysts.boot.report.pdf.PdfReportBuilder;
 import cc.catalysts.boot.report.pdf.PdfReportService;
 import cc.catalysts.boot.report.pdf.config.DefaultPdfStyleSheet;
 import cc.catalysts.boot.report.pdf.config.PdfPageLayout;
+import cc.catalysts.boot.report.pdf.config.PdfStyleSheet;
 import cc.catalysts.boot.report.pdf.config.PdfTextStyle;
-import cc.catalysts.boot.report.pdf.elements.ReportTableCellElement;
 import cc.catalysts.boot.report.pdf.elements.ReportTextBox;
 import org.apache.commons.io.FileUtils;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
@@ -91,6 +91,8 @@ public class PdfReportStructureServiceTest {
 
     PdfReportBuilder createTestReport() {
 
+        PdfStyleSheet styleSheet = new DefaultPdfStyleSheet();
+
         StringBuilder longText = new StringBuilder();
         for (int i = 0; i < 10; i++) {
             longText.append("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.");
@@ -103,9 +105,9 @@ public class PdfReportStructureServiceTest {
                 .startTable()
                 .addColumn("COL1", 2).addColumn("COL2", 2).addColumn("COL3", 4)
                 .createRow()
-                .addValue(new ReportTableCellElement("val1", null, null)).addValue(new ReportTableCellElement("val2", null, null)).addValue(new ReportTableCellElement("val3", null, null)).endRow()
-                .createRow().withValues(new ReportTableCellElement("x1", null, null), new ReportTableCellElement("x2", null, null), new ReportTableCellElement("x3", null, null))
-                .createRow().withValues(new ReportTableCellElement("y1", null, null), new ReportTableCellElement("y2", null, null), new ReportTableCellElement("y3", null, null))
+                .addValue(new ReportTextBox(styleSheet.getBodyText(), styleSheet.getLineDistance(), "val1")).addValue(new ReportTextBox(styleSheet.getBodyText(), styleSheet.getLineDistance(), "val2")).addValue(new ReportTextBox(styleSheet.getBodyText(), styleSheet.getLineDistance(), "val3")).endRow()
+                .createRow().withValues(new ReportTextBox(styleSheet.getBodyText(), styleSheet.getLineDistance(), "x1"), new ReportTextBox(styleSheet.getBodyText(), styleSheet.getLineDistance(), "x2"), new ReportTextBox(styleSheet.getBodyText(), styleSheet.getLineDistance(), "x3"))
+                .createRow().withValues(new ReportTextBox(styleSheet.getBodyText(), styleSheet.getLineDistance(), "y1"), new ReportTextBox(styleSheet.getBodyText(), styleSheet.getLineDistance(), "y2"), new ReportTextBox(styleSheet.getBodyText(), styleSheet.getLineDistance(), "y3"))
                 .endTable()
                 .beginNewSection("Test 2, Long text", true)
                 .addElement(new ReportTextBox(otherConfig, 1, longText.toString()))

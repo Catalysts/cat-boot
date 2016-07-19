@@ -5,7 +5,9 @@ import cc.catalysts.boot.report.pdf.PdfReportService;
 import cc.catalysts.boot.report.pdf.config.DefaultPdfStyleSheet;
 import cc.catalysts.boot.report.pdf.config.PdfPageLayout;
 import cc.catalysts.boot.report.pdf.config.PdfTextStyle;
-import cc.catalysts.boot.report.pdf.elements.ReportTableCellElement;
+import cc.catalysts.boot.report.pdf.elements.ReportElement;
+import cc.catalysts.boot.report.pdf.elements.ReportImage;
+import cc.catalysts.boot.report.pdf.elements.ReportTextBox;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.junit.Assert;
 import org.junit.Test;
@@ -48,9 +50,9 @@ public class DemoTest {
                 .addPadding(10)
                 .startTable()
                 .addColumn("COL1", 2).addColumn("COL2", 2).addColumn("COL3", 4)
-                .createRow().withValues(new ReportTableCellElement("x1", null, null), new ReportTableCellElement(null, img, null), new ReportTableCellElement("x3", null, null))
-                .createRow().withValues(new ReportTableCellElement("y1", null, null), new ReportTableCellElement("y3", null, null), new ReportTableCellElement(null, null, new ReportTableBuilderImpl(styleSheet, null)
-                        .addColumn("1",1).addColumn("2", 3).createRow().withValues(new ReportTableCellElement("z1", null, null), new ReportTableCellElement("z2", null, null)).build()))
+                .createRow().withValues(new ReportTextBox(styleSheet.getBodyText(), styleSheet.getLineDistance(), "x1"), new ReportImage(img, img.getWidth(), img.getHeight()), new ReportTextBox(styleSheet.getBodyText(), styleSheet.getLineDistance(), "x3"))
+                .createRow().withValues(new ReportTextBox(styleSheet.getBodyText(), styleSheet.getLineDistance(), "y1"), new ReportTextBox(styleSheet.getBodyText(), styleSheet.getLineDistance(), "y3"), new ReportTableBuilderImpl(styleSheet, null)
+                        .addColumn("1",1).addColumn("2", 3).createRow().withValues(new ReportTextBox(styleSheet.getBodyText(), styleSheet.getLineDistance(), "z1"), new ReportTextBox(styleSheet.getBodyText(), styleSheet.getLineDistance(), "z2")).build())
                 .endTable()
                 .beginNewSection("Formatting", false)
                 .addText("You can also format text as you can see here.", new PdfTextStyle(13, PDType1Font.TIMES_BOLD_ITALIC, Color.BLUE))
@@ -69,7 +71,7 @@ public class DemoTest {
         pdfReport.getDocument().save("demo.pdf");
 
         final File target = new File("pdf-out");
-        Assert.assertTrue(target.mkdirs());
+        //Assert.assertTrue(target.mkdirs());
         pdfReportFilePrinter.print(pdfReport, target);
 
     }
