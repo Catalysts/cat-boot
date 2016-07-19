@@ -142,12 +142,11 @@ public class ReportTable implements ReportElement {
             if (line[i] != null) {
                 float yi = 0;
                 if (line[i] instanceof ReportImage) {
-                    //stream.close();
-                    ((ReportImage) line[i]).setWidth(cellWidths[i] * allowedWidth - cellPaddingX * 2);
-                    ((ReportImage) line[i]).setHeight(((ReportImage) line[i]).getHeight() * (cellWidths[i] * allowedWidth - cellPaddingX * 2) / ((ReportImage) line[i]).getHeight());
+                    ReportImage reportImage = (ReportImage) line[i];
+                    reportImage.setWidth(cellWidths[i] * allowedWidth - cellPaddingX * 2);
+                    reportImage.setHeight(reportImage.getHeight() * (cellWidths[i] * allowedWidth - cellPaddingX * 2) / reportImage.getHeight());
                     yi = line[i].print(document, stream, pageNumber, x, y - cellPaddingY, cellWidths[i] * allowedWidth - cellPaddingX * 2);
-                    ((ReportImage) line[i]).printImage(document, pageNumber, x, y - cellPaddingY);
-                    //stream = new PDPageContentStream(document, (PDPage) document.getDocumentCatalog().getAllPages().get(pageNumber), true, false);
+                    reportImage.printImage(document, pageNumber, x, y - cellPaddingY);
                 }else {
                     yi = line[i].print(document, stream, pageNumber, x, y - cellPaddingY, cellWidths[i] * allowedWidth - cellPaddingX * 2);
                 }
