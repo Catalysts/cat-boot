@@ -37,5 +37,4 @@ public class PdfReportServiceImpl implements PdfReportService {
         return new PdfReportBuilderImpl(config);
     }
 
-
 }
