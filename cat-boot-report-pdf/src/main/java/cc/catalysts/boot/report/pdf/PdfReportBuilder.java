@@ -22,9 +22,9 @@ public interface PdfReportBuilder {
 
     PdfReportBuilder addElement(ReportElement element);
 
-    PdfReportBuilder withHeaderOnAllPages(String left, String middle, String right);
+    PdfReportBuilder withHeaderOnAllPages(String left, String middle, String right, boolean excludeOnAllPages);
 
-    PdfReportBuilder withFooterOnAllPages(String left, String middle, String right);
+    PdfReportBuilder withFooterOnAllPages(String left, String middle, String right, boolean excludeOnAllPages);
 
     PdfReportBuilder addPadding(float padding);
 

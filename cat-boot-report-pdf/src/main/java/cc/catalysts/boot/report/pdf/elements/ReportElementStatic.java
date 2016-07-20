@@ -19,7 +19,7 @@ public class ReportElementStatic implements ReportElement {
     private float y;
     private float width;
     private int pageNo;
-
+    private boolean excludeOnFirstPage;
 
     /**
      * @param base   ReportElement to be printed
@@ -28,12 +28,13 @@ public class ReportElementStatic implements ReportElement {
      * @param y      starting Y coordinate of print location
      * @param width  the width of the static element
      */
-    public ReportElementStatic(ReportElement base, int pageNo, float x, float y, float width) {
+    public ReportElementStatic(ReportElement base, int pageNo, float x, float y, float width, boolean excludeOnFirstPage) {
         this.base = base;
         this.x = x;
         this.y = y;
         this.pageNo = pageNo;
         this.width = width;
+        this.excludeOnFirstPage = excludeOnFirstPage;
     }
 
     public ReportElement getBase() {
@@ -103,6 +104,10 @@ public class ReportElementStatic implements ReportElement {
 
     public int getPageNo() {
         return pageNo;
+    }
+
+    public boolean isExcludeOnFirstPage() {
+        return excludeOnFirstPage;
     }
 
 }

@@ -10,8 +10,8 @@ import cc.catalysts.boot.report.pdf.config.PdfStyleSheet;
  */
 public class PdfFooterGenerator extends AbstractFixedLineGenerator {
 
-    public PdfFooterGenerator(PdfStyleSheet pdfStyleSheet, String leftText, String centerText, String rightText) {
-        super(pdfStyleSheet, leftText, centerText, rightText);
+    public PdfFooterGenerator(PdfStyleSheet pdfStyleSheet, String leftText, String centerText, String rightText, boolean excludeOnFirstPage) {
+        super(pdfStyleSheet, leftText, centerText, rightText, excludeOnFirstPage);
     }
 
     @Override

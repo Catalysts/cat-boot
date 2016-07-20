@@ -34,14 +34,14 @@ class PdfReportBuilderImpl implements PdfReportBuilder {
     }
 
     @Override
-    public PdfReportBuilder withHeaderOnAllPages(String left, String middle, String right) {
-        fixedLineGenerators.add(new PdfHeaderGenerator(configuration, left, middle, right));
+    public PdfReportBuilder withHeaderOnAllPages(String left, String middle, String right, boolean excludeOnFirstPage) {
+        fixedLineGenerators.add(new PdfHeaderGenerator(configuration, left, middle, right, excludeOnFirstPage));
         return this;
     }
 
     @Override
-    public PdfReportBuilder withFooterOnAllPages(String left, String middle, String right) {
-        fixedLineGenerators.add(new PdfFooterGenerator(configuration, left, middle, right));
+    public PdfReportBuilder withFooterOnAllPages(String left, String middle, String right, boolean excludeOnFirstPage) {
+        fixedLineGenerators.add(new PdfFooterGenerator(configuration, left, middle, right, excludeOnFirstPage));
         return this;
     }
 

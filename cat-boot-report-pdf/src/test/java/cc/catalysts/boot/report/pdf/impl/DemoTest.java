@@ -52,7 +52,7 @@ public class DemoTest {
                 .addColumn("COL1", 2).addColumn("COL2", 2).addColumn("COL3", 4)
                 .createRow().withValues(new ReportTextBox(styleSheet.getBodyText(), styleSheet.getLineDistance(), "x1"), new ReportImage(img, img.getWidth(), img.getHeight()), new ReportTextBox(styleSheet.getBodyText(), styleSheet.getLineDistance(), "x3"))
                 .createRow().withValues(new ReportTextBox(styleSheet.getBodyText(), styleSheet.getLineDistance(), "y1"), new ReportTextBox(styleSheet.getBodyText(), styleSheet.getLineDistance(), "y3"), new ReportTableBuilderImpl(styleSheet, null)
-                        .addColumn("1",1).addColumn("2", 3).createRow().withValues(new ReportTextBox(styleSheet.getBodyText(), styleSheet.getLineDistance(), "z1"), new ReportTextBox(styleSheet.getBodyText(), styleSheet.getLineDistance(), "z2")).build())
+                        .addColumn("1", 1).addColumn("2", 3).createRow().withValues(new ReportTextBox(styleSheet.getBodyText(), styleSheet.getLineDistance(), "z1"), new ReportTextBox(styleSheet.getBodyText(), styleSheet.getLineDistance(), "z2")).build())
                 .endTable()
                 .beginNewSection("Formatting", false)
                 .addText("You can also format text as you can see here.", new PdfTextStyle(13, PDType1Font.TIMES_BOLD_ITALIC, Color.BLUE))
@@ -61,8 +61,9 @@ public class DemoTest {
                 .addPadding(10)
                 .addImage(new ClassPathResource("github_icon.png"), 100, 100)
                 .withFooterOnAllPages("Demo-PDF", "cat-boot-report-pdf", PdfFooterGenerator.PAGE_TEMPLATE_CURR + "/"
-                        + PdfFooterGenerator.PAGE_TEMPLATE_TOTAL)
-
+                        + PdfFooterGenerator.PAGE_TEMPLATE_TOTAL, true)
+                .withHeaderOnAllPages("Demo-PDF", "cat-boot-report-pdf", PdfFooterGenerator.PAGE_TEMPLATE_CURR + "/"
+                        + PdfFooterGenerator.PAGE_TEMPLATE_TOTAL, false)
                 .buildReport("demo.pdf",
                         PdfPageLayout.getPortraitA4Page(),
                         new ClassPathResource("demo-template.pdf"));

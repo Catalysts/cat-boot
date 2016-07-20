@@ -13,8 +13,8 @@ import cc.catalysts.boot.report.pdf.config.PdfStyleSheet;
 public class PdfHeaderGenerator extends AbstractFixedLineGenerator {
 
 
-    public PdfHeaderGenerator(PdfStyleSheet configuration, String leftText, String centerText, String rightText) {
-        super(configuration, leftText, centerText, rightText);
+    public PdfHeaderGenerator(PdfStyleSheet configuration, String leftText, String centerText, String rightText, boolean excludeOnFirstPage) {
+        super(configuration, leftText, centerText, rightText, excludeOnFirstPage);
     }
 
     @Override

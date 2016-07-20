@@ -21,15 +21,17 @@ public abstract class AbstractFixedLineGenerator {
     private String leftText;
     private String centerText;
     private String rightText;
+    private boolean excludeOnFirstPage;
 
     public static final String PAGE_TEMPLATE_CURR = "%PAGE_NUMBER%";
     public static final String PAGE_TEMPLATE_TOTAL = "%TOTAL_PAGES%";
 
-    public AbstractFixedLineGenerator(PdfStyleSheet pdfStyleSheet, String leftText, String centerText, String rightText) {
+    public AbstractFixedLineGenerator(PdfStyleSheet pdfStyleSheet, String leftText, String centerText, String rightText, boolean excludeOnFirstPage) {
         this.pdfStyleSheet = pdfStyleSheet;
         this.leftText = leftText;
         this.centerText = centerText;
         this.rightText = rightText;
+        this.excludeOnFirstPage = excludeOnFirstPage;
     }
 
     /**
@@ -46,17 +48,17 @@ public abstract class AbstractFixedLineGenerator {
         if (!StringUtils.isEmpty(leftText)) {
             ReportTextBox footerElem = new ReportTextBox(pdfStyleSheet.getFooterText(), pdfStyleSheet.getLineDistance(), leftText);
             footerElem.setAlign(ReportAlignType.LEFT);
-            staticElements.add(new ReportElementStatic(footerElem, 0, x, y, w));
+            staticElements.add(new ReportElementStatic(footerElem, 0, x, y, w, excludeOnFirstPage));
         }
         if (!StringUtils.isEmpty(centerText)) {
             ReportTextBox footerElem = new ReportTextBox(pdfStyleSheet.getFooterText(), pdfStyleSheet.getLineDistance(), centerText);
             footerElem.setAlign(ReportAlignType.CENTER);
-            staticElements.add(new ReportElementStatic(footerElem, 0, x, y, w));
+            staticElements.add(new ReportElementStatic(footerElem, 0, x, y, w, excludeOnFirstPage));
         }
         if (!StringUtils.isEmpty(rightText)) {
             ReportTextBox footerElem = new ReportTextBox(pdfStyleSheet.getFooterText(), pdfStyleSheet.getLineDistance(), rightText);
             footerElem.setAlign(ReportAlignType.RIGHT);
-            staticElements.add(new ReportElementStatic(footerElem, 0, x, y, w));
+            staticElements.add(new ReportElementStatic(footerElem, 0, x, y, w, excludeOnFirstPage));
         }
 
         report.addStaticElementsForEachPage(staticElements.toArray(new ReportElementStatic[staticElements.size()]));

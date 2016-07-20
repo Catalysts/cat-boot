@@ -63,8 +63,8 @@ public class PdfReportStructure {
                 } else {
                     newElement = baseElement;
                 }
-
-                addStaticElement(new ReportElementStatic(newElement, i, elem.getX(), elem.getY(), elem.getWidth()));
+                if (i != 0 || !elem.isExcludeOnFirstPage())
+                    addStaticElement(new ReportElementStatic(newElement, i, elem.getX(), elem.getY(), elem.getWidth(), elem.isExcludeOnFirstPage()));
             }
         }
     }
