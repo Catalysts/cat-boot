@@ -130,6 +130,17 @@ public class ReportTableBuilderImpl implements ReportTableBuilder {
             return this;
         }
 
+        public ReportTableRowBuilderImpl addValue(String value){
+            values.add(new ReportTextBox(parent.pdfStyleSheet.getBodyText(), parent.pdfStyleSheet.getLineDistance(),value));
+            return this;
+        }
+
+        public ReportTableBuilderImpl withValues(String... rowValues) {
+            for(String value : rowValues){
+                values.add(new ReportTextBox(parent.pdfStyleSheet.getBodyText(), parent.pdfStyleSheet.getLineDistance(), value));
+            }
+            return endRow();
+        }
 
         public ReportTableBuilderImpl withValues(ReportElement... rowValues) {
             values.addAll(Arrays.asList(rowValues));

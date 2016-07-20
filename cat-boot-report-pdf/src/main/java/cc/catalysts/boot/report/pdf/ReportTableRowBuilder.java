@@ -9,6 +9,8 @@ import java.awt.image.BufferedImage;
  */
 public interface ReportTableRowBuilder {
 
+    ReportTableRowBuilder addValue(String value);
+
     ReportTableRowBuilder addValue(ReportElement value);
 
     /**
@@ -17,6 +19,9 @@ public interface ReportTableRowBuilder {
      * @param rowValues the values for the current row
      * @return the surrounding report builder
      */
+
+    ReportTableBuilder withValues(String... rowValues);
+
     ReportTableBuilder withValues(ReportElement... rowValues);
 
     ReportTableBuilder endRow();

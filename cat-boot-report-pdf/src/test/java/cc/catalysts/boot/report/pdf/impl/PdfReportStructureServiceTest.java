@@ -81,9 +81,9 @@ public class PdfReportStructureServiceTest {
     @Test
     public void generateAndSaveHeaderFooterSmallMarginExample() throws Exception {
         PdfReportBuilder report = createTestReport()
-                .withHeaderOnAllPages("one", "two", "three", false)
+                .withHeaderOnAllPages("one", "two", "three", true)
                 .withFooterOnAllPages("left", "center", "right: " + PdfFooterGenerator.PAGE_TEMPLATE_CURR + "/"
-                        + PdfFooterGenerator.PAGE_TEMPLATE_TOTAL, false);
+                        + PdfFooterGenerator.PAGE_TEMPLATE_TOTAL, true);
 
         final PdfReport pdfReport = report.buildReport("example-header-footer.pdf", PdfPageLayout.getPortraitA4Page(), null);
         new PdfReportFilePrinter().print(pdfReport, outDirectory);
@@ -105,9 +105,9 @@ public class PdfReportStructureServiceTest {
                 .startTable()
                 .addColumn("COL1", 2).addColumn("COL2", 2).addColumn("COL3", 4)
                 .createRow()
-                .addValue(new ReportTextBox(styleSheet.getBodyText(), styleSheet.getLineDistance(), "val1")).addValue(new ReportTextBox(styleSheet.getBodyText(), styleSheet.getLineDistance(), "val2")).addValue(new ReportTextBox(styleSheet.getBodyText(), styleSheet.getLineDistance(), "val3")).endRow()
-                .createRow().withValues(new ReportTextBox(styleSheet.getBodyText(), styleSheet.getLineDistance(), "x1"), new ReportTextBox(styleSheet.getBodyText(), styleSheet.getLineDistance(), "x2"), new ReportTextBox(styleSheet.getBodyText(), styleSheet.getLineDistance(), "x3"))
-                .createRow().withValues(new ReportTextBox(styleSheet.getBodyText(), styleSheet.getLineDistance(), "y1"), new ReportTextBox(styleSheet.getBodyText(), styleSheet.getLineDistance(), "y2"), new ReportTextBox(styleSheet.getBodyText(), styleSheet.getLineDistance(), "y3"))
+                .addValue("val1").addValue("val2").addValue("val3").endRow()
+                .createRow().withValues("x1", "x2", "x3")
+                .createRow().withValues("y1", "y2", "y3")
                 .endTable()
                 .beginNewSection("Test 2, Long text", true)
                 .addElement(new ReportTextBox(otherConfig, 1, longText.toString()))
