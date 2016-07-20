@@ -7,4 +7,5 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  */
 @ConfigurationProperties(prefix = "cat-boot.report.pdf.stylesheet", ignoreUnknownFields = false)
 public class DefaultPdfStyleSheet extends PdfStyleSheet {
+
 }

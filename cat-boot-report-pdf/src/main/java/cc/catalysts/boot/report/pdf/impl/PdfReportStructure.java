@@ -1,10 +1,7 @@
 package cc.catalysts.boot.report.pdf.impl;
 
-import cc.catalysts.boot.report.pdf.elements.ReportElement;
+import cc.catalysts.boot.report.pdf.elements.*;
 import cc.catalysts.boot.report.pdf.config.PdfStyleSheet;
-import cc.catalysts.boot.report.pdf.elements.ReportElementStatic;
-import cc.catalysts.boot.report.pdf.elements.ReportPage;
-import cc.catalysts.boot.report.pdf.elements.ReportTextBox;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -52,20 +49,30 @@ public class PdfReportStructure {
     }
 
     public void expandPagesStaticElements(int totalPages) {
-        for (ReportElementStatic elem : staticElementsForEachPage) {
+        for (int i = staticElementsForEachPage.size() - 1; i >= 0; --i) {
+            ReportElementStatic elem = staticElementsForEachPage.get(i);
             ReportElement baseElement = elem.getBase();
-            for (int i = 0; i < totalPages; i++) {
-                ReportElement newElement;
-                if (baseElement instanceof ReportTextBox) {
-                    ReportTextBox oldTextBox = (ReportTextBox) baseElement;
-                    String changedText = oldTextBox.getText().replaceAll("%PAGE_NUMBER%", i + 1 + "").replaceAll("%TOTAL_PAGES%", totalPages + "");
-                    newElement = new ReportTextBox(oldTextBox, changedText);
-                } else {
-                    newElement = baseElement;
+            for (int j = 0; j < totalPages; j++) {
+                setFooterPageNumbers(baseElement, j, totalPages);
+                if (baseElement instanceof ReportTable) {
+                    ReportTable baseTable = (ReportTable) baseElement;
+                    for (int k = baseTable.getElements().length - 1; k >= 0 ; --k){
+                        for (int l = baseTable.getElements()[k].length - 1; l >= 0; --l) {
+                            System.out.println(l);
+                            setFooterPageNumbers(baseTable.getElements()[k][l], j, totalPages);
+                        }
+                    }
                 }
-                if (i != 0 || !elem.isExcludeOnFirstPage())
-                    addStaticElement(new ReportElementStatic(newElement, i, elem.getX(), elem.getY(), elem.getWidth(), elem.isExcludeOnFirstPage()));
+                if (j != 0 || !elem.isExcludeOnFirstPage())
+                    addStaticElement(new ReportElementStatic(baseElement, j, elem.getX(), elem.getY(), elem.getWidth(), elem.isExcludeOnFirstPage()));
             }
+        }
+    }
+
+    public void setFooterPageNumbers(ReportElement footerElement, int pageNo, int totalPages){
+        if (footerElement instanceof ReportTextBox) {
+            ReportTextBox footerTextBox = (ReportTextBox) footerElement;
+            footerTextBox.setText(footerTextBox.getText().replaceAll("%PAGE_NUMBER%", pageNo + 1 + "").replaceAll("%TOTAL_PAGES%", totalPages + ""));
         }
     }
 

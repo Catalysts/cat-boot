@@ -3,6 +3,7 @@ package cc.catalysts.boot.report.pdf.impl;
 
 import cc.catalysts.boot.report.pdf.config.PdfPageLayout;
 import cc.catalysts.boot.report.pdf.config.PdfStyleSheet;
+import cc.catalysts.boot.report.pdf.elements.ReportElement;
 
 
 /**
@@ -13,8 +14,8 @@ import cc.catalysts.boot.report.pdf.config.PdfStyleSheet;
 public class PdfHeaderGenerator extends AbstractFixedLineGenerator {
 
 
-    public PdfHeaderGenerator(PdfStyleSheet configuration, String leftText, String centerText, String rightText, boolean excludeOnFirstPage) {
-        super(configuration, leftText, centerText, rightText, excludeOnFirstPage);
+    public PdfHeaderGenerator(ReportElement headerElement, boolean excludeOnFirstPage) {
+        super(headerElement, excludeOnFirstPage);
     }
 
     @Override

@@ -352,4 +352,13 @@ public class ReportTable implements ReportElement {
             }
         }
     }
+
+    public ReportElement[][] getElements() {
+        return elements;
+    }
+
+    public ReportElement[] getTitle() {
+        return title;
+    }
+
 }
