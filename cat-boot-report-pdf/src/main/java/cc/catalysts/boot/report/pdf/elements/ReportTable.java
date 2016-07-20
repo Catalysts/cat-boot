@@ -143,8 +143,9 @@ public class ReportTable implements ReportElement {
                 float yi = 0;
                 if (line[i] instanceof ReportImage) {
                     ReportImage reportImage = (ReportImage) line[i];
+                    float initialWidth = reportImage.getWidth();
                     reportImage.setWidth(cellWidths[i] * allowedWidth - cellPaddingX * 2);
-                    reportImage.setHeight(reportImage.getHeight() * (cellWidths[i] * allowedWidth - cellPaddingX * 2) / reportImage.getWidth());
+                    reportImage.setHeight(reportImage.getHeight() * (cellWidths[i] * allowedWidth - cellPaddingX * 2) / initialWidth);
                     yi = line[i].print(document, stream, pageNumber, x, y - cellPaddingY, cellWidths[i] * allowedWidth - cellPaddingX * 2);
                     reportImage.printImage(document, pageNumber, x, y - cellPaddingY);
                 }else {
