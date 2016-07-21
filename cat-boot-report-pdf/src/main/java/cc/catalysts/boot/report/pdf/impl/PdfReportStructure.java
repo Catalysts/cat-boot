@@ -2,6 +2,7 @@ package cc.catalysts.boot.report.pdf.impl;
 
 import cc.catalysts.boot.report.pdf.elements.*;
 import cc.catalysts.boot.report.pdf.config.PdfStyleSheet;
+import cc.catalysts.boot.report.pdf.utils.ReportFooterOnPages;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -52,19 +53,20 @@ public class PdfReportStructure {
         for (int i = staticElementsForEachPage.size() - 1; i >= 0; --i) {
             ReportElementStatic elem = staticElementsForEachPage.get(i);
             ReportElement baseElement = elem.getBase();
-            for (int j = 0; j < totalPages; j++) {
-                setFooterPageNumbers(baseElement, j, totalPages);
+            for (int pageNo = 0; pageNo < totalPages; pageNo++) {
+                setFooterPageNumbers(baseElement, pageNo, totalPages);
                 if (baseElement instanceof ReportTable) {
                     ReportTable baseTable = (ReportTable) baseElement;
-                    for (int k = baseTable.getElements().length - 1; k >= 0 ; --k){
-                        for (int l = baseTable.getElements()[k].length - 1; l >= 0; --l) {
-                            System.out.println(l);
-                            setFooterPageNumbers(baseTable.getElements()[k][l], j, totalPages);
+                    for (int row = baseTable.getElements().length - 1; row >= 0 ; --row){
+                        for (int col = baseTable.getElements()[row].length - 1; col >= 0; --col) {
+                            setFooterPageNumbers(baseTable.getElements()[row][col], pageNo, totalPages);
                         }
                     }
                 }
-                if (j != 0 || !elem.isExcludeOnFirstPage())
-                    addStaticElement(new ReportElementStatic(baseElement, j, elem.getX(), elem.getY(), elem.getWidth(), elem.isExcludeOnFirstPage()));
+                if ((elem.getFooterOnPages() == ReportFooterOnPages.ALL) ||
+                        (elem.getFooterOnPages() == ReportFooterOnPages.ALL_BUT_FIRST && pageNo != 0)
+                        || (elem.getFooterOnPages() == ReportFooterOnPages.ALL_BUT_LAST && pageNo != (totalPages - 1)))
+                    addStaticElement(new ReportElementStatic(baseElement, pageNo, elem.getX(), elem.getY(), elem.getWidth(), elem.getFooterOnPages()));
             }
         }
     }

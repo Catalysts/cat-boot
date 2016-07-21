@@ -81,9 +81,9 @@ public class PdfReportStructureServiceTest {
     @Test
     public void generateAndSaveHeaderFooterSmallMarginExample() throws Exception {
         PdfReportBuilder report = createTestReport()
-                .withHeaderOnAllPages("one", "two", "three", true)
+                .withHeaderOnAllPages("one", "two", "three")
                 .withFooterOnAllPages("left", "center", "right: " + PdfFooterGenerator.PAGE_TEMPLATE_CURR + "/"
-                        + PdfFooterGenerator.PAGE_TEMPLATE_TOTAL, true);
+                        + PdfFooterGenerator.PAGE_TEMPLATE_TOTAL);
 
         final PdfReport pdfReport = report.buildReport("example-header-footer.pdf", PdfPageLayout.getPortraitA4Page(), null);
         new PdfReportFilePrinter().print(pdfReport, outDirectory);

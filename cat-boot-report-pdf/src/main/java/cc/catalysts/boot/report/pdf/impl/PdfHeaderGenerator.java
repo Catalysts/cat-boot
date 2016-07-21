@@ -4,6 +4,7 @@ package cc.catalysts.boot.report.pdf.impl;
 import cc.catalysts.boot.report.pdf.config.PdfPageLayout;
 import cc.catalysts.boot.report.pdf.config.PdfStyleSheet;
 import cc.catalysts.boot.report.pdf.elements.ReportElement;
+import cc.catalysts.boot.report.pdf.utils.ReportFooterOnPages;
 
 
 /**
@@ -14,8 +15,8 @@ import cc.catalysts.boot.report.pdf.elements.ReportElement;
 public class PdfHeaderGenerator extends AbstractFixedLineGenerator {
 
 
-    public PdfHeaderGenerator(ReportElement headerElement, boolean excludeOnFirstPage) {
-        super(headerElement, excludeOnFirstPage);
+    public PdfHeaderGenerator(ReportElement headerElement, ReportFooterOnPages headerOnPages) {
+        super(headerElement, headerOnPages);
     }
 
     @Override

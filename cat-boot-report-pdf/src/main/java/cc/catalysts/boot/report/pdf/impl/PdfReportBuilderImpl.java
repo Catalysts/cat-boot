@@ -9,6 +9,7 @@ import cc.catalysts.boot.report.pdf.config.PdfStyleSheet;
 import cc.catalysts.boot.report.pdf.config.PdfTextStyle;
 import cc.catalysts.boot.report.pdf.elements.*;
 import cc.catalysts.boot.report.pdf.utils.ReportAlignType;
+import cc.catalysts.boot.report.pdf.utils.ReportFooterOnPages;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.springframework.core.io.Resource;
 
@@ -36,7 +37,7 @@ class PdfReportBuilderImpl implements PdfReportBuilder {
     }
 
     @Override
-    public PdfReportBuilder withHeaderOnAllPages(String left, String middle, String right, boolean excludeOnFirstPage) {
+    public PdfReportBuilder withHeaderOnAllPages(String left, String middle, String right) {
         PdfStyleSheet HeaderTableConfiguration = new DefaultPdfStyleSheet();
         HeaderTableConfiguration.setTableTitleText(configuration.getFooterText());
         ReportTable headerTable = new ReportTableBuilderImpl(HeaderTableConfiguration, this).addColumn(left, 1).addColumn(middle, 1).addColumn(right, 1).build();
@@ -44,18 +45,37 @@ class PdfReportBuilderImpl implements PdfReportBuilder {
         headerTable.setTextAlignInColumn(1, ReportAlignType.CENTER, false);
         headerTable.setTextAlignInColumn(2, ReportAlignType.RIGHT, false);
         headerTable.setBorder(false);
-        fixedLineGenerators.add(new PdfHeaderGenerator(headerTable, excludeOnFirstPage));
+        fixedLineGenerators.add(new PdfHeaderGenerator(headerTable, ReportFooterOnPages.ALL));
         return this;
     }
 
     @Override
-    public PdfReportBuilder withHeaderOnAllPages(ReportElement headerElement, boolean excludeOnFirstPage) {
-        fixedLineGenerators.add(new PdfHeaderGenerator(headerElement, excludeOnFirstPage));
+    public PdfReportBuilder withHeaderOnAllPages(ReportElement headerElement) {
+        fixedLineGenerators.add(new PdfHeaderGenerator(headerElement, ReportFooterOnPages.ALL));
         return this;
     }
 
     @Override
-    public PdfReportBuilder withFooterOnAllPages(String left, String middle, String right, boolean excludeOnFirstPage) {
+    public PdfReportBuilder withHeaderOnPages(String left, String middle, String right, ReportFooterOnPages headerOnPages) {
+        PdfStyleSheet HeaderTableConfiguration = new DefaultPdfStyleSheet();
+        HeaderTableConfiguration.setTableTitleText(configuration.getFooterText());
+        ReportTable headerTable = new ReportTableBuilderImpl(HeaderTableConfiguration, this).addColumn(left, 1).addColumn(middle, 1).addColumn(right, 1).build();
+        headerTable.setTextAlignInColumn(0, ReportAlignType.LEFT, false);
+        headerTable.setTextAlignInColumn(1, ReportAlignType.CENTER, false);
+        headerTable.setTextAlignInColumn(2, ReportAlignType.RIGHT, false);
+        headerTable.setBorder(false);
+        fixedLineGenerators.add(new PdfHeaderGenerator(headerTable, headerOnPages));
+        return this;
+    }
+
+    @Override
+    public PdfReportBuilder withHeaderOnPages(ReportElement headerElement, ReportFooterOnPages headerOnPages) {
+        fixedLineGenerators.add(new PdfHeaderGenerator(headerElement, headerOnPages));
+        return this;
+    }
+
+    @Override
+    public PdfReportBuilder withFooterOnAllPages(String left, String middle, String right) {
         PdfStyleSheet footerTableConfiguration = new DefaultPdfStyleSheet();
         footerTableConfiguration.setTableTitleText(configuration.getFooterText());
         ReportTable footerTable = new ReportTableBuilderImpl(footerTableConfiguration, this).addColumn(left, 1).addColumn(middle, 1).addColumn(right, 1).build();
@@ -63,13 +83,32 @@ class PdfReportBuilderImpl implements PdfReportBuilder {
         footerTable.setTextAlignInColumn(1, ReportAlignType.CENTER, false);
         footerTable.setTextAlignInColumn(2, ReportAlignType.RIGHT, false);
         footerTable.setBorder(false);
-        fixedLineGenerators.add(new PdfHeaderGenerator(footerTable, excludeOnFirstPage));
+        fixedLineGenerators.add(new PdfHeaderGenerator(footerTable, ReportFooterOnPages.ALL));
         return this;
     }
 
     @Override
-    public PdfReportBuilder withFooterOnAllPages(ReportElement footerElement, boolean excludeOnFirstPage) {
-        fixedLineGenerators.add(new PdfHeaderGenerator(footerElement, excludeOnFirstPage));
+    public PdfReportBuilder withFooterOnAllPages(ReportElement footerElement) {
+        fixedLineGenerators.add(new PdfHeaderGenerator(footerElement, ReportFooterOnPages.ALL));
+        return this;
+    }
+
+    @Override
+    public PdfReportBuilder withFooterOnPages(String left, String middle, String right, ReportFooterOnPages footerOnPages) {
+        PdfStyleSheet footerTableConfiguration = new DefaultPdfStyleSheet();
+        footerTableConfiguration.setTableTitleText(configuration.getFooterText());
+        ReportTable footerTable = new ReportTableBuilderImpl(footerTableConfiguration, this).addColumn(left, 1).addColumn(middle, 1).addColumn(right, 1).build();
+        footerTable.setTextAlignInColumn(0, ReportAlignType.LEFT, false);
+        footerTable.setTextAlignInColumn(1, ReportAlignType.CENTER, false);
+        footerTable.setTextAlignInColumn(2, ReportAlignType.RIGHT, false);
+        footerTable.setBorder(false);
+        fixedLineGenerators.add(new PdfHeaderGenerator(footerTable, footerOnPages));
+        return this;
+    }
+
+    @Override
+    public PdfReportBuilder withFooterOnPages(ReportElement footerElement, ReportFooterOnPages footerOnPages) {
+        fixedLineGenerators.add(new PdfHeaderGenerator(footerElement, footerOnPages));
         return this;
     }
 

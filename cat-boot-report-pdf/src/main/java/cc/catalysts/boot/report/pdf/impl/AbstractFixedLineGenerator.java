@@ -6,6 +6,7 @@ import cc.catalysts.boot.report.pdf.elements.ReportElement;
 import cc.catalysts.boot.report.pdf.elements.ReportElementStatic;
 import cc.catalysts.boot.report.pdf.elements.ReportTextBox;
 import cc.catalysts.boot.report.pdf.utils.ReportAlignType;
+import cc.catalysts.boot.report.pdf.utils.ReportFooterOnPages;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
@@ -18,15 +19,15 @@ import java.util.List;
  * @author Paul Klingelhuber
  */
 public abstract class AbstractFixedLineGenerator {
-    private boolean excludeOnFirstPage;
+    private ReportFooterOnPages footerOnPages;
     private ReportElement footerElement;
 
     public static final String PAGE_TEMPLATE_CURR = "%PAGE_NUMBER%";
     public static final String PAGE_TEMPLATE_TOTAL = "%TOTAL_PAGES%";
 
-    public AbstractFixedLineGenerator(ReportElement footerElement, boolean excludeOnFirstPage) {
+    public AbstractFixedLineGenerator(ReportElement footerElement, ReportFooterOnPages footerOnPages) {
         this.footerElement = footerElement;
-        this.excludeOnFirstPage = excludeOnFirstPage;
+        this.footerOnPages = footerOnPages;
     }
 
     /**
@@ -39,7 +40,7 @@ public abstract class AbstractFixedLineGenerator {
         float x = pageConfig.getStartX();
         float y = getVerticalPosition(pageConfig);
         float w = pageConfig.getUsableWidth();
-        report.addStaticElementsForEachPage(new ReportElementStatic(footerElement, 0, x, y, w, excludeOnFirstPage));
+        report.addStaticElementsForEachPage(new ReportElementStatic(footerElement, 0, x, y, w, footerOnPages));
     }
 
     protected abstract float getVerticalPosition(PdfPageLayout pageConfig);

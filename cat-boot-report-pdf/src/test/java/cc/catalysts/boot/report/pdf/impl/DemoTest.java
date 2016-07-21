@@ -8,6 +8,7 @@ import cc.catalysts.boot.report.pdf.config.PdfTextStyle;
 import cc.catalysts.boot.report.pdf.elements.ReportElement;
 import cc.catalysts.boot.report.pdf.elements.ReportImage;
 import cc.catalysts.boot.report.pdf.elements.ReportTextBox;
+import cc.catalysts.boot.report.pdf.utils.ReportFooterOnPages;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.junit.Assert;
 import org.junit.Test;
@@ -61,9 +62,9 @@ public class DemoTest {
                 .addPadding(10)
                 .addImage(new ClassPathResource("github_icon.png"), 100, 100)
                 .withFooterOnAllPages("Demo-PDF", "cat-boot-report-pdf", PdfFooterGenerator.PAGE_TEMPLATE_CURR + "/"
-                        + PdfFooterGenerator.PAGE_TEMPLATE_TOTAL, true)
-                .withHeaderOnAllPages("Demo-PDF", "cat-boot-report-pdf", PdfFooterGenerator.PAGE_TEMPLATE_CURR + "/"
-                        + PdfFooterGenerator.PAGE_TEMPLATE_TOTAL, false)
+                        + PdfFooterGenerator.PAGE_TEMPLATE_TOTAL)
+                .withHeaderOnPages("Demo-PDF", "cat-boot-report-pdf", PdfFooterGenerator.PAGE_TEMPLATE_CURR + "/"
+                        + PdfFooterGenerator.PAGE_TEMPLATE_TOTAL, ReportFooterOnPages.ALL_BUT_FIRST)
                 .buildReport("demo.pdf",
                         PdfPageLayout.getPortraitA4Page(),
                         new ClassPathResource("demo-template.pdf"));
