@@ -62,7 +62,7 @@ public class Demo2Test {
                 .addText("You can also format text as you can see here.", new PdfTextStyle(13, PDType1Font.TIMES_BOLD_ITALIC, Color.BLUE))
                 .withFooterOnAllPages("Demo-PDF", "cat-boot-report-pdf", PdfFooterGenerator.PAGE_TEMPLATE_CURR + "/"
                         + PdfFooterGenerator.PAGE_TEMPLATE_TOTAL)
-                .withHeaderOnPages("Demo-PDF", "cat-boot-report-pdf", "not include me on first page", ReportFooterOnPages.ALL_BUT_FIRST)
+                .withHeaderOnPages("Demo-PDF", "cat-boot-report-pdf", "not include me on first pageq", ReportFooterOnPages.ALL_BUT_FIRST)
                 .buildReport("demo2.pdf",
                         PdfPageLayout.getPortraitA4Page(),
                         new ClassPathResource("demo-template.pdf"));
@@ -70,7 +70,7 @@ public class Demo2Test {
 
         pdfReport.getDocument().save("demo2.pdf");
 
-        final File target = new File("pdf-out");
+        final File target = new File("pdf-out2");
         Assert.assertTrue(target.mkdirs());
         pdfReportFilePrinter.print(pdfReport, target);
 
