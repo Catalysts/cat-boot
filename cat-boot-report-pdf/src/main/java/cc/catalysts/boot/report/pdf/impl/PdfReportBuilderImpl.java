@@ -83,13 +83,13 @@ class PdfReportBuilderImpl implements PdfReportBuilder {
         footerTable.setTextAlignInColumn(1, ReportAlignType.CENTER, false);
         footerTable.setTextAlignInColumn(2, ReportAlignType.RIGHT, false);
         footerTable.setBorder(false);
-        fixedLineGenerators.add(new PdfHeaderGenerator(footerTable, ReportFooterOnPages.ALL));
+        fixedLineGenerators.add(new PdfFooterGenerator(footerTable, ReportFooterOnPages.ALL));
         return this;
     }
 
     @Override
     public PdfReportBuilder withFooterOnAllPages(ReportElement footerElement) {
-        fixedLineGenerators.add(new PdfHeaderGenerator(footerElement, ReportFooterOnPages.ALL));
+        fixedLineGenerators.add(new PdfFooterGenerator(footerElement, ReportFooterOnPages.ALL));
         return this;
     }
 
@@ -102,13 +102,13 @@ class PdfReportBuilderImpl implements PdfReportBuilder {
         footerTable.setTextAlignInColumn(1, ReportAlignType.CENTER, false);
         footerTable.setTextAlignInColumn(2, ReportAlignType.RIGHT, false);
         footerTable.setBorder(false);
-        fixedLineGenerators.add(new PdfHeaderGenerator(footerTable, footerOnPages));
+        fixedLineGenerators.add(new PdfFooterGenerator(footerTable, footerOnPages));
         return this;
     }
 
     @Override
     public PdfReportBuilder withFooterOnPages(ReportElement footerElement, ReportFooterOnPages footerOnPages) {
-        fixedLineGenerators.add(new PdfHeaderGenerator(footerElement, footerOnPages));
+        fixedLineGenerators.add(new PdfFooterGenerator(footerElement, footerOnPages));
         return this;
     }
 
