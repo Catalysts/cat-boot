@@ -62,6 +62,9 @@ public class DemoTest {
 
 
         final File target = new File("pdf-out");
+
+        pdfReport.getDocument().save("demo.pdf");
+
         Assert.assertTrue(target.mkdirs());
         pdfReportFilePrinter.print(pdfReport, target);
     }
