@@ -1,5 +1,6 @@
 package cc.catalysts.boot.report.pdf.elements;
 
+import cc.catalysts.boot.report.pdf.utils.ReportFooterOnPages;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.edit.PDPageContentStream;
@@ -19,7 +20,7 @@ public class ReportElementStatic implements ReportElement {
     private float y;
     private float width;
     private int pageNo;
-
+    private ReportFooterOnPages footerOnPages;
 
     /**
      * @param base   ReportElement to be printed
@@ -28,12 +29,13 @@ public class ReportElementStatic implements ReportElement {
      * @param y      starting Y coordinate of print location
      * @param width  the width of the static element
      */
-    public ReportElementStatic(ReportElement base, int pageNo, float x, float y, float width) {
+    public ReportElementStatic(ReportElement base, int pageNo, float x, float y, float width, ReportFooterOnPages footerOnPages) {
         this.base = base;
         this.x = x;
         this.y = y;
         this.pageNo = pageNo;
         this.width = width;
+        this.footerOnPages = footerOnPages;
     }
 
     public ReportElement getBase() {
@@ -105,4 +107,7 @@ public class ReportElementStatic implements ReportElement {
         return pageNo;
     }
 
+    public ReportFooterOnPages getFooterOnPages() {
+        return footerOnPages;
+    }
 }

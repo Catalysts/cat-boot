@@ -5,6 +5,7 @@ import cc.catalysts.boot.report.pdf.PdfReportBuilder;
 import cc.catalysts.boot.report.pdf.PdfReportService;
 import cc.catalysts.boot.report.pdf.config.DefaultPdfStyleSheet;
 import cc.catalysts.boot.report.pdf.config.PdfPageLayout;
+import cc.catalysts.boot.report.pdf.config.PdfStyleSheet;
 import cc.catalysts.boot.report.pdf.config.PdfTextStyle;
 import cc.catalysts.boot.report.pdf.elements.ReportTextBox;
 import org.apache.commons.io.FileUtils;
@@ -89,6 +90,8 @@ public class PdfReportStructureServiceTest {
     }
 
     PdfReportBuilder createTestReport() {
+
+        PdfStyleSheet styleSheet = new DefaultPdfStyleSheet();
 
         StringBuilder longText = new StringBuilder();
         for (int i = 0; i < 10; i++) {

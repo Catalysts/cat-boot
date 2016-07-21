@@ -4,9 +4,7 @@ import cc.catalysts.boot.report.pdf.PdfReportBuilder;
 import cc.catalysts.boot.report.pdf.ReportTableBuilder;
 import cc.catalysts.boot.report.pdf.ReportTableRowBuilder;
 import cc.catalysts.boot.report.pdf.config.PdfStyleSheet;
-import cc.catalysts.boot.report.pdf.elements.ReportElement;
-import cc.catalysts.boot.report.pdf.elements.ReportTable;
-import cc.catalysts.boot.report.pdf.elements.ReportTextBox;
+import cc.catalysts.boot.report.pdf.elements.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -20,7 +18,7 @@ public class ReportTableBuilderImpl implements ReportTableBuilder {
     private final PdfStyleSheet pdfStyleSheet;
     private List<String> columnNames = new ArrayList<>();
     private List<Float> columnWeights = new ArrayList<>();
-    private List<List<String>> tableValues = new ArrayList<>();
+    private List<List<ReportElement>> tableValues = new ArrayList<>();
     private PdfReportBuilder reportBuilder;
 
     /**
@@ -61,7 +59,7 @@ public class ReportTableBuilderImpl implements ReportTableBuilder {
         return new ReportTableRowBuilderImpl(this);
     }
 
-    void addRow(List<String> values) {
+    void addRow(List<ReportElement> values) {
         if (values.size() != columnNames.size()) {
             throw new IllegalArgumentException("invalid value count, must match column count: " + columnNames.size());
         }
@@ -101,10 +99,10 @@ public class ReportTableBuilderImpl implements ReportTableBuilder {
         }
         row++;
         // body
-        for (List<String> rowValues : tableValues) {
+        for (List<ReportElement> rowValues : tableValues) {
             col = 0;
-            for (String value : rowValues) {
-                result[row][col] = new ReportTextBox(pdfStyleSheet.getTableBodyText(), pdfStyleSheet.getLineDistance(), value);
+            for (ReportElement value : rowValues) {
+                result[row][col] = value;
                 col++;
             }
             row++;
@@ -121,19 +119,30 @@ public class ReportTableBuilderImpl implements ReportTableBuilder {
     public static class ReportTableRowBuilderImpl implements ReportTableRowBuilder {
         private final ReportTableBuilderImpl parent;
 
-        private List<String> values = new ArrayList<>();
+        private List<ReportElement> values = new ArrayList<>();
 
         ReportTableRowBuilderImpl(ReportTableBuilderImpl parent) {
             this.parent = parent;
         }
 
-        public ReportTableRowBuilderImpl addValue(String value) {
+        public ReportTableRowBuilderImpl addValue(ReportElement value) {
             values.add(value);
             return this;
         }
 
+        public ReportTableRowBuilderImpl addValue(String value){
+            values.add(new ReportTextBox(parent.pdfStyleSheet.getBodyText(), parent.pdfStyleSheet.getLineDistance(),value));
+            return this;
+        }
 
         public ReportTableBuilderImpl withValues(String... rowValues) {
+            for(String value : rowValues){
+                values.add(new ReportTextBox(parent.pdfStyleSheet.getBodyText(), parent.pdfStyleSheet.getLineDistance(), value));
+            }
+            return endRow();
+        }
+
+        public ReportTableBuilderImpl withValues(ReportElement... rowValues) {
             values.addAll(Arrays.asList(rowValues));
             return endRow();
         }

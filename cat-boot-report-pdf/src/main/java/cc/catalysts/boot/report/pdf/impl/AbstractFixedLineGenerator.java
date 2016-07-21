@@ -2,9 +2,11 @@ package cc.catalysts.boot.report.pdf.impl;
 
 import cc.catalysts.boot.report.pdf.config.PdfPageLayout;
 import cc.catalysts.boot.report.pdf.config.PdfStyleSheet;
+import cc.catalysts.boot.report.pdf.elements.ReportElement;
 import cc.catalysts.boot.report.pdf.elements.ReportElementStatic;
 import cc.catalysts.boot.report.pdf.elements.ReportTextBox;
 import cc.catalysts.boot.report.pdf.utils.ReportAlignType;
+import cc.catalysts.boot.report.pdf.utils.ReportFooterOnPages;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
@@ -17,19 +19,15 @@ import java.util.List;
  * @author Paul Klingelhuber
  */
 public abstract class AbstractFixedLineGenerator {
-    private final PdfStyleSheet pdfStyleSheet;
-    private String leftText;
-    private String centerText;
-    private String rightText;
+    private ReportFooterOnPages footerOnPages;
+    private ReportElement footerElement;
 
     public static final String PAGE_TEMPLATE_CURR = "%PAGE_NUMBER%";
     public static final String PAGE_TEMPLATE_TOTAL = "%TOTAL_PAGES%";
 
-    public AbstractFixedLineGenerator(PdfStyleSheet pdfStyleSheet, String leftText, String centerText, String rightText) {
-        this.pdfStyleSheet = pdfStyleSheet;
-        this.leftText = leftText;
-        this.centerText = centerText;
-        this.rightText = rightText;
+    public AbstractFixedLineGenerator(ReportElement footerElement, ReportFooterOnPages footerOnPages) {
+        this.footerElement = footerElement;
+        this.footerOnPages = footerOnPages;
     }
 
     /**
@@ -42,24 +40,7 @@ public abstract class AbstractFixedLineGenerator {
         float x = pageConfig.getStartX();
         float y = getVerticalPosition(pageConfig);
         float w = pageConfig.getUsableWidth();
-        List<ReportElementStatic> staticElements = new ArrayList<ReportElementStatic>();
-        if (!StringUtils.isEmpty(leftText)) {
-            ReportTextBox footerElem = new ReportTextBox(pdfStyleSheet.getFooterText(), pdfStyleSheet.getLineDistance(), leftText);
-            footerElem.setAlign(ReportAlignType.LEFT);
-            staticElements.add(new ReportElementStatic(footerElem, 0, x, y, w));
-        }
-        if (!StringUtils.isEmpty(centerText)) {
-            ReportTextBox footerElem = new ReportTextBox(pdfStyleSheet.getFooterText(), pdfStyleSheet.getLineDistance(), centerText);
-            footerElem.setAlign(ReportAlignType.CENTER);
-            staticElements.add(new ReportElementStatic(footerElem, 0, x, y, w));
-        }
-        if (!StringUtils.isEmpty(rightText)) {
-            ReportTextBox footerElem = new ReportTextBox(pdfStyleSheet.getFooterText(), pdfStyleSheet.getLineDistance(), rightText);
-            footerElem.setAlign(ReportAlignType.RIGHT);
-            staticElements.add(new ReportElementStatic(footerElem, 0, x, y, w));
-        }
-
-        report.addStaticElementsForEachPage(staticElements.toArray(new ReportElementStatic[staticElements.size()]));
+        report.addStaticElementsForEachPage(new ReportElementStatic(footerElement, 0, x, y, w, footerOnPages));
     }
 
     protected abstract float getVerticalPosition(PdfPageLayout pageConfig);

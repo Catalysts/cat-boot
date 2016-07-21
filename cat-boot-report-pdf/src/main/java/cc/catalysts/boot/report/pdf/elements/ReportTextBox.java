@@ -131,6 +131,8 @@ public class ReportTextBox implements ReportElement {
         return text;
     }
 
+    public void setText(String text) { this.text = text; }
+
     private static final class CacheKey {
         private PDFont font;
         private int fontSize;
