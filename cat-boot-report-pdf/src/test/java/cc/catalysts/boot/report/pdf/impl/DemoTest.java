@@ -55,8 +55,10 @@ public class DemoTest {
 
 
         final File target = new File("pdf-out");
-        target.mkdirs();
-        Assert.assertTrue(target.exists());
+        if (!target.exists()) {
+            Assert.assertTrue(target.mkdirs());
+        }
+
         pdfReportFilePrinter.print(pdfReport, target);
     }
 }
