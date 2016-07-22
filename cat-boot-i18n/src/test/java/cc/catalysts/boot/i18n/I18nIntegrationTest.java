@@ -8,8 +8,11 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import java.util.Locale;
 
 /**
  * @author Klaus Lehner
@@ -23,6 +26,7 @@ public class I18nIntegrationTest {
 
     @Test
     public void fetchAllEntries() {
+        LocaleContextHolder.setLocale(Locale.ENGLISH);
         final I18nDto allValues = i18nService.getAllValues();
         Assert.assertNotNull(allValues);
         Assert.assertEquals(3, allValues.getMessages().size());
