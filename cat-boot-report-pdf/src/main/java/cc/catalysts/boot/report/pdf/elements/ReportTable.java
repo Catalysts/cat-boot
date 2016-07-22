@@ -361,4 +361,8 @@ public class ReportTable implements ReportElement {
         return title;
     }
 
+    public float[] getCellWidths() { return cellWidths; }
+
+    public PdfStyleSheet getPdfStyleSheet() { return pdfStyleSheet; }
+
 }
