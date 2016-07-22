@@ -55,7 +55,6 @@ public class DemoTest {
                 .addImage(new ClassPathResource("github_icon.png"), 100, 100)
                 .withFooterOnAllPages("Demo-PDF", "cat-boot-report-pdf", PdfFooterGenerator.PAGE_TEMPLATE_CURR + "/"
                         + PdfFooterGenerator.PAGE_TEMPLATE_TOTAL)
-
                 .buildReport("demo.pdf",
                         PdfPageLayout.getPortraitA4Page(),
                         new ClassPathResource("demo-template.pdf"));

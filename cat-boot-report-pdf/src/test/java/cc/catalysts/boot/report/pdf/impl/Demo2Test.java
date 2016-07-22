@@ -5,6 +5,7 @@ import cc.catalysts.boot.report.pdf.PdfReportService;
 import cc.catalysts.boot.report.pdf.config.DefaultPdfStyleSheet;
 import cc.catalysts.boot.report.pdf.config.PdfPageLayout;
 import cc.catalysts.boot.report.pdf.config.PdfTextStyle;
+import cc.catalysts.boot.report.pdf.elements.ReportElement;
 import cc.catalysts.boot.report.pdf.elements.ReportImage;
 import cc.catalysts.boot.report.pdf.elements.ReportTable;
 import cc.catalysts.boot.report.pdf.elements.ReportTextBox;
@@ -62,10 +63,10 @@ public class Demo2Test {
                 .addText("You can also format text as you can see here.", new PdfTextStyle(13, PDType1Font.TIMES_BOLD_ITALIC, Color.BLUE))
                 .withFooterOnAllPages("Demo-PDF", "cat-boot-report-pdf", PdfFooterGenerator.PAGE_TEMPLATE_CURR + "/"
                         + PdfFooterGenerator.PAGE_TEMPLATE_TOTAL)
-                .withHeaderOnPages("Demo-PDF", "cat-boot-report-pdf", "not include me on first pageq", ReportFooterOnPages.ALL_BUT_FIRST)
+                .withHeaderOnPages("Demo-PDF", "cat-boot-report-pdf", "not include me on first page", ReportFooterOnPages.ALL_BUT_FIRST)
                 .buildReport("demo2.pdf",
                         PdfPageLayout.getPortraitA4Page(),
-                        new ClassPathResource("demo-template.pdf"));
+                        new ClassPathResource("/demo-template.pdf"));
 
 
         pdfReport.getDocument().save("demo2.pdf");
