@@ -53,9 +53,23 @@ public class PdfReportStructure {
         for (int i = staticElementsForEachPage.size() - 1; i >= 0; --i) {
             ReportElementStatic elem = staticElementsForEachPage.get(i);
             for (int pageNo = 0; pageNo < totalPages; pageNo++) {
-                if ((elem.getFooterOnPages() == ReportFooterOnPages.ALL) || (elem.getFooterOnPages() == ReportFooterOnPages.ALL_BUT_FIRST && pageNo != 0) ||
-                        (elem.getFooterOnPages() == ReportFooterOnPages.ALL_BUT_LAST && pageNo != (totalPages - 1)))
-                    addStaticElement(new ReportElementStatic(getFooterElementWithPagesSet(elem.getBase(), pageNo, totalPages), pageNo, elem.getX(), elem.getY(), elem.getWidth(), elem.getFooterOnPages()));
+                ReportFooterOnPages config = elem.getFooterOnPages();
+                if (pageNo == 0 &&
+                        config == ReportFooterOnPages.ALL_BUT_FIRST) {
+                    continue;
+                } else if (pageNo == (totalPages - 1) &&
+                        config == ReportFooterOnPages.ALL_BUT_LAST) {
+                    continue;
+                }
+
+                addStaticElement(
+                        new ReportElementStatic(getFooterElementWithPagesSet(elem.getBase(), pageNo, totalPages),
+                                pageNo,
+                                elem.getX(),
+                                elem.getY(),
+                                elem.getWidth(),
+                                elem.getFooterOnPages())
+                );
             }
         }
     }
