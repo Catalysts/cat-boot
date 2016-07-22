@@ -5,20 +5,13 @@ import cc.catalysts.boot.report.pdf.PdfReportService;
 import cc.catalysts.boot.report.pdf.config.DefaultPdfStyleSheet;
 import cc.catalysts.boot.report.pdf.config.PdfPageLayout;
 import cc.catalysts.boot.report.pdf.config.PdfTextStyle;
-import cc.catalysts.boot.report.pdf.elements.ReportElement;
-import cc.catalysts.boot.report.pdf.elements.ReportImage;
-import cc.catalysts.boot.report.pdf.elements.ReportTextBox;
-import cc.catalysts.boot.report.pdf.utils.ReportFooterOnPages;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
 
-import javax.imageio.ImageIO;
 import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.IOException;
 
 /**
  * @author Klaus Lehner
@@ -65,7 +58,10 @@ public class DemoTest {
 
         pdfReport.getDocument().save("demo.pdf");
 
-        Assert.assertTrue(target.mkdirs());
+        if (!target.exists()) {
+            Assert.assertTrue(target.mkdirs());
+        }
+
         pdfReportFilePrinter.print(pdfReport, target);
     }
 }
