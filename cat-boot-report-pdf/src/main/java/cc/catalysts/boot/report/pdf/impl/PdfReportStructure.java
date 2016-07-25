@@ -52,30 +52,46 @@ public class PdfReportStructure {
     public void expandPagesStaticElements(int totalPages) {
         for (int i = staticElementsForEachPage.size() - 1; i >= 0; --i) {
             ReportElementStatic elem = staticElementsForEachPage.get(i);
-            ReportElement baseElement = elem.getBase();
             for (int pageNo = 0; pageNo < totalPages; pageNo++) {
-                setFooterPageNumbers(baseElement, pageNo, totalPages);
-                if (baseElement instanceof ReportTable) {
-                    ReportTable baseTable = (ReportTable) baseElement;
-                    for (int row = baseTable.getElements().length - 1; row >= 0 ; --row){
-                        for (int col = baseTable.getElements()[row].length - 1; col >= 0; --col) {
-                            setFooterPageNumbers(baseTable.getElements()[row][col], pageNo, totalPages);
-                        }
-                    }
+                ReportFooterOnPages config = elem.getFooterOnPages();
+                if (pageNo == 0 &&
+                        config == ReportFooterOnPages.ALL_BUT_FIRST) {
+                    continue;
+                } else if (pageNo == (totalPages - 1) &&
+                        config == ReportFooterOnPages.ALL_BUT_LAST) {
+                    continue;
                 }
-                if ((elem.getFooterOnPages() == ReportFooterOnPages.ALL) ||
-                        (elem.getFooterOnPages() == ReportFooterOnPages.ALL_BUT_FIRST && pageNo != 0)
-                        || (elem.getFooterOnPages() == ReportFooterOnPages.ALL_BUT_LAST && pageNo != (totalPages - 1)))
-                    addStaticElement(new ReportElementStatic(baseElement, pageNo, elem.getX(), elem.getY(), elem.getWidth(), elem.getFooterOnPages()));
+
+                addStaticElement(
+                        new ReportElementStatic(getFooterElementWithPagesSet(elem.getBase(), pageNo, totalPages),
+                                pageNo,
+                                elem.getX(),
+                                elem.getY(),
+                                elem.getWidth(),
+                                elem.getFooterOnPages())
+                );
             }
         }
     }
 
-    public void setFooterPageNumbers(ReportElement footerElement, int pageNo, int totalPages){
-        if (footerElement instanceof ReportTextBox) {
-            ReportTextBox footerTextBox = (ReportTextBox) footerElement;
-            footerTextBox.setText(footerTextBox.getText().replaceAll("%PAGE_NUMBER%", pageNo + 1 + "").replaceAll("%TOTAL_PAGES%", totalPages + ""));
+    public ReportElement getFooterElementWithPagesSet(ReportElement baseElement, int pageNo, int totalPages) {
+        if (baseElement instanceof ReportTextBox) {
+            ReportTextBox oldFooterTextBox = (ReportTextBox) baseElement;
+            String newText = oldFooterTextBox.getText().replaceAll("%PAGE_NUMBER%", pageNo + 1 + "").replaceAll("%TOTAL_PAGES%", totalPages + "");
+            return new ReportTextBox(oldFooterTextBox, newText);
+        } else if (baseElement instanceof ReportTable) {
+            ReportTable baseTable = (ReportTable) baseElement;
+            ReportElement[][] oldElements = baseTable.getElements();
+            ReportElement[][] newElements = new ReportElement[oldElements.length][];
+            for (int row = oldElements.length - 1; row >= 0; --row) {
+                newElements[row] = new ReportElement[oldElements[row].length];
+                for (int col = oldElements[row].length - 1; col >= 0; --col) {
+                    newElements[row][col] = getFooterElementWithPagesSet(oldElements[row][col], pageNo, totalPages);
+                }
+            }
+            return new ReportTable(baseTable.getPdfStyleSheet(), baseTable.getCellWidths(), newElements, baseTable.getTitle());
+        } else {
+            return baseElement;
         }
     }
-
 }
