@@ -43,7 +43,8 @@ public class Demo2Test {
 
         ReportTable sampleTable = new ReportTableBuilderImpl(styleSheet, null)
                 .addColumn("1", 1).addColumn("2", 3).createRow().withValues("z1", "z2").build();
-        sampleTable.setBorder(false);
+        sampleTable.setBorder(true);
+        sampleTable.setNoInnerBorders(true);
 
         final PdfReport pdfReport = pdfReportService.createBuilder(styleSheet)
                 .addHeading("Dear Github users")
