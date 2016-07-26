@@ -30,9 +30,10 @@ public class ReportTable implements ReportElement {
     private boolean noBottomBorder;
     private boolean noTopBorder;
     private boolean noInnerBorders = false;
-    private boolean placeFirstBorder = false;
-    private boolean placeLastBorder = false;
+    private boolean placeFirstBorder = true;
+    private boolean placeLastBorder = true;
     private boolean enableExtraSplitting;
+    private boolean isSplitable = true;
     private Collection<ReportImage.ImagePrintIntent> intents = new LinkedList<ReportImage.ImagePrintIntent>();
 
     /**
@@ -189,9 +190,9 @@ public class ReportTable implements ReportElement {
     }
 
     @Override
-    public boolean isSplitable() {
-        return true;
-    }
+    public boolean isSplitable() { return isSplitable; }
+
+    public void setSplitable(boolean isSplitable) { this.isSplitable = isSplitable; }
 
     @Override
     public float getFirstSegmentHeight(float allowedWidth) {
