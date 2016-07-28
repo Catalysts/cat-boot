@@ -29,8 +29,11 @@ public class ReportTable implements ReportElement {
     private boolean border = DEFAULT_BORDER;
     private boolean noBottomBorder;
     private boolean noTopBorder;
+    private boolean noInnerBorders = false;
+    private boolean placeFirstBorder = true;
     private boolean placeLastBorder = true;
     private boolean enableExtraSplitting;
+    private boolean isSplitable = true;
     private Collection<ReportImage.ImagePrintIntent> intents = new LinkedList<ReportImage.ImagePrintIntent>();
 
     /**
@@ -60,6 +63,8 @@ public class ReportTable implements ReportElement {
         this.elements = elements;
         this.title = title;
     }
+
+    public void setNoInnerBorders(boolean noInnerBorders) { this.noInnerBorders = noInnerBorders; }
 
     public void setNoBottomBorder(boolean border) {
         this.noBottomBorder = border;
@@ -104,9 +109,8 @@ public class ReportTable implements ReportElement {
         int i = 0;
         for (ReportElement[] line : elements) {
             y = printLine(document, stream, pageNumber, startX, y, allowedWidth, line);
-            if (i == elements.length - 1 && noBottomBorder) {
-                placeLastBorder = false;
-            }
+            placeFirstBorder = i == 0 ? true : false;
+            placeLastBorder = i == elements.length - 1 ? true : false;
             placeBorders(stream, startY, y, startX, allowedWidth);
             i++;
         }
@@ -119,16 +123,28 @@ public class ReportTable implements ReportElement {
             stream.setLineWidth(0.3f);
             float y0 = startY - BORDER_Y_DELTA;
             float y1 = endY - (BORDER_Y_DELTA + 1);
-            if (!noTopBorder) {
-                stream.drawLine(x, y0, x + allowedWidth, y0);
+            if (!noInnerBorders){
+                if (!noTopBorder || noTopBorder && !placeFirstBorder){
+                    stream.drawLine(x, y0, x + allowedWidth, y0);
+                }
+                if (!noBottomBorder || noBottomBorder && !placeLastBorder){
+                    stream.drawLine(x, y1, x + allowedWidth, y1);
+                }
             }
-            if (placeLastBorder) {
-                stream.drawLine(x, y1, x + allowedWidth, y1);
+            else{
+                if (!noTopBorder && placeFirstBorder){
+                    stream.drawLine(x, y0, x + allowedWidth, y0);
+                }
+                if (!noBottomBorder && placeLastBorder){
+                    stream.drawLine(x, y1, x + allowedWidth, y1);
+                }
             }
-
             float currX = x;
+            stream.drawLine(currX, y0, currX, y1);
             for (float width : cellWidths) {
-                stream.drawLine(currX, y0, currX, y1);
+                if (!noInnerBorders) {
+                    stream.drawLine(currX, y0, currX, y1);
+                }
                 currX += width * allowedWidth;
             }
             stream.drawLine(currX, y0, currX, y1);
@@ -174,9 +190,9 @@ public class ReportTable implements ReportElement {
     }
 
     @Override
-    public boolean isSplitable() {
-        return true;
-    }
+    public boolean isSplitable() { return isSplitable; }
+
+    public void setSplitable(boolean isSplitable) { this.isSplitable = isSplitable; }
 
     @Override
     public float getFirstSegmentHeight(float allowedWidth) {
