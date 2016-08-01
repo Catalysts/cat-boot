@@ -137,7 +137,7 @@ class PdfReportBuilderImpl implements PdfReportBuilder {
             if (generator instanceof PdfFooterGenerator) {
                 pageConfig.setFooterOnPages(generator.getFooterOnPages());
                 pageConfig.setFooter(generator.getFooterElement().getHeight(pageConfig.getUsableWidth()) + configuration.getLineDistance());
-            }else {
+            } else {
                 pageConfig.setHeaderOnPages(generator.getFooterOnPages());
                 pageConfig.setHeader(generator.getFooterElement().getHeight(pageConfig.getUsableWidth()) + configuration.getLineDistance());
             }
