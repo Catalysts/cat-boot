@@ -1,16 +1,10 @@
 package cc.catalysts.boot.report.pdf.impl;
 
 import cc.catalysts.boot.report.pdf.config.PdfPageLayout;
-import cc.catalysts.boot.report.pdf.config.PdfStyleSheet;
 import cc.catalysts.boot.report.pdf.elements.ReportElement;
 import cc.catalysts.boot.report.pdf.elements.ReportElementStatic;
-import cc.catalysts.boot.report.pdf.elements.ReportTextBox;
-import cc.catalysts.boot.report.pdf.utils.ReportAlignType;
-import cc.catalysts.boot.report.pdf.utils.ReportFooterOnPages;
-import org.springframework.util.StringUtils;
+import cc.catalysts.boot.report.pdf.utils.PositionOfStaticElements;
 
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Base for static page decorators that add a single line (split in left, center, right parts) to a certain
@@ -19,13 +13,13 @@ import java.util.List;
  * @author Paul Klingelhuber
  */
 public abstract class AbstractFixedLineGenerator {
-    private ReportFooterOnPages footerOnPages;
+    private PositionOfStaticElements footerOnPages;
     private ReportElement footerElement;
 
     public static final String PAGE_TEMPLATE_CURR = "%PAGE_NUMBER%";
     public static final String PAGE_TEMPLATE_TOTAL = "%TOTAL_PAGES%";
 
-    public AbstractFixedLineGenerator(ReportElement footerElement, ReportFooterOnPages footerOnPages) {
+    public AbstractFixedLineGenerator(ReportElement footerElement, PositionOfStaticElements footerOnPages) {
         this.footerElement = footerElement;
         this.footerOnPages = footerOnPages;
     }
@@ -44,5 +38,9 @@ public abstract class AbstractFixedLineGenerator {
     }
 
     protected abstract float getVerticalPosition(PdfPageLayout pageConfig);
+
+    public PositionOfStaticElements getFooterOnPages() { return footerOnPages; }
+
+    public ReportElement getFooterElement() { return footerElement; }
 
 }

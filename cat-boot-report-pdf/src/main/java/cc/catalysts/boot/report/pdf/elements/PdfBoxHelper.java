@@ -72,7 +72,7 @@ final class PdfBoxHelper {
                 return nextLineY;
             }
 
-        } catch (Exception e) {
+        } catch (Exception e)  {
             LOG.warn("Could not add text: " + e.getClass() + " - " + e.getMessage());
             return textY;
         }

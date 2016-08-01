@@ -1,5 +1,6 @@
 package cc.catalysts.boot.report.pdf.config;
 
+import cc.catalysts.boot.report.pdf.utils.PositionOfStaticElements;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 
 /**
@@ -16,7 +17,10 @@ public class PdfPageLayout {
     private float marginTop;
     private float marginBottom;
     private float lineDistance;
+    private float header;
     private float footer;
+    private PositionOfStaticElements footerPosition;
+    private PositionOfStaticElements headerPosition;
 
     public static PdfPageLayout getPortraitA4Page() {
         return new PdfPageLayout(595.27563F, 841.8898F, 28.346457F, 10, 100, 20, 1);
@@ -96,31 +100,33 @@ public class PdfPageLayout {
         this.lineDistance = lineDistance;
     }
 
+    public PositionOfStaticElements getFooterPosition() { return footerPosition; }
+
+    public void setFooterPosition(PositionOfStaticElements footerPosition) { this.footerPosition = footerPosition; }
+
+    public PositionOfStaticElements getHeaderPosition() { return headerPosition; }
+
+    public void setHeaderPosition(PositionOfStaticElements headerPosition) { this.headerPosition = headerPosition; }
+
     public void setFooter(float footerSize) {
         this.footer = footerSize;
     }
 
-    public float getUsableWidth() {
-        return width - marginLeft - marginRight;
-    }
+    public void setHeader(float headerSize) { this.header = headerSize; }
 
-    public PDRectangle getPageSize() {
-        return new PDRectangle(width, height);
-    }
+    public float getUsableWidth() { return width - marginLeft - marginRight; }
 
-    public float getStartY() {
-        return height - marginTop;
-    }
+    public PDRectangle getPageSize() { return new PDRectangle(width, height); }
 
-    public float getStartX() {
-        return marginLeft;
-    }
+    public float getStartY() { return height - marginTop - header; }
 
-    public float getLastY() {
-        return marginBottom + footer;
-    }
+    public float getStartY(int pageNo) { return pageNo == 0 && headerPosition == PositionOfStaticElements.ON_ALL_PAGES_BUT_FIRST ? height - marginTop : getStartY(); }
 
-    public float getLastX() {
-        return width - marginRight;
-    }
+    public float getStartX() { return marginLeft; }
+
+    public float getLastY() { return marginBottom + footer; }
+
+    public float getLastY(int pageNo) { return pageNo == 0 && footerPosition == PositionOfStaticElements.ON_ALL_PAGES_BUT_FIRST ? marginBottom : getLastY(); }
+
+    public float getLastX() { return width - marginRight; }
 }

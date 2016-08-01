@@ -39,7 +39,6 @@ class PdfReportGenerator {
      * @throws java.io.IOException
      */
     public PDDocument generate(PdfPageLayout pageConfig, Resource templateResource, PdfReportStructure report) throws IOException {
-        pageConfig.setFooter(report.getConfiguration().getFooterText().getFontSize() + pageConfig.getLineDistance());
 
         PrintData printData = new PrintData(templateResource, pageConfig);
         PrintCursor cursor = new PrintCursor();
@@ -56,11 +55,13 @@ class PdfReportGenerator {
             boolean forceBreak = false;
             //currentReportElement.setFontLib(fontLibrary);
             float height = currentReportElement.getHeight(maxWidth);
-            if (cursor.yPos - height < pageConfig.getLastY()) {
+            if (cursor.yPos - height < pageConfig.getLastY(cursor.currentPageNumber)) {
                 //out of bounds
-                if (currentReportElement.isSplitable() && currentReportElement instanceof ReportTable && (cursor.yPos - currentReportElement.getFirstSegmentHeight(maxWidth)) >= pageConfig.getLastY()) {
+                if (currentReportElement.isSplitable() && currentReportElement instanceof ReportTable && (cursor.yPos -
+                        currentReportElement.getFirstSegmentHeight(maxWidth)) >= pageConfig.getLastY(cursor.currentPageNumber)) {
                     //it's a Table out of bounds, so we also do a height split
-                    ReportElement[] twoElements = currentReportElement.split(maxWidth, cursor.yPos - pageConfig.getLastY());
+                    ReportElement[] twoElements = currentReportElement.split(maxWidth, cursor.yPos -
+                            pageConfig.getLastY(cursor.currentPageNumber));
                     if (twoElements.length != 2) {
                         throw new IllegalStateException("The split method should always two parts.");
                     }
@@ -69,7 +70,8 @@ class PdfReportGenerator {
                     if (((ReportTable) currentReportElement).getExtraSplitting()) {
                         forceBreak = true;
                     }
-                } else if (currentReportElement.isSplitable() && (cursor.yPos - currentReportElement.getFirstSegmentHeight(maxWidth) >= pageConfig.getLastY())) {
+                } else if (currentReportElement.isSplitable() && (cursor.yPos - currentReportElement.getFirstSegmentHeight(maxWidth)
+                        >= pageConfig.getLastY(cursor.currentPageNumber))) {
                     ReportElement[] twoElements = currentReportElement.split(maxWidth);
                     if (twoElements.length != 2) {
                         throw new IllegalStateException("The split method should always two parts.");
@@ -127,7 +129,7 @@ class PdfReportGenerator {
         }
         PDPage currPage = (PDPage) document.getDocumentCatalog().getAllPages().get(++cursor.currentPageNumber);
         cursor.currentStream = new PDPageContentStream(document, currPage, true, false);
-        cursor.yPos = printData.pageConfig.getStartY();
+        cursor.yPos = printData.pageConfig.getStartY(cursor.currentPageNumber);
         cursor.xPos = printData.pageConfig.getStartX();
     }
 
