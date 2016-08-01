@@ -27,17 +27,17 @@ public interface PdfReportBuilder {
 
     PdfReportBuilder withHeaderOnAllPages(ReportElement headerElement);
 
-    PdfReportBuilder withHeaderOnPages(String left, String middle, String right, PositionOfStaticElements headerOnPages);
+    PdfReportBuilder withHeaderOnPages(String left, String middle, String right, PositionOfStaticElements headerPosition);
 
-    PdfReportBuilder withHeaderOnPages(ReportElement headerElement, PositionOfStaticElements headerOnPages);
+    PdfReportBuilder withHeaderOnPages(ReportElement headerElement, PositionOfStaticElements headerPosition);
 
     PdfReportBuilder withFooterOnAllPages(String left, String middle, String right);
 
     PdfReportBuilder withFooterOnAllPages(ReportElement footerElement);
 
-    PdfReportBuilder withFooterOnPages(String left, String middle, String right, PositionOfStaticElements footerOnPages);
+    PdfReportBuilder withFooterOnPages(String left, String middle, String right, PositionOfStaticElements footerPosition);
 
-    PdfReportBuilder withFooterOnPages(ReportElement footerElement, PositionOfStaticElements footerOnPages);
+    PdfReportBuilder withFooterOnPages(ReportElement footerElement, PositionOfStaticElements footerPosition);
 
     PdfReportBuilder addPadding(float padding);
 

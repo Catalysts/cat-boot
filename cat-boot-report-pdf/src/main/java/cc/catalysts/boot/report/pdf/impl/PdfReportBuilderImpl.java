@@ -56,7 +56,7 @@ class PdfReportBuilderImpl implements PdfReportBuilder {
     }
 
     @Override
-    public PdfReportBuilder withHeaderOnPages(String left, String middle, String right, PositionOfStaticElements headerOnPages) {
+    public PdfReportBuilder withHeaderOnPages(String left, String middle, String right, PositionOfStaticElements headerPosition) {
         PdfStyleSheet HeaderTableConfiguration = new DefaultPdfStyleSheet();
         HeaderTableConfiguration.setTableTitleText(configuration.getFooterText());
         ReportTable headerTable = new ReportTableBuilderImpl(HeaderTableConfiguration, this).addColumn(left, 1).addColumn(middle, 1).addColumn(right, 1).build();
@@ -64,13 +64,13 @@ class PdfReportBuilderImpl implements PdfReportBuilder {
         headerTable.setTextAlignInColumn(1, ReportAlignType.CENTER, false);
         headerTable.setTextAlignInColumn(2, ReportAlignType.RIGHT, false);
         headerTable.setBorder(false);
-        fixedLineGenerators.add(new PdfHeaderGenerator(headerTable, headerOnPages));
+        fixedLineGenerators.add(new PdfHeaderGenerator(headerTable, headerPosition));
         return this;
     }
 
     @Override
-    public PdfReportBuilder withHeaderOnPages(ReportElement headerElement, PositionOfStaticElements headerOnPages) {
-        fixedLineGenerators.add(new PdfHeaderGenerator(headerElement, headerOnPages));
+    public PdfReportBuilder withHeaderOnPages(ReportElement headerElement, PositionOfStaticElements headerPosition) {
+        fixedLineGenerators.add(new PdfHeaderGenerator(headerElement, headerPosition));
         return this;
     }
 
@@ -94,7 +94,7 @@ class PdfReportBuilderImpl implements PdfReportBuilder {
     }
 
     @Override
-    public PdfReportBuilder withFooterOnPages(String left, String middle, String right, PositionOfStaticElements footerOnPages) {
+    public PdfReportBuilder withFooterOnPages(String left, String middle, String right, PositionOfStaticElements footerPosition) {
         PdfStyleSheet footerTableConfiguration = new DefaultPdfStyleSheet();
         footerTableConfiguration.setTableTitleText(configuration.getFooterText());
         ReportTable footerTable = new ReportTableBuilderImpl(footerTableConfiguration, this).addColumn(left, 1).addColumn(middle, 1).addColumn(right, 1).build();
@@ -102,13 +102,13 @@ class PdfReportBuilderImpl implements PdfReportBuilder {
         footerTable.setTextAlignInColumn(1, ReportAlignType.CENTER, false);
         footerTable.setTextAlignInColumn(2, ReportAlignType.RIGHT, false);
         footerTable.setBorder(false);
-        fixedLineGenerators.add(new PdfFooterGenerator(footerTable, footerOnPages));
+        fixedLineGenerators.add(new PdfFooterGenerator(footerTable, footerPosition));
         return this;
     }
 
     @Override
-    public PdfReportBuilder withFooterOnPages(ReportElement footerElement, PositionOfStaticElements footerOnPages) {
-        fixedLineGenerators.add(new PdfFooterGenerator(footerElement, footerOnPages));
+    public PdfReportBuilder withFooterOnPages(ReportElement footerElement, PositionOfStaticElements footerPosition) {
+        fixedLineGenerators.add(new PdfFooterGenerator(footerElement, footerPosition));
         return this;
     }
 
@@ -135,10 +135,10 @@ class PdfReportBuilderImpl implements PdfReportBuilder {
         for (AbstractFixedLineGenerator generator : fixedLineGenerators) {
             generator.addFooterToAllPages(report, pageConfig);
             if (generator instanceof PdfFooterGenerator) {
-                pageConfig.setFooterOnPages(generator.getFooterOnPages());
+                pageConfig.setFooterPosition(generator.getFooterOnPages());
                 pageConfig.setFooter(generator.getFooterElement().getHeight(pageConfig.getUsableWidth()) + configuration.getLineDistance());
             } else {
-                pageConfig.setHeaderOnPages(generator.getFooterOnPages());
+                pageConfig.setHeaderPosition(generator.getFooterOnPages());
                 pageConfig.setHeader(generator.getFooterElement().getHeight(pageConfig.getUsableWidth()) + configuration.getLineDistance());
             }
         }

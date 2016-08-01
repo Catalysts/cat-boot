@@ -20,7 +20,7 @@ public class ReportElementStatic implements ReportElement {
     private float y;
     private float width;
     private int pageNo;
-    private PositionOfStaticElements footerOnPages;
+    private PositionOfStaticElements position;
 
     /**
      * @param base   ReportElement to be printed
@@ -29,13 +29,13 @@ public class ReportElementStatic implements ReportElement {
      * @param y      starting Y coordinate of print location
      * @param width  the width of the static element
      */
-    public ReportElementStatic(ReportElement base, int pageNo, float x, float y, float width, PositionOfStaticElements footerOnPages) {
+    public ReportElementStatic(ReportElement base, int pageNo, float x, float y, float width, PositionOfStaticElements position) {
         this.base = base;
         this.x = x;
         this.y = y;
         this.pageNo = pageNo;
         this.width = width;
-        this.footerOnPages = footerOnPages;
+        this.position = position;
     }
 
     public ReportElement getBase() {
@@ -107,7 +107,7 @@ public class ReportElementStatic implements ReportElement {
         return pageNo;
     }
 
-    public PositionOfStaticElements getFooterOnPages() {
-        return footerOnPages;
+    public PositionOfStaticElements getPosition() {
+        return position;
     }
 }

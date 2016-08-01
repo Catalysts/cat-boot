@@ -19,8 +19,8 @@ public class PdfPageLayout {
     private float lineDistance;
     private float header;
     private float footer;
-    private PositionOfStaticElements footerOnPages;
-    private PositionOfStaticElements headerOnPages;
+    private PositionOfStaticElements footerPosition;
+    private PositionOfStaticElements headerPosition;
 
     public static PdfPageLayout getPortraitA4Page() {
         return new PdfPageLayout(595.27563F, 841.8898F, 28.346457F, 10, 100, 20, 1);
@@ -100,13 +100,13 @@ public class PdfPageLayout {
         this.lineDistance = lineDistance;
     }
 
-    public PositionOfStaticElements getFooterOnPages() { return footerOnPages; }
+    public PositionOfStaticElements getFooterPosition() { return footerPosition; }
 
-    public void setFooterOnPages(PositionOfStaticElements footerOnPages) { this.footerOnPages = footerOnPages; }
+    public void setFooterPosition(PositionOfStaticElements footerPosition) { this.footerPosition = footerPosition; }
 
-    public PositionOfStaticElements getHeaderOnPages() { return headerOnPages; }
+    public PositionOfStaticElements getHeaderPosition() { return headerPosition; }
 
-    public void setHeaderOnPages(PositionOfStaticElements headerOnPages) { this.headerOnPages = headerOnPages; }
+    public void setHeaderPosition(PositionOfStaticElements headerPosition) { this.headerPosition = headerPosition; }
 
     public void setFooter(float footerSize) {
         this.footer = footerSize;
@@ -120,13 +120,13 @@ public class PdfPageLayout {
 
     public float getStartY() { return height - marginTop - header; }
 
-    public float getStartY(int pageNo) { return pageNo == 0 && headerOnPages == PositionOfStaticElements.ON_ALL_PAGES_BUT_FIRST ? height - marginTop : getStartY(); }
+    public float getStartY(int pageNo) { return pageNo == 0 && headerPosition == PositionOfStaticElements.ON_ALL_PAGES_BUT_FIRST ? height - marginTop : getStartY(); }
 
     public float getStartX() { return marginLeft; }
 
     public float getLastY() { return marginBottom + footer; }
 
-    public float getLastY(int pageNo) { return pageNo == 0 && footerOnPages == PositionOfStaticElements.ON_ALL_PAGES_BUT_FIRST ? marginBottom : getLastY(); }
+    public float getLastY(int pageNo) { return pageNo == 0 && footerPosition == PositionOfStaticElements.ON_ALL_PAGES_BUT_FIRST ? marginBottom : getLastY(); }
 
     public float getLastX() { return width - marginRight; }
 }

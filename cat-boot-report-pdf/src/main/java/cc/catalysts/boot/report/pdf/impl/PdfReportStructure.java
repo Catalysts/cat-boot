@@ -53,7 +53,7 @@ public class PdfReportStructure {
         for (int i = staticElementsForEachPage.size() - 1; i >= 0; --i) {
             ReportElementStatic elem = staticElementsForEachPage.get(i);
             for (int pageNo = 0; pageNo < totalPages; pageNo++) {
-                PositionOfStaticElements config = elem.getFooterOnPages();
+                PositionOfStaticElements config = elem.getPosition();
                 if (pageNo == 0 &&
                         config == PositionOfStaticElements.ON_ALL_PAGES_BUT_FIRST) {
                     continue;
@@ -68,7 +68,7 @@ public class PdfReportStructure {
                                 elem.getX(),
                                 elem.getY(),
                                 elem.getWidth(),
-                                elem.getFooterOnPages())
+                                elem.getPosition())
                 );
             }
         }
