@@ -8,7 +8,7 @@ import cc.catalysts.boot.report.pdf.config.PdfTextStyle;
 import cc.catalysts.boot.report.pdf.elements.ReportImage;
 import cc.catalysts.boot.report.pdf.elements.ReportTable;
 import cc.catalysts.boot.report.pdf.elements.ReportTextBox;
-import cc.catalysts.boot.report.pdf.utils.ReportStaticElementOnPages;
+import cc.catalysts.boot.report.pdf.utils.PositionOfStaticElements;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.junit.Assert;
 import org.junit.Test;
@@ -63,7 +63,7 @@ public class Demo2Test {
                 .addText("You can also format text as you can see here.", new PdfTextStyle(13, PDType1Font.TIMES_BOLD_ITALIC, Color.BLUE))
                 .withFooterOnAllPages("Demo-PDF", "cat-boot-report-pdf", PdfFooterGenerator.PAGE_TEMPLATE_CURR + "/"
                         + PdfFooterGenerator.PAGE_TEMPLATE_TOTAL)
-                .withHeaderOnPages("Demo-PDF", "cat-boot-report-pdf", "not include me on first pageq", ReportStaticElementOnPages.ALL_BUT_FIRST)
+                .withHeaderOnPages("Demo-PDF", "cat-boot-report-pdf", "not include me on first pageq", PositionOfStaticElements.ON_ALL_PAGES_BUT_FIRST)
                 .buildReport("demo2.pdf",
                         PdfPageLayout.getPortraitA4Page(),
                         new ClassPathResource("demo-template.pdf"));

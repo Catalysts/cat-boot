@@ -3,7 +3,7 @@ package cc.catalysts.boot.report.pdf;
 import cc.catalysts.boot.report.pdf.config.PdfPageLayout;
 import cc.catalysts.boot.report.pdf.config.PdfTextStyle;
 import cc.catalysts.boot.report.pdf.elements.ReportElement;
-import cc.catalysts.boot.report.pdf.utils.ReportStaticElementOnPages;
+import cc.catalysts.boot.report.pdf.utils.PositionOfStaticElements;
 import org.springframework.core.io.Resource;
 
 import java.io.IOException;
@@ -27,17 +27,17 @@ public interface PdfReportBuilder {
 
     PdfReportBuilder withHeaderOnAllPages(ReportElement headerElement);
 
-    PdfReportBuilder withHeaderOnPages(String left, String middle, String right, ReportStaticElementOnPages headerOnPages);
+    PdfReportBuilder withHeaderOnPages(String left, String middle, String right, PositionOfStaticElements headerOnPages);
 
-    PdfReportBuilder withHeaderOnPages(ReportElement headerElement, ReportStaticElementOnPages headerOnPages);
+    PdfReportBuilder withHeaderOnPages(ReportElement headerElement, PositionOfStaticElements headerOnPages);
 
     PdfReportBuilder withFooterOnAllPages(String left, String middle, String right);
 
     PdfReportBuilder withFooterOnAllPages(ReportElement footerElement);
 
-    PdfReportBuilder withFooterOnPages(String left, String middle, String right, ReportStaticElementOnPages footerOnPages);
+    PdfReportBuilder withFooterOnPages(String left, String middle, String right, PositionOfStaticElements footerOnPages);
 
-    PdfReportBuilder withFooterOnPages(ReportElement footerElement, ReportStaticElementOnPages footerOnPages);
+    PdfReportBuilder withFooterOnPages(ReportElement footerElement, PositionOfStaticElements footerOnPages);
 
     PdfReportBuilder addPadding(float padding);
 

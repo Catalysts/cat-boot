@@ -2,7 +2,7 @@ package cc.catalysts.boot.report.pdf.impl;
 
 import cc.catalysts.boot.report.pdf.elements.*;
 import cc.catalysts.boot.report.pdf.config.PdfStyleSheet;
-import cc.catalysts.boot.report.pdf.utils.ReportStaticElementOnPages;
+import cc.catalysts.boot.report.pdf.utils.PositionOfStaticElements;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -53,12 +53,12 @@ public class PdfReportStructure {
         for (int i = staticElementsForEachPage.size() - 1; i >= 0; --i) {
             ReportElementStatic elem = staticElementsForEachPage.get(i);
             for (int pageNo = 0; pageNo < totalPages; pageNo++) {
-                ReportStaticElementOnPages config = elem.getFooterOnPages();
+                PositionOfStaticElements config = elem.getFooterOnPages();
                 if (pageNo == 0 &&
-                        config == ReportStaticElementOnPages.ALL_BUT_FIRST) {
+                        config == PositionOfStaticElements.ON_ALL_PAGES_BUT_FIRST) {
                     continue;
                 } else if (pageNo == (totalPages - 1) &&
-                        config == ReportStaticElementOnPages.ALL_BUT_LAST) {
+                        config == PositionOfStaticElements.ON_ALL_PAGES_BUT_LAST) {
                     continue;
                 }
 
