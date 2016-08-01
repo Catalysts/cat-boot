@@ -2,7 +2,6 @@ package cc.catalysts.boot.report.pdf.impl;
 
 
 import cc.catalysts.boot.report.pdf.config.PdfPageLayout;
-import cc.catalysts.boot.report.pdf.config.PdfStyleSheet;
 import cc.catalysts.boot.report.pdf.elements.ReportElement;
 import cc.catalysts.boot.report.pdf.utils.ReportFooterOnPages;
 
@@ -21,7 +20,7 @@ public class PdfHeaderGenerator extends AbstractFixedLineGenerator {
 
     @Override
     protected float getVerticalPosition(PdfPageLayout pageConfig) {
-        return pageConfig.getHeight();
+        return pageConfig.getStartY();
     }
 
 }
