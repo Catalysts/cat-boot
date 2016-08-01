@@ -3,7 +3,7 @@ package cc.catalysts.boot.report.pdf.impl;
 import cc.catalysts.boot.report.pdf.config.PdfPageLayout;
 import cc.catalysts.boot.report.pdf.elements.ReportElement;
 import cc.catalysts.boot.report.pdf.elements.ReportElementStatic;
-import cc.catalysts.boot.report.pdf.utils.ReportFooterOnPages;
+import cc.catalysts.boot.report.pdf.utils.ReportStaticElementOnPages;
 
 
 /**
@@ -13,13 +13,13 @@ import cc.catalysts.boot.report.pdf.utils.ReportFooterOnPages;
  * @author Paul Klingelhuber
  */
 public abstract class AbstractFixedLineGenerator {
-    private ReportFooterOnPages footerOnPages;
+    private ReportStaticElementOnPages footerOnPages;
     private ReportElement footerElement;
 
     public static final String PAGE_TEMPLATE_CURR = "%PAGE_NUMBER%";
     public static final String PAGE_TEMPLATE_TOTAL = "%TOTAL_PAGES%";
 
-    public AbstractFixedLineGenerator(ReportElement footerElement, ReportFooterOnPages footerOnPages) {
+    public AbstractFixedLineGenerator(ReportElement footerElement, ReportStaticElementOnPages footerOnPages) {
         this.footerElement = footerElement;
         this.footerOnPages = footerOnPages;
     }
@@ -39,7 +39,7 @@ public abstract class AbstractFixedLineGenerator {
 
     protected abstract float getVerticalPosition(PdfPageLayout pageConfig);
 
-    public ReportFooterOnPages getFooterOnPages() { return footerOnPages; }
+    public ReportStaticElementOnPages getFooterOnPages() { return footerOnPages; }
 
     public ReportElement getFooterElement() { return footerElement; }
 

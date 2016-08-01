@@ -1,9 +1,8 @@
 package cc.catalysts.boot.report.pdf.impl;
 
 import cc.catalysts.boot.report.pdf.config.PdfPageLayout;
-import cc.catalysts.boot.report.pdf.config.PdfStyleSheet;
 import cc.catalysts.boot.report.pdf.elements.ReportElement;
-import cc.catalysts.boot.report.pdf.utils.ReportFooterOnPages;
+import cc.catalysts.boot.report.pdf.utils.ReportStaticElementOnPages;
 
 /**
  * <p><b>IMPORTANT:</b> Although this class is publicly visible, it is subject to change and may not be implemented by clients!</p>
@@ -12,7 +11,7 @@ import cc.catalysts.boot.report.pdf.utils.ReportFooterOnPages;
  */
 public class PdfFooterGenerator extends AbstractFixedLineGenerator {
 
-    public PdfFooterGenerator(ReportElement footerElement, ReportFooterOnPages footerOnPages) {
+    public PdfFooterGenerator(ReportElement footerElement, ReportStaticElementOnPages footerOnPages) {
         super(footerElement, footerOnPages);
     }
 

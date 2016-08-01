@@ -9,7 +9,7 @@ import cc.catalysts.boot.report.pdf.config.PdfStyleSheet;
 import cc.catalysts.boot.report.pdf.config.PdfTextStyle;
 import cc.catalysts.boot.report.pdf.elements.*;
 import cc.catalysts.boot.report.pdf.utils.ReportAlignType;
-import cc.catalysts.boot.report.pdf.utils.ReportFooterOnPages;
+import cc.catalysts.boot.report.pdf.utils.ReportStaticElementOnPages;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.springframework.core.io.Resource;
 
@@ -45,18 +45,18 @@ class PdfReportBuilderImpl implements PdfReportBuilder {
         headerTable.setTextAlignInColumn(1, ReportAlignType.CENTER, false);
         headerTable.setTextAlignInColumn(2, ReportAlignType.RIGHT, false);
         headerTable.setBorder(false);
-        fixedLineGenerators.add(new PdfHeaderGenerator(headerTable, ReportFooterOnPages.ALL));
+        fixedLineGenerators.add(new PdfHeaderGenerator(headerTable, ReportStaticElementOnPages.ALL));
         return this;
     }
 
     @Override
     public PdfReportBuilder withHeaderOnAllPages(ReportElement headerElement) {
-        fixedLineGenerators.add(new PdfHeaderGenerator(headerElement, ReportFooterOnPages.ALL));
+        fixedLineGenerators.add(new PdfHeaderGenerator(headerElement, ReportStaticElementOnPages.ALL));
         return this;
     }
 
     @Override
-    public PdfReportBuilder withHeaderOnPages(String left, String middle, String right, ReportFooterOnPages headerOnPages) {
+    public PdfReportBuilder withHeaderOnPages(String left, String middle, String right, ReportStaticElementOnPages headerOnPages) {
         PdfStyleSheet HeaderTableConfiguration = new DefaultPdfStyleSheet();
         HeaderTableConfiguration.setTableTitleText(configuration.getFooterText());
         ReportTable headerTable = new ReportTableBuilderImpl(HeaderTableConfiguration, this).addColumn(left, 1).addColumn(middle, 1).addColumn(right, 1).build();
@@ -69,7 +69,7 @@ class PdfReportBuilderImpl implements PdfReportBuilder {
     }
 
     @Override
-    public PdfReportBuilder withHeaderOnPages(ReportElement headerElement, ReportFooterOnPages headerOnPages) {
+    public PdfReportBuilder withHeaderOnPages(ReportElement headerElement, ReportStaticElementOnPages headerOnPages) {
         fixedLineGenerators.add(new PdfHeaderGenerator(headerElement, headerOnPages));
         return this;
     }
@@ -83,18 +83,18 @@ class PdfReportBuilderImpl implements PdfReportBuilder {
         footerTable.setTextAlignInColumn(1, ReportAlignType.CENTER, false);
         footerTable.setTextAlignInColumn(2, ReportAlignType.RIGHT, false);
         footerTable.setBorder(false);
-        fixedLineGenerators.add(new PdfFooterGenerator(footerTable, ReportFooterOnPages.ALL));
+        fixedLineGenerators.add(new PdfFooterGenerator(footerTable, ReportStaticElementOnPages.ALL));
         return this;
     }
 
     @Override
     public PdfReportBuilder withFooterOnAllPages(ReportElement footerElement) {
-        fixedLineGenerators.add(new PdfFooterGenerator(footerElement, ReportFooterOnPages.ALL));
+        fixedLineGenerators.add(new PdfFooterGenerator(footerElement, ReportStaticElementOnPages.ALL));
         return this;
     }
 
     @Override
-    public PdfReportBuilder withFooterOnPages(String left, String middle, String right, ReportFooterOnPages footerOnPages) {
+    public PdfReportBuilder withFooterOnPages(String left, String middle, String right, ReportStaticElementOnPages footerOnPages) {
         PdfStyleSheet footerTableConfiguration = new DefaultPdfStyleSheet();
         footerTableConfiguration.setTableTitleText(configuration.getFooterText());
         ReportTable footerTable = new ReportTableBuilderImpl(footerTableConfiguration, this).addColumn(left, 1).addColumn(middle, 1).addColumn(right, 1).build();
@@ -107,7 +107,7 @@ class PdfReportBuilderImpl implements PdfReportBuilder {
     }
 
     @Override
-    public PdfReportBuilder withFooterOnPages(ReportElement footerElement, ReportFooterOnPages footerOnPages) {
+    public PdfReportBuilder withFooterOnPages(ReportElement footerElement, ReportStaticElementOnPages footerOnPages) {
         fixedLineGenerators.add(new PdfFooterGenerator(footerElement, footerOnPages));
         return this;
     }
