@@ -217,7 +217,7 @@ public class ReportTable implements ReportElement {
         float currentHeight;
         for (int i = 0; i < line.length; i++) {
             if (line[i] != null) {
-                if (line[i] instanceof ReportImage){
+                if (line[i] instanceof ReportImage) {
                     ReportImage lineImage = (ReportImage) line[i];
                     currentHeight = lineImage.getHeight() * (cellWidths[i] * allowedWidth - cellPaddingX * 2) / lineImage.getWidth();
                 } else {
