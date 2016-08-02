@@ -109,8 +109,8 @@ public class ReportTable implements ReportElement {
         int i = 0;
         for (ReportElement[] line : elements) {
             y = printLine(document, stream, pageNumber, startX, y, allowedWidth, line);
-            placeFirstBorder = i == 0 ? true : false;
-            placeLastBorder = i == elements.length - 1 ? true : false;
+            placeFirstBorder = i == 0;
+            placeLastBorder = i == elements.length - 1;
             placeBorders(stream, startY, y, startX, allowedWidth);
             i++;
         }
@@ -204,19 +204,34 @@ public class ReportTable implements ReportElement {
     }
 
     private float getFirstSegmentHeightFromLine(ReportElement[] line, float allowedWidth) {
-        float maxHeight = 0f;
+        float maxHeight = 0;
+        float currentHeight;
         for (int i = 0; i < line.length; i++) {
-            if (line[i] != null)
-                maxHeight = Math.max(maxHeight, line[i].getFirstSegmentHeight(cellWidths[i] * allowedWidth - cellPaddingX * 2));
+            if (line[i] != null) {
+                if (line[i] instanceof ReportImage){
+                    ReportImage lineImage = (ReportImage) line[i];
+                    currentHeight = lineImage.getHeight() * (cellWidths[i] * allowedWidth - cellPaddingX * 2) / lineImage.getWidth();
+                } else {
+                    currentHeight = line[i].getHeight(cellWidths[i] * allowedWidth - cellPaddingX * 2);
+                }
+                maxHeight = Math.max(maxHeight, currentHeight);
+            }
         }
         return maxHeight + 2 * cellPaddingY;
     }
 
     private float getLineHeight(ReportElement[] line, float allowedWidth) {
         float maxHeight = 0;
+        float currentHeight;
         for (int i = 0; i < line.length; i++) {
             if (line[i] != null) {
-                maxHeight = Math.max(maxHeight, line[i].getHeight(cellWidths[i] * allowedWidth - cellPaddingX * 2));
+                if (line[i] instanceof ReportImage){
+                    ReportImage lineImage = (ReportImage) line[i];
+                    currentHeight = lineImage.getHeight() * (cellWidths[i] * allowedWidth - cellPaddingX * 2) / lineImage.getWidth();
+                } else {
+                    currentHeight = line[i].getHeight(cellWidths[i] * allowedWidth - cellPaddingX * 2);
+                }
+                maxHeight = Math.max(maxHeight, currentHeight);
             }
         }
         return maxHeight + 2 * cellPaddingY;
