@@ -79,11 +79,12 @@ final class PdfBoxHelper {
      */
     public static float addText(PDPageContentStream stream, PdfTextStyle textConfig, float textX, float textY, float allowedWidth, float lineHeightD, ReportAlignType align, String text, boolean underline) {
         String fixedText = text;
-        if (textConfig.getFont() == null || textConfig.getFont().getFontEncoding() instanceof WinAnsiEncoding) {
+        /*
+        if (textConfig.getFont() == null || textConfig.getFont()() instanceof WinAnsiEncoding) {
             // only necessary if the font doesn't support unicode
             fixedText = fixString(text);
         }
-
+        */
         float nextLineY = nextLineY((int) textY, textConfig.getFontSize(), lineHeightD);
         try {
             String[] split = splitText(textConfig.getFont(), textConfig.getFontSize(), allowedWidth, fixedText);
@@ -309,6 +310,8 @@ final class PdfBoxHelper {
     }
 
     private static String fixString(final String original) {
+        return original;
+        /*
         StringBuilder sb = new StringBuilder();
         try {
             for (char ch : original.toCharArray()) {
@@ -348,6 +351,7 @@ final class PdfBoxHelper {
             throw new PdfBoxHelperException("unexpected character decoding error for input " + original, e);
         }
         return sb.toString();
+        */
     }
 
     /**

@@ -15,7 +15,7 @@ public class PdfTextStyleTest {
         PdfTextStyle config = new PdfTextStyle("10,Times-Roman,#000000");
 
         Assert.assertEquals(10, config.getFontSize());
-        Assert.assertEquals("Times-Roman", config.getFont().getBaseFont());
+        Assert.assertEquals("Times-Roman", config.getFont().getName());
         Assert.assertEquals(Color.black, config.getColor());
     }
 }
