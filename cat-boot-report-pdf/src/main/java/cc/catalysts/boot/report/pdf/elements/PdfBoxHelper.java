@@ -86,14 +86,22 @@ final class PdfBoxHelper {
         }
         */
         float nextLineY = nextLineY((int) textY, textConfig.getFontSize(), lineHeightD);
+
+        if(fixedText.equals("")) {
+            addTextSimple(stream, textConfig, textX, nextLineY, "");
+            return nextLineY;
+        }
+
         try {
             String[] split = splitText(textConfig.getFont(), textConfig.getFontSize(), allowedWidth, fixedText);
             float x = calculateAlignPosition(textX, align, textConfig, allowedWidth, split[0]);
+
             if (!underline) {
                 addTextSimple(stream, textConfig, x, nextLineY, split[0]);
             } else {
                 addTextSimpleUnderlined(stream, textConfig, x, nextLineY, split[0]);
             }
+
             if (!StringUtils.isEmpty(split[1])) {
                 return addText(stream, textConfig, textX, nextLineY, allowedWidth, lineHeightD, align, split[1], underline);
             } else {
@@ -368,8 +376,9 @@ final class PdfBoxHelper {
             stream.setFont(textConfig.getFont(), textConfig.getFontSize());
             stream.setNonStrokingColor(textConfig.getColor());
             stream.beginText();
-            stream.moveTextPositionByAmount(textX, textY);
-            stream.drawString(text);
+            //stream.setTextMatrix(new Matrix(1,0,0,1,textX, textY));
+            stream.newLineAtOffset(textX, textY);
+            stream.showText(text);
             stream.endText();
         } catch (Exception e) {
             LOG.warn("Could not add text: " + e.getClass() + " - " + e.getMessage());

@@ -1,14 +1,10 @@
 package cc.catalysts.boot.report.pdf.config;
 
-import org.apache.fontbox.ttf.TrueTypeCollection;
-import org.apache.pdfbox.cos.COSDictionary;
-import org.apache.pdfbox.pdmodel.font.FontProvider;
 import org.apache.pdfbox.pdmodel.font.PDFont;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.springframework.util.Assert;
 
 import java.awt.*;
-import java.io.IOException;
 
 public class PdfTextStyle {
 
