@@ -12,7 +12,7 @@ bootRepackage {
 dependencies {
     compile 'org.slf4j:slf4j-api'
 
-    compile 'org.apache.pdfbox:pdfbox:1.8.10'
+    compile 'org.apache.pdfbox:pdfbox:2.0.2'
 
     compile 'org.springframework:spring-core'
     compile 'commons-io:commons-io:2.4'

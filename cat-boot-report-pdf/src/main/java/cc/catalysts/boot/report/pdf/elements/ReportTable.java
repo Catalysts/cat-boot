@@ -4,7 +4,7 @@ import cc.catalysts.boot.report.pdf.config.PdfStyleSheet;
 import cc.catalysts.boot.report.pdf.utils.ReportAlignType;
 import cc.catalysts.boot.report.pdf.utils.ReportVerticalAlignType;
 import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.pdmodel.edit.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.PDPageContentStream;
 
 import java.io.IOException;
 import java.util.Arrays;

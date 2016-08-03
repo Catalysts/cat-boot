@@ -5,10 +5,9 @@ import cc.catalysts.boot.report.pdf.elements.ReportElement;
 import cc.catalysts.boot.report.pdf.elements.ReportElementStatic;
 import cc.catalysts.boot.report.pdf.elements.ReportImage;
 import cc.catalysts.boot.report.pdf.elements.ReportTable;
-import org.apache.pdfbox.exceptions.COSVisitorException;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
-import org.apache.pdfbox.pdmodel.edit.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.springframework.core.io.Resource;
 
 import java.io.IOException;
@@ -26,7 +25,7 @@ class PdfReportGenerator {
     public PdfReportGenerator() {
     }
 
-    public void printToStream(PdfPageLayout pageConfig, Resource templateResource, PdfReportStructure report, OutputStream stream) throws IOException, COSVisitorException {
+    public void printToStream(PdfPageLayout pageConfig, Resource templateResource, PdfReportStructure report, OutputStream stream) throws IOException {
         PDDocument page = generate(pageConfig, templateResource, report);
         page.save(stream);
         page.close();
@@ -127,10 +126,10 @@ class PdfReportGenerator {
         } else {
             PDDocument templateDoc = PDDocument.load(printData.templateResource.getInputStream());
             cursor.cacheTempalte(templateDoc);
-            PDPage templatePage = (PDPage) templateDoc.getDocumentCatalog().getAllPages().get(0);
+            PDPage templatePage = (PDPage) templateDoc.getDocumentCatalog().getPages().get(0);
             document.importPage(templatePage);
         }
-        PDPage currPage = (PDPage) document.getDocumentCatalog().getAllPages().get(++cursor.currentPageNumber);
+        PDPage currPage = (PDPage) document.getDocumentCatalog().getPages().get(++cursor.currentPageNumber);
         cursor.currentStream = new PDPageContentStream(document, currPage, true, false);
         cursor.yPos = printData.pageConfig.getStartY(cursor.currentPageNumber);
         cursor.xPos = printData.pageConfig.getStartX();
