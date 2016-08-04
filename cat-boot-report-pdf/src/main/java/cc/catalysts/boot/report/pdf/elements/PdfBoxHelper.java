@@ -4,8 +4,10 @@ import cc.catalysts.boot.report.pdf.config.PdfTextStyle;
 import cc.catalysts.boot.report.pdf.exception.PdfBoxHelperException;
 import cc.catalysts.boot.report.pdf.utils.ReportAlignType;
 import org.apache.pdfbox.encoding.WinAnsiEncoding;
+import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.edit.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.font.PDFont;
+import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
@@ -28,6 +30,28 @@ final class PdfBoxHelper {
     }
 
     /**
+     * Calculates the position whee a string needs to be drawn in order to conform to the alignment
+     *
+     * @param x     the desired position, will be corrected as necessary
+     * @return the corrected position
+     */
+    private static float calculateAlignPosition(float x, ReportAlignType align, PdfTextStyle textConfig, float allowedWidth, String text) {
+        switch (align) {
+            case LEFT:
+                return x;
+            case RIGHT:
+                float w = getTextWidth(textConfig.getFont(), textConfig.getFontSize(), text);
+                return x + allowedWidth - w;
+            case CENTER:
+                float halfW = getTextWidth(textConfig.getFont(), textConfig.getFontSize(), text) / 2;
+                float absoluteCenter = allowedWidth / 2 + x;
+                return absoluteCenter - halfW;
+            default:
+                throw new IllegalArgumentException("Align type " + align + " not implemented for text");
+        }
+    }
+
+    /**
      * Adds text of any length, will parse it if necessary.
      *
      * @param stream       stream
@@ -45,26 +69,11 @@ final class PdfBoxHelper {
             // only necessary if the font doesn't support unicode
             fixedText = fixString(text);
         }
+
         float nextLineY = nextLineY((int) textY, textConfig.getFontSize(), lineHeightD);
         try {
             String[] split = splitText(textConfig.getFont(), textConfig.getFontSize(), allowedWidth, fixedText);
-            float x;
-            switch (align) {
-                case LEFT:
-                    x = textX;
-                    break;
-                case RIGHT:
-                    float w = getTextWidth(textConfig.getFont(), textConfig.getFontSize(), split[0]);
-                    x = textX + allowedWidth - w;
-                    break;
-                case CENTER:
-                    float halfW = getTextWidth(textConfig.getFont(), textConfig.getFontSize(), split[0]) / 2;
-                    float absoluteCenter = allowedWidth / 2 + textX;
-                    x = absoluteCenter - halfW;
-                    break;
-                default:
-                    throw new IllegalStateException("Align type " + align + " not implemented for text");
-            }
+            float x = calculateAlignPosition(textX, align, textConfig, allowedWidth, text);
             addTextSimple(stream, textConfig, x, nextLineY, split[0]);
             if (!StringUtils.isEmpty(split[1])) {
                 return addText(stream, textConfig, textX, nextLineY, allowedWidth, lineHeightD, align, split[1]);
@@ -78,25 +87,154 @@ final class PdfBoxHelper {
         }
     }
 
+
+    private static String replaceBulletPoints(String str) {
+        for (int i = 0; i < str.length(); i++) {
+            if (str.charAt(i) == '-') {
+                return str.substring(0, i) + "•" + str.substring(i + 1);
+            }
+
+            if (str.charAt(i) != ' ' && str.charAt(i) != '\t') {
+                break;
+            }
+        }
+        return str;
+    }
+
+    private static class TextSegment {
+        private String text;
+        private PdfTextStyle style;
+
+        public TextSegment(String text, PdfTextStyle style) {
+            this.text = text;
+            this.style = style;
+        }
+
+        public String getText() {
+            return text;
+        }
+
+        public void setText(String text) {
+            this.text = text;
+        }
+
+        public PdfTextStyle getStyle() {
+            return style;
+        }
+
+        public void setStyle(PdfTextStyle style) {
+            this.style = style;
+        }
+    }
+
+    private static ArrayList<TextSegment> findTextSegments(PdfTextStyle bodyText, String str) {
+        ArrayList<TextSegment> segments = new ArrayList<>();
+
+        if(str.isEmpty()) {
+            segments.add(new TextSegment("", bodyText));
+            return segments;
+        }
+
+        //TODO: generalize bold font generation
+        PdfTextStyle boldText = new PdfTextStyle(bodyText.getFontSize(), PDType1Font.HELVETICA_BOLD, bodyText.getColor());
+
+        String temp = "";
+        for (int i = 0; i < str.length(); i++) {
+            char c = str.charAt(i);
+            if (c == '*' && i < str.length() - 1 && str.charAt(i + 1) != ' ') {
+                // greedily search for closing asterisk
+                int index = -1;
+
+                for (int j = i + 1; j < str.length(); j++) {
+                    if (str.charAt(j) == '*') {
+                        if (str.charAt(j - 1) == ' ') {
+                            index = -1;
+                            break;
+                        }
+                        index = j;
+                    }
+                }
+
+                if (index != -1) {
+                    if (!temp.isEmpty()) {
+                        segments.add(new TextSegment(temp, bodyText));
+                        temp = "";
+                    }
+                    segments.add(new TextSegment(str.substring(i + 1, index), boldText));
+                    i = index;
+                } else {
+                    temp += c;
+                }
+            } else {
+                temp += c;
+            }
+        }
+
+        if (!temp.isEmpty()) {
+            segments.add(new TextSegment(temp, bodyText));
+        }
+
+        return segments;
+    }
+
+    public static float addRichText(PDPageContentStream stream, PdfTextStyle textConfig, float textX, float textY, float allowedWidth, float lineHeightD, ReportAlignType align, String text) {
+        String[] lines = text.split(System.lineSeparator());
+
+        float currX = textX, currY = textY;
+        for(String line : lines) {
+            ArrayList<TextSegment> segments = findTextSegments(textConfig, replaceBulletPoints(line));
+            float totalLineWidth = 0;
+            for(TextSegment seg : segments) {
+                addText(stream, seg.getStyle(), currX, currY, allowedWidth, lineHeightD, align, seg.getText());
+                float segWidth =getTextWidth(seg.getStyle().getFont(), seg.getStyle().getFontSize(), seg.getText());
+                currX += segWidth;
+                totalLineWidth += segWidth;
+            }
+
+            // HACK
+            int extraLineBreaks = (int)(totalLineWidth / allowedWidth);
+
+            currY = nextLineY((int)currY, textConfig.getFontSize(), lineHeightD);
+            while(extraLineBreaks --> 0) {
+                currY = nextLineY((int)currY, textConfig.getFontSize(), lineHeightD);
+            }
+
+            currX = textX;
+        }
+
+        return currY;
+    }
+
     private static String fixString(final String original) {
         StringBuilder sb = new StringBuilder();
         try {
             for (char ch : original.toCharArray()) {
                 if (WinAnsiEncoding.INSTANCE.hasNameForCode(ch)) {
                     sb.append(ch);
-                } else if (ch == (char) 8220 || ch == (char) 8222) {
-                    sb.append('"');
-                } else if (ch == (char) 8230) {
-                    sb.append("...");
-                } else if (ch == (char) 8364) { // euro sign
-                    sb.append((char) 128); // see http://stackoverflow.com/questions/22260344/pdfbox-encode-symbol-currency-euro
                 } else {
-                    String decoded = Normalizer.normalize(String.valueOf(ch), Normalizer.Form.NFD);
-                    char decodedChar = decoded != null && decoded.length() > 0 ? decoded.charAt(0) : FALLBACK_CHAR;
-                    if (WinAnsiEncoding.INSTANCE.getCharacter(decodedChar) != null) {
-                        sb.append(decodedChar);
-                    } else {
-                        sb.append(FALLBACK_CHAR);
+                    switch (ch) {
+                        case (char) 8220:
+                        case (char) 8222:
+                            sb.append('"');
+                            break;
+                        case (char) 8230:
+                            sb.append("...");
+                            break;
+                        case (char) 8364: // euro sign
+                            sb.append((char) 128); // see http://stackoverflow.com/questions/22260344/pdfbox-encode-symbol-currency-euro
+                            break;
+                        case (char) 8226: // bullet point
+                            sb.append((char) 149);
+                            break;
+                        default:
+                            String decoded = Normalizer.normalize(String.valueOf(ch), Normalizer.Form.NFD);
+                            char decodedChar = decoded != null && decoded.length() > 0 ? decoded.charAt(0) : FALLBACK_CHAR;
+                            if (WinAnsiEncoding.INSTANCE.getCharacter(decodedChar) != null) {
+                                sb.append(decodedChar);
+                            } else {
+                                sb.append(FALLBACK_CHAR);
+                            }
+                            break;
                     }
                 }
             }
