@@ -18,6 +18,10 @@ public class ReportPadding extends AbstractReportElement implements ReportElemen
         this.padding = padding;
     }
 
+    public float getPadding() {
+        return padding;
+    }
+
     @Override
     public float print(PDDocument document, PDPageContentStream stream, int pageNumber, float startX, float startY, float allowedWidth) throws IOException {
         return startY - padding;

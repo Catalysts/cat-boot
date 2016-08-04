@@ -39,7 +39,11 @@ public class ReportCompositeElement extends AbstractReportElement {
     public float getHeight(float allowedWidth) {
         float height = 0;
         for (ReportElement element : elements) {
-            height += element.getHeight(allowedWidth);
+            if (element instanceof ReportPadding) {
+                height += ((ReportPadding) element).getPadding();
+            } else {
+                height += element.getHeight(allowedWidth);
+            }
         }
         return height;
     }
