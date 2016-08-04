@@ -147,8 +147,12 @@ class PdfReportBuilderImpl implements PdfReportBuilder {
 
     @Override
     public PdfReport buildReport(String fileName, PdfPageLayout pageConfig, Resource templateResource) throws IOException {
+        return buildReport(fileName, pageConfig, templateResource, new PDDocument());
+    }
+
+    public PdfReport buildReport(String fileName, PdfPageLayout pageConfig, Resource templateResource, PDDocument document) throws IOException {
         PdfReportStructure report = this.buildReport(pageConfig);
-        PDDocument document = new PdfReportGenerator().generate(pageConfig, templateResource, report);
+        document = new PdfReportGenerator().generate(pageConfig, templateResource, report, document);
         return new PdfReport(fileName, document);
     }
 
