@@ -32,17 +32,20 @@ class PdfReportGenerator {
         page.close();
     }
 
+    public PDDocument generate(PdfPageLayout pageConfig, Resource templateResource, PdfReportStructure report) throws IOException {
+        return generate(pageConfig, templateResource, report, new PDDocument());
+    }
+
     /**
      * @param pageConfig page config
      * @param report     the report to print
      * @return the printed PdfBox document
      * @throws java.io.IOException
      */
-    public PDDocument generate(PdfPageLayout pageConfig, Resource templateResource, PdfReportStructure report) throws IOException {
+    public PDDocument generate(PdfPageLayout pageConfig, Resource templateResource, PdfReportStructure report, PDDocument document) throws IOException {
 
         PrintData printData = new PrintData(templateResource, pageConfig);
         PrintCursor cursor = new PrintCursor();
-        PDDocument document = new PDDocument();
 
         breakPage(document, cursor, printData);
         float maxWidth = pageConfig.getUsableWidth();

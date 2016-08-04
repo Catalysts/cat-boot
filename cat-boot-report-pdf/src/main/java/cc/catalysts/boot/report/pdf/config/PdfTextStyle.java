@@ -1,6 +1,7 @@
 package cc.catalysts.boot.report.pdf.config;
 
 import org.apache.pdfbox.pdmodel.font.PDFont;
+import org.apache.pdfbox.pdmodel.font.PDTrueTypeFont;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.springframework.util.Assert;
 
@@ -11,6 +12,12 @@ public class PdfTextStyle {
     private int fontSize;
     private PDFont font;
     private Color color;
+
+    public PdfTextStyle(int fontSize, PDFont defaultFont, Color color) {
+        this.fontSize = fontSize;
+        this.font = defaultFont;
+        this.color = color;
+    }
 
     public PdfTextStyle(int fontSize, PDType1Font defaultFont, Color color) {
         this.fontSize = fontSize;
