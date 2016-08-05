@@ -113,12 +113,16 @@ public class ReportTable implements ReportElement {
         }
         float y = startY;
         int i = 0;
+
+        float lineY = 0;
         for (ReportElement[] line : elements) {
-            y = printLine(document, stream, pageNumber, startX, y, allowedWidth, line);
+            float lineHeight = getLineHeight(line, allowedWidth) + pdfStyleSheet.getLineDistance();
+            y = printLine(document, stream, pageNumber, startX, y, allowedWidth, line, lineY);
             placeFirstBorder = i == 0;
             placeLastBorder = i == elements.length - 1;
             placeBorders(stream, startY, y, startX, allowedWidth);
             i++;
+            lineY += lineHeight;
         }
         return y;
     }
@@ -175,7 +179,7 @@ public class ReportTable implements ReportElement {
         return yPos;
     }
 
-    private float printLine(PDDocument document, PDPageContentStream stream, int pageNumber, float startX, float y, float allowedWidth, ReportElement[] line) throws IOException {
+    private float printLine(PDDocument document, PDPageContentStream stream, int pageNumber, float startX, float y, float allowedWidth, ReportElement[] line, float previousLineHeight) throws IOException {
         float x = startX + cellPaddingX;
         float minY = y;
         for (int i = 0; i < cellWidths.length; i++) {
@@ -196,7 +200,6 @@ public class ReportTable implements ReportElement {
                 }
                 intents.addAll(line[i].getImageIntents());
                 minY = Math.min(minY, yi);
-
             }
             x += cellWidths[i] * allowedWidth;
         }
