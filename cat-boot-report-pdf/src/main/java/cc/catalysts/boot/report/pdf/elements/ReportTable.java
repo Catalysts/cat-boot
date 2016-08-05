@@ -2,6 +2,7 @@ package cc.catalysts.boot.report.pdf.elements;
 
 import cc.catalysts.boot.report.pdf.config.PdfStyleSheet;
 import cc.catalysts.boot.report.pdf.utils.ReportAlignType;
+import cc.catalysts.boot.report.pdf.utils.ReportVerticalAlignType;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.edit.PDPageContentStream;
 
@@ -24,6 +25,7 @@ public class ReportTable implements ReportElement {
     private final PdfStyleSheet pdfStyleSheet;
 
     private float[] cellWidths;
+    private ReportVerticalAlignType[] cellAligns;
     private ReportElement[][] elements;
     private ReportElement[] title;
     private boolean border = DEFAULT_BORDER;
@@ -60,6 +62,8 @@ public class ReportTable implements ReportElement {
             throw new IllegalArgumentException("Title must be null, or the same size as elements");
         }
         this.cellWidths = cellWidths;
+        this.cellAligns = new ReportVerticalAlignType[cellWidths.length];
+        Arrays.fill(cellAligns, ReportVerticalAlignType.TOP);
         this.elements = elements;
         this.title = title;
     }
@@ -157,15 +161,33 @@ public class ReportTable implements ReportElement {
         for (int i = 0; i < cellWidths.length; i++) {
             if (line[i] != null) {
                 float yi = 0;
+
+                float yPos = 0;
+                float lineHeight = getLineHeight(line, allowedWidth);
+                switch (cellAligns[i]) {
+                    case TOP:
+                        yPos = y - cellPaddingY;
+                        break;
+                    case BOTTOM:
+                        yPos = y - cellPaddingY - lineHeight  + line[i].getHeight(cellWidths[i] * allowedWidth - 2 * cellPaddingX);
+                        break;
+                    case MIDDLE:
+                        yPos = y - cellPaddingY - lineHeight / 2 + line[i].getHeight(cellWidths[i] * allowedWidth - 2 * cellPaddingX) / 2 ;
+                        break;
+                    default:
+                        throw new IllegalArgumentException("Vertical align type " + cellAligns[i] + " not implemented for tables");
+                }
+
                 if (line[i] instanceof ReportImage) {
                     ReportImage reportImage = (ReportImage) line[i];
                     float initialWidth = reportImage.getWidth();
                     reportImage.setWidth(cellWidths[i] * allowedWidth - cellPaddingX * 2);
                     reportImage.setHeight(reportImage.getHeight() * (cellWidths[i] * allowedWidth - cellPaddingX * 2) / initialWidth);
-                    yi = line[i].print(document, stream, pageNumber, x, y - cellPaddingY, cellWidths[i] * allowedWidth - cellPaddingX * 2);
-                    reportImage.printImage(document, pageNumber, x, y - cellPaddingY);
+
+                    yi = line[i].print(document, stream, pageNumber, x, yPos, cellWidths[i] * allowedWidth - cellPaddingX * 2);
+                    reportImage.printImage(document, pageNumber, x, yPos);
                 }else {
-                    yi = line[i].print(document, stream, pageNumber, x, y - cellPaddingY, cellWidths[i] * allowedWidth - cellPaddingX * 2);
+                    yi = line[i].print(document, stream, pageNumber, x, yPos, cellWidths[i] * allowedWidth - cellPaddingX * 2);
                 }
                 intents.addAll(line[i].getImageIntents());
                 minY = Math.min(minY, yi);
@@ -374,6 +396,10 @@ public class ReportTable implements ReportElement {
                 ((ReportTextBox) element[column]).setAlign(alignType);
             }
         }
+    }
+
+    public void setVerticalAlignInColumn(int column, ReportVerticalAlignType alignType) {
+        cellAligns[column] = alignType;
     }
 
     public ReportElement[][] getElements() {
