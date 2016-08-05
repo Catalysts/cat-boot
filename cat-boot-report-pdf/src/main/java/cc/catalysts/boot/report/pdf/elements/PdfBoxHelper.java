@@ -281,14 +281,9 @@ final class PdfBoxHelper {
     }
 
     public static String[] splitText(PDFont font, int fontSize, float allowedWidth, String text) {
-        String endPart;
+        String endPart = "";
         String shortenedText = text;
-        if (shortenedText.length() > MAX_CHARS_IN_LINE) {
-            endPart = shortenedText.substring(MAX_CHARS_IN_LINE);
-            shortenedText = shortenedText.substring(0, MAX_CHARS_IN_LINE);
-        } else {
-            endPart = "";
-        }
+
         if (getTextWidth(font, fontSize, shortenedText) <= allowedWidth && shortenedText.indexOf((char) 13) == -1) {
             return new String[]{shortenedText, null};
         }
