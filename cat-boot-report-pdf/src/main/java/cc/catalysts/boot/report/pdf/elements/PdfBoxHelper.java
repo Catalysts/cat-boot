@@ -226,6 +226,9 @@ final class PdfBoxHelper {
                         case (char) 8226: // bullet point
                             sb.append((char) 149);
                             break;
+                        case (char) 8211: // endash
+                            sb.append((char) 150);
+                            break;
                         default:
                             String decoded = Normalizer.normalize(String.valueOf(ch), Normalizer.Form.NFD);
                             char decodedChar = decoded != null && decoded.length() > 0 ? decoded.charAt(0) : FALLBACK_CHAR;
