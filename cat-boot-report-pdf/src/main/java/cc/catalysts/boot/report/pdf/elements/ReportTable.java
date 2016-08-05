@@ -68,7 +68,9 @@ public class ReportTable implements ReportElement {
         this.title = title;
     }
 
-    public void setNoInnerBorders(boolean noInnerBorders) { this.noInnerBorders = noInnerBorders; }
+    public void setNoInnerBorders(boolean noInnerBorders) {
+        this.noInnerBorders = noInnerBorders;
+    }
 
     public void setNoBottomBorder(boolean border) {
         this.noBottomBorder = border;
@@ -127,19 +129,18 @@ public class ReportTable implements ReportElement {
             stream.setLineWidth(0.3f);
             float y0 = startY - BORDER_Y_DELTA;
             float y1 = endY - (BORDER_Y_DELTA + 1);
-            if (!noInnerBorders){
-                if (!noTopBorder || noTopBorder && !placeFirstBorder){
+            if (!noInnerBorders) {
+                if (!noTopBorder || noTopBorder && !placeFirstBorder) {
                     stream.drawLine(x, y0, x + allowedWidth, y0);
                 }
-                if (!noBottomBorder || noBottomBorder && !placeLastBorder){
+                if (!noBottomBorder || noBottomBorder && !placeLastBorder) {
                     stream.drawLine(x, y1, x + allowedWidth, y1);
                 }
-            }
-            else{
-                if (!noTopBorder && placeFirstBorder){
+            } else {
+                if (!noTopBorder && placeFirstBorder) {
                     stream.drawLine(x, y0, x + allowedWidth, y0);
                 }
-                if (!noBottomBorder && placeLastBorder){
+                if (!noBottomBorder && placeLastBorder) {
                     stream.drawLine(x, y1, x + allowedWidth, y1);
                 }
             }
@@ -155,28 +156,32 @@ public class ReportTable implements ReportElement {
         }
     }
 
+    private float calculateVerticalAlignment(ReportElement[] line, int elementIndex, float y, float allowedWidth) {
+        float yPos = 0;
+        float lineHeight = getLineHeight(line, allowedWidth);
+        switch (cellAligns[elementIndex]) {
+            case TOP:
+                yPos = y - cellPaddingY;
+                break;
+            case BOTTOM:
+                yPos = y - cellPaddingY - lineHeight + line[elementIndex].getHeight(cellWidths[elementIndex] * allowedWidth - 2 * cellPaddingX);
+                break;
+            case MIDDLE:
+                yPos = y - cellPaddingY - lineHeight / 2 + line[elementIndex].getHeight(cellWidths[elementIndex] * allowedWidth - 2 * cellPaddingX) / 2;
+                break;
+            default:
+                throw new IllegalArgumentException("Vertical align type " + cellAligns[elementIndex] + " not implemented for tables");
+        }
+        return yPos;
+    }
+
     private float printLine(PDDocument document, PDPageContentStream stream, int pageNumber, float startX, float y, float allowedWidth, ReportElement[] line) throws IOException {
         float x = startX + cellPaddingX;
         float minY = y;
         for (int i = 0; i < cellWidths.length; i++) {
             if (line[i] != null) {
                 float yi = 0;
-
-                float yPos = 0;
-                float lineHeight = getLineHeight(line, allowedWidth);
-                switch (cellAligns[i]) {
-                    case TOP:
-                        yPos = y - cellPaddingY;
-                        break;
-                    case BOTTOM:
-                        yPos = y - cellPaddingY - lineHeight  + line[i].getHeight(cellWidths[i] * allowedWidth - 2 * cellPaddingX);
-                        break;
-                    case MIDDLE:
-                        yPos = y - cellPaddingY - lineHeight / 2 + line[i].getHeight(cellWidths[i] * allowedWidth - 2 * cellPaddingX) / 2 ;
-                        break;
-                    default:
-                        throw new IllegalArgumentException("Vertical align type " + cellAligns[i] + " not implemented for tables");
-                }
+                float yPos = calculateVerticalAlignment(line, i, y, allowedWidth);
 
                 if (line[i] instanceof ReportImage) {
                     ReportImage reportImage = (ReportImage) line[i];
@@ -186,7 +191,7 @@ public class ReportTable implements ReportElement {
 
                     yi = line[i].print(document, stream, pageNumber, x, yPos, cellWidths[i] * allowedWidth - cellPaddingX * 2);
                     reportImage.printImage(document, pageNumber, x, yPos);
-                }else {
+                } else {
                     yi = line[i].print(document, stream, pageNumber, x, yPos, cellWidths[i] * allowedWidth - cellPaddingX * 2);
                 }
                 intents.addAll(line[i].getImageIntents());
@@ -212,9 +217,13 @@ public class ReportTable implements ReportElement {
     }
 
     @Override
-    public boolean isSplitable() { return isSplitable; }
+    public boolean isSplitable() {
+        return isSplitable;
+    }
 
-    public void setSplitable(boolean isSplitable) { this.isSplitable = isSplitable; }
+    public void setSplitable(boolean isSplitable) {
+        this.isSplitable = isSplitable;
+    }
 
     @Override
     public float getFirstSegmentHeight(float allowedWidth) {
@@ -410,8 +419,12 @@ public class ReportTable implements ReportElement {
         return title;
     }
 
-    public float[] getCellWidths() { return cellWidths; }
+    public float[] getCellWidths() {
+        return cellWidths;
+    }
 
-    public PdfStyleSheet getPdfStyleSheet() { return pdfStyleSheet; }
+    public PdfStyleSheet getPdfStyleSheet() {
+        return pdfStyleSheet;
+    }
 
 }

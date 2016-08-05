@@ -35,9 +35,9 @@ public class Demo2Test {
         styleSheet.setBodyText(new PdfTextStyle(10, PDType1Font.HELVETICA, Color.BLACK));
 
         BufferedImage img = null;
-        try{
+        try {
             img = ImageIO.read(new ClassPathResource("/github_icon.png").getInputStream());
-        }catch(IOException e){
+        } catch (IOException e) {
 
         }
 
@@ -72,7 +72,10 @@ public class Demo2Test {
         pdfReport.getDocument().save("demo2.pdf");
 
         final File target = new File("pdf-out2");
-        Assert.assertTrue(target.mkdirs());
+
+        if (!target.exists()) {
+            Assert.assertTrue(target.mkdirs());
+        }
         pdfReportFilePrinter.print(pdfReport, target);
 
     }
