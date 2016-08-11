@@ -15,17 +15,10 @@ import java.util.Map;
 /**
  * Created by cboehmwalder on 04.08.2016.
  */
-public class ReportRichTextBox implements ReportElement {
-    private PdfTextStyle textConfig;
-    private String text;
-    private final float lineDistance;
-    private ReportAlignType align = ReportAlignType.LEFT;
-    private Map<CacheKey, String[]> cache = new HashMap<CacheKey, String[]>();
+public class ReportRichTextBox extends ReportTextBox {
 
     public ReportRichTextBox(PdfTextStyle textConfig, float lineDistance, String text) {
-        this.textConfig = textConfig;
-        this.text = text == null ? "" : text;
-        this.lineDistance = lineDistance;
+        super(textConfig, lineDistance, text);
     }
 
     /**
@@ -35,37 +28,12 @@ public class ReportRichTextBox implements ReportElement {
      * @param text   text of text box
      */
     public ReportRichTextBox(ReportRichTextBox object, String text) {
-        this.text = text;
-        this.textConfig = object.textConfig;
-        this.lineDistance = object.lineDistance;
-        this.align = object.align;
+        super(object, text);
     }
 
     @Override
     public float print(PDDocument document, PDPageContentStream stream, int pageNumber, float textX, float textY, float allowedWidth) {
         return PdfBoxHelper.addRichText(stream, textConfig, textX, textY, allowedWidth, lineDistance, align, text);
-    }
-
-    @Override
-    public float getHeight(float allowedWidth) {
-        int height = 0;
-        String currText = text;
-        while (!StringUtils.isEmpty(currText)) {
-            String[] split = split(allowedWidth, currText);
-            height += getFirstSegmentHeight(allowedWidth) + lineDistance;
-            currText = split[1];
-        }
-        return height;
-    }
-
-    @Override
-    public boolean isSplitable() {
-        return true;
-    }
-
-    @Override
-    public float getFirstSegmentHeight(float allowedWidth) {
-        return textConfig.getFontSize();
     }
 
     @Override
@@ -95,76 +63,5 @@ public class ReportRichTextBox implements ReportElement {
         ReportElement firstPart = new ReportRichTextBox(this, sb.toString());
         ReportElement nextLines = StringUtils.isEmpty(currText) ? null : new ReportRichTextBox(this, currText);
         return new ReportElement[]{firstPart, nextLines};
-    }
-
-    @Override
-    public Collection<ReportImage.ImagePrintIntent> getImageIntents() {
-        return Collections.emptyList();
-    }
-
-    private String[] split(float allowedWidth, String text) {
-        if (text == null) {
-            return new String[]{null, null};
-        }
-        CacheKey key = new CacheKey(textConfig.getFont(), textConfig.getFontSize(), allowedWidth, text);
-        if (cache.containsKey(key)) {
-            return cache.get(key);
-        } else {
-            String[] split = PdfBoxHelper.splitText(textConfig.getFont(), textConfig.getFontSize(), allowedWidth, text);
-            cache.put(key, split);
-            return split;
-        }
-    }
-
-    public ReportAlignType getAlign() {
-        return align;
-    }
-
-    public void setAlign(ReportAlignType align) {
-        this.align = align;
-    }
-
-    public String getText() {
-        return text;
-    }
-
-    public void setText(String text) { this.text = text; }
-
-    private static final class CacheKey {
-        private PDFont font;
-        private int fontSize;
-        private float width;
-        private String text;
-
-        private CacheKey(PDFont font, int fontSize, float width, String text) {
-            this.font = font;
-            this.fontSize = fontSize;
-            this.width = width;
-            this.text = text;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-
-            CacheKey cacheKey = (CacheKey) o;
-
-            if (!text.equals(cacheKey.text)) return false;
-            if (fontSize != cacheKey.fontSize) return false;
-            if (Float.compare(cacheKey.width, width) != 0) return false;
-            if (!font.equals(cacheKey.font)) return false;
-
-            return true;
-        }
-
-        @Override
-        public int hashCode() {
-            int result = font.hashCode();
-            result = 31 * result + fontSize;
-            result = 31 * result + text.hashCode();
-            result = 31 * result + (width != +0.0f ? Float.floatToIntBits(width) : 0);
-            return result;
-        }
     }
 }

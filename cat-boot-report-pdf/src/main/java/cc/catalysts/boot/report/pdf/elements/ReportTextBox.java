@@ -19,11 +19,11 @@ import java.util.Map;
  */
 public class ReportTextBox implements ReportElement {
 
-    private PdfTextStyle textConfig;
-    private String text;
-    private final float lineDistance;
-    private ReportAlignType align = ReportAlignType.LEFT;
-    private Map<CacheKey, String[]> cache = new HashMap<CacheKey, String[]>();
+    protected PdfTextStyle textConfig;
+    protected String text;
+    protected final float lineDistance;
+    protected ReportAlignType align = ReportAlignType.LEFT;
+    protected Map<CacheKey, String[]> cache = new HashMap<CacheKey, String[]>();
 
     public ReportTextBox(PdfTextStyle textConfig, float lineDistance, String text) {
         this.textConfig = textConfig;
@@ -46,7 +46,7 @@ public class ReportTextBox implements ReportElement {
 
     @Override
     public float print(PDDocument document, PDPageContentStream stream, int pageNumber, float textX, float textY, float allowedWidth) {
-        return PdfBoxHelper.addText(stream, textConfig, textX, textY, allowedWidth, lineDistance, align, text);
+        return PdfBoxHelper.addTextWithLineBreaks(stream, textConfig, textX, textY, allowedWidth, lineDistance, align, text);
     }
 
     @Override
@@ -95,6 +95,7 @@ public class ReportTextBox implements ReportElement {
                 break;
             }
         }
+
         ReportElement firstPart = new ReportTextBox(this, sb.toString());
         ReportElement nextLines = StringUtils.isEmpty(currText) ? null : new ReportTextBox(this, currText);
         return new ReportElement[]{firstPart, nextLines};
@@ -105,7 +106,7 @@ public class ReportTextBox implements ReportElement {
         return Collections.emptyList();
     }
 
-    private String[] split(float allowedWidth, String text) {
+    protected String[] split(float allowedWidth, String text) {
         if (text == null) {
             return new String[]{null, null};
         }
