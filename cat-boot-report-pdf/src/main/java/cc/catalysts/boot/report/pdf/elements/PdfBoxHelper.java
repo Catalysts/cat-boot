@@ -100,6 +100,14 @@ final class PdfBoxHelper {
         return addText(stream, textConfig, textX, textX, textY, allowedWidth, lineHeightD, align, text, false);
     }
 
+    private static String generalizeLineSeparators(String text) {
+        String generalizedString = text.replace("\r\n", "\n");
+        if (System.lineSeparator().equals("\r\n")) {
+            generalizedString = generalizedString.replace("\n", "\r\n");
+        }
+        return generalizedString;
+    }
+
 
     private static String replaceBulletPoints(String str) {
         for (int i = 0; i < str.length(); i++) {
@@ -227,7 +235,7 @@ final class PdfBoxHelper {
     }
 
     public static float addRichText(PDPageContentStream stream, PdfTextStyle textConfig, float textX, float textY, float allowedWidth, float lineHeightD, ReportAlignType align, String text) {
-        String[] lines = text.split(System.lineSeparator());
+        String[] lines = generalizeLineSeparators(text).split(System.lineSeparator());
 
         float currX = textX, currY = textY;
         for (String line : lines) {
@@ -252,6 +260,17 @@ final class PdfBoxHelper {
 
             currY = nextLineY((int) currY, textConfig.getFontSize(), lineHeightD);
             currX = textX;
+        }
+
+        return currY;
+    }
+
+    public static float addTextWithLineBreaks(PDPageContentStream stream, PdfTextStyle textConfig, float textX, float textY, float allowedWidth, float lineHeightD, ReportAlignType align, String text) {
+        String[] lines = generalizeLineSeparators(text).split(System.lineSeparator());
+
+        float currY = textY;
+        for (String line : lines) {
+            currY = addText(stream, textConfig, textX, currY, allowedWidth, lineHeightD, align, line);
         }
 
         return currY;
