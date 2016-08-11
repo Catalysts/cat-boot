@@ -4,7 +4,6 @@ import cc.catalysts.boot.report.pdf.config.PdfTextStyle;
 import cc.catalysts.boot.report.pdf.exception.PdfBoxHelperException;
 import cc.catalysts.boot.report.pdf.utils.ReportAlignType;
 import org.apache.pdfbox.encoding.WinAnsiEncoding;
-import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.edit.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.font.PDFont;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
@@ -12,8 +11,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 
+import java.io.IOException;
 import java.text.Normalizer;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -22,9 +23,8 @@ final class PdfBoxHelper {
 
     private static final Logger LOG = LoggerFactory.getLogger(PdfBoxHelper.class);
     private static final char FALLBACK_CHAR = '?';
+    private static float lastTextEndX = 0;
 
-    //for optimization
-    private static final int MAX_CHARS_IN_LINE = 200;
 
     private PdfBoxHelper() {
     }
@@ -32,7 +32,7 @@ final class PdfBoxHelper {
     /**
      * Calculates the position whee a string needs to be drawn in order to conform to the alignment
      *
-     * @param x     the desired position, will be corrected as necessary
+     * @param x the desired position, will be corrected as necessary
      * @return the corrected position
      */
     private static float calculateAlignPosition(float x, ReportAlignType align, PdfTextStyle textConfig, float allowedWidth, String text) {
@@ -54,16 +54,18 @@ final class PdfBoxHelper {
     /**
      * Adds text of any length, will parse it if necessary.
      *
-     * @param stream       stream
-     * @param textConfig   text config
-     * @param textX        starting X position of text
-     * @param textY        starting Y position of text
-     * @param allowedWidth max width of text (wher to wrap)
-     * @param lineHeightD  line height delta of text (line height will be: fontSize + this)
-     * @param text         text
+     * @param stream         stream
+     * @param textConfig     text config
+     * @param firstLineTextX starting X position of the first line of text (neccessary for richtextboxes)
+     * @param textX          starting X position of text
+     * @param textY          starting Y position of text
+     * @param allowedWidth   max width of text (where to wrap)
+     * @param lineHeightD    line height delta of text (line height will be: fontSize + this)
+     * @param text           text
+     * @param underline      true to underline the text
      * @return ending Y position of this line
      */
-    public static float addText(PDPageContentStream stream, PdfTextStyle textConfig, float textX, float textY, float allowedWidth, float lineHeightD, ReportAlignType align, String text) {
+    public static float addText(PDPageContentStream stream, PdfTextStyle textConfig, float firstLineTextX, float textX, float textY, float allowedWidth, float lineHeightD, ReportAlignType align, String text, boolean underline) {
         String fixedText = text;
         if (textConfig.getFont() == null || textConfig.getFont().getFontEncoding() instanceof WinAnsiEncoding) {
             // only necessary if the font doesn't support unicode
@@ -72,19 +74,30 @@ final class PdfBoxHelper {
 
         float nextLineY = nextLineY((int) textY, textConfig.getFontSize(), lineHeightD);
         try {
-            String[] split = splitText(textConfig.getFont(), textConfig.getFontSize(), allowedWidth, fixedText);
-            float x = calculateAlignPosition(textX, align, textConfig, allowedWidth, text);
-            addTextSimple(stream, textConfig, x, nextLineY, split[0]);
+            String[] split = splitText(textConfig.getFont(), textConfig.getFontSize(), allowedWidth - (firstLineTextX - textX), fixedText);
+            float x = calculateAlignPosition(firstLineTextX, align, textConfig, allowedWidth, text);
+            if (!underline) {
+                addTextSimple(stream, textConfig, x, nextLineY, split[0]);
+            } else {
+                addTextSimpleUnderlined(stream, textConfig, x, nextLineY, split[0]);
+            }
             if (!StringUtils.isEmpty(split[1])) {
-                return addText(stream, textConfig, textX, nextLineY, allowedWidth, lineHeightD, align, split[1]);
+                return addText(stream, textConfig, textX, textX, nextLineY, allowedWidth, lineHeightD, align, split[1], underline);
             } else {
                 return nextLineY;
             }
 
-        } catch (Exception e)  {
+        } catch (Exception e) {
             LOG.warn("Could not add text: " + e.getClass() + " - " + e.getMessage());
             return textY;
         }
+    }
+
+    /**
+     * Compatibility overload for {@link #addText}.
+     */
+    public static float addText(PDPageContentStream stream, PdfTextStyle textConfig, float textX, float textY, float allowedWidth, float lineHeightD, ReportAlignType align, String text) {
+        return addText(stream, textConfig, textX, textX, textY, allowedWidth, lineHeightD, align, text, false);
     }
 
 
@@ -104,10 +117,25 @@ final class PdfBoxHelper {
     private static class TextSegment {
         private String text;
         private PdfTextStyle style;
+        private boolean underlined;
 
         public TextSegment(String text, PdfTextStyle style) {
+            this(text, style, false);
+        }
+
+        public TextSegment(String text, PdfTextStyle style, boolean underline) {
             this.text = text;
             this.style = style;
+            this.underlined = underline;
+        }
+
+
+        public boolean isUnderlined() {
+            return underlined;
+        }
+
+        public void setUnderlined(boolean underlined) {
+            this.underlined = underlined;
         }
 
         public String getText() {
@@ -127,13 +155,16 @@ final class PdfBoxHelper {
         }
     }
 
-    private static ArrayList<TextSegment> findTextSegments(PdfTextStyle bodyText, String str) {
-        ArrayList<TextSegment> segments = new ArrayList<>();
+    private static List<TextSegment> findTextSegments(PdfTextStyle bodyText, String str) {
+        List<TextSegment> segments = new ArrayList<>();
 
-        if(str.isEmpty()) {
+        if (str.isEmpty()) {
             segments.add(new TextSegment("", bodyText));
             return segments;
         }
+
+        List<Character> markdownChars = Arrays.asList('*', '+');
+        List<Character> whiteSpaces = Arrays.asList(' ', '\r', '\n', '\t');
 
         //TODO: generalize bold font generation
         PdfTextStyle boldText = new PdfTextStyle(bodyText.getFontSize(), PDType1Font.HELVETICA_BOLD, bodyText.getColor());
@@ -141,37 +172,55 @@ final class PdfBoxHelper {
         String temp = "";
         for (int i = 0; i < str.length(); i++) {
             char c = str.charAt(i);
-            if (c == '*' && i < str.length() - 1 && str.charAt(i + 1) != ' ') {
-                // greedily search for closing asterisk
-                int index = -1;
 
-                for (int j = i + 1; j < str.length(); j++) {
-                    if (str.charAt(j) == '*') {
-                        if (str.charAt(j - 1) == ' ') {
-                            index = -1;
+            // markdown character must not be followed by a whitespace character
+            if (markdownChars.contains(c) && i < str.length() - 1 && !whiteSpaces.contains(str.charAt(i + 1))) {
+                if (temp.length() > 0) {
+                    // remove trailing spaces. they will be added afterwards
+                    segments.add(new TextSegment(temp.replaceAll("\\s+$", ""), bodyText));
+                }
+                temp = "";
+
+                int endIndex = -1;
+                for (int end = i + 1; end < str.length(); end++) {
+                    if (str.charAt(end) == c) {
+                        if (whiteSpaces.contains(str.charAt(end - 1))) {
+                            // for strings like '*not bold text *' we need to quit here
+                            temp += c;
                             break;
                         }
-                        index = j;
+                        endIndex = end;
+                        break;
                     }
                 }
 
-                if (index != -1) {
-                    if (!temp.isEmpty()) {
-                        segments.add(new TextSegment(temp, bodyText));
-                        temp = "";
-                    }
-                    segments.add(new TextSegment(str.substring(i + 1, index), boldText));
-                    i = index;
-                } else {
-                    temp += c;
+                if (endIndex == -1) {
+                    continue;
                 }
+
+                String stringSegment = str.substring(i + 1, endIndex);
+                List<TextSegment> subSegments = findTextSegments(bodyText, stringSegment);
+                segments.addAll(subSegments);
+
+                // manipulate segments accordingly
+                for (TextSegment segment : subSegments) {
+                    switch (c) {
+                        case '*':
+                            segment.setStyle(boldText);
+                            break;
+                        case '+':
+                            segment.setUnderlined(true);
+                            break;
+                    }
+                }
+
+                i = endIndex;
             } else {
                 temp += c;
             }
         }
-
-        if (!temp.isEmpty()) {
-            segments.add(new TextSegment(temp, bodyText));
+        if (temp.length() > 0) {
+            segments.add(new TextSegment(temp.replaceAll("\\s+$", ""), bodyText));
         }
 
         return segments;
@@ -181,24 +230,27 @@ final class PdfBoxHelper {
         String[] lines = text.split(System.lineSeparator());
 
         float currX = textX, currY = textY;
-        for(String line : lines) {
-            ArrayList<TextSegment> segments = findTextSegments(textConfig, replaceBulletPoints(line));
-            float totalLineWidth = 0;
-            for(TextSegment seg : segments) {
-                addText(stream, seg.getStyle(), currX, currY, allowedWidth, lineHeightD, align, seg.getText());
-                float segWidth =getTextWidth(seg.getStyle().getFont(), seg.getStyle().getFontSize(), seg.getText());
-                currX += segWidth;
-                totalLineWidth += segWidth;
+        for (String line : lines) {
+            List<TextSegment> segments = findTextSegments(textConfig, replaceBulletPoints(line));
+
+            int i = 0;
+            for (TextSegment seg : segments) {
+                float absoluteLineHeight = -nextLineY(0, seg.getStyle().getFontSize(), lineHeightD);
+
+                float endY = addText(stream, seg.getStyle(), currX, textX, currY, allowedWidth, lineHeightD, align, seg.getText(), seg.isUnderlined());
+                currY = endY + absoluteLineHeight;
+                currX = lastTextEndX;
+
+                // due to some strange bug some spaces between text segments are trimmed so we have to add it manually
+                boolean underline = (seg.isUnderlined() && i < segments.size() && segments.get(i + 1).isUnderlined());
+                endY = addText(stream, seg.getStyle(), currX, textX, currY, allowedWidth, lineHeightD, align, " ", underline);
+                currX = lastTextEndX;
+                currY = endY + absoluteLineHeight;
+
+                i++;
             }
 
-            // HACK
-            int extraLineBreaks = (int)(totalLineWidth / allowedWidth);
-
-            currY = nextLineY((int)currY, textConfig.getFontSize(), lineHeightD);
-            while(extraLineBreaks --> 0) {
-                currY = nextLineY((int)currY, textConfig.getFontSize(), lineHeightD);
-            }
-
+            currY = nextLineY((int) currY, textConfig.getFontSize(), lineHeightD);
             currX = textX;
         }
 
@@ -264,8 +316,23 @@ final class PdfBoxHelper {
             stream.moveTextPositionByAmount(textX, textY);
             stream.drawString(text);
             stream.endText();
+
+            lastTextEndX = textX + getTextWidth(textConfig.getFont(), textConfig.getFontSize(), text);
         } catch (Exception e) {
             LOG.warn("Could not add text: " + e.getClass() + " - " + e.getMessage());
+        }
+    }
+
+    public static void addTextSimpleUnderlined(PDPageContentStream stream, PdfTextStyle textConfig, float textX, float textY, String text) {
+        addTextSimple(stream, textConfig, textX, textY, text);
+        try {
+            float lineOffset = textConfig.getFontSize() / 8F;
+            stream.setStrokingColor(textConfig.getColor());
+            stream.setLineWidth(0.5F);
+            stream.drawLine(textX, textY - lineOffset, textX + getTextWidth(textConfig.getFont(), textConfig.getFontSize(), text), textY - lineOffset);
+            stream.stroke();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
