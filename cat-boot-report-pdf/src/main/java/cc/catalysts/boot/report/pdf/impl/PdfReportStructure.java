@@ -78,7 +78,7 @@ public class PdfReportStructure {
         if (baseElement instanceof ReportTextBox) {
             ReportTextBox oldFooterTextBox = (ReportTextBox) baseElement;
             String newText = oldFooterTextBox.getText().replaceAll("%PAGE_NUMBER%", pageNo + 1 + "").replaceAll("%TOTAL_PAGES%", totalPages + "");
-            return new ReportTextBox(oldFooterTextBox, newText);
+            return oldFooterTextBox.clone(newText);
         } else if (baseElement instanceof ReportTable) {
             ReportTable baseTable = (ReportTable) baseElement;
             ReportElement[][] oldElements = baseTable.getElements();
