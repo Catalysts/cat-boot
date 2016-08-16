@@ -250,7 +250,7 @@ final class PdfBoxHelper {
                 currX = lastTextEndX;
 
                 // due to some strange bug some spaces between text segments are trimmed so we have to add it manually
-                boolean underline = (seg.isUnderlined() && i < segments.size() && segments.get(i + 1).isUnderlined());
+                boolean underline = (seg.isUnderlined() && i + 1 < segments.size() && segments.get(i + 1).isUnderlined());
                 endY = addText(stream, seg.getStyle(), currX, textX, currY, allowedWidth, lineHeightD, align, " ", underline);
                 currX = lastTextEndX;
                 currY = endY + absoluteLineHeight;
