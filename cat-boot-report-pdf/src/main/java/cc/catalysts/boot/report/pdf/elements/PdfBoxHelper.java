@@ -75,7 +75,7 @@ final class PdfBoxHelper {
         float nextLineY = nextLineY((int) textY, textConfig.getFontSize(), lineHeightD);
         try {
             String[] split = splitText(textConfig.getFont(), textConfig.getFontSize(), allowedWidth - (firstLineTextX - textX), fixedText);
-            float x = calculateAlignPosition(firstLineTextX, align, textConfig, allowedWidth, text);
+            float x = calculateAlignPosition(firstLineTextX, align, textConfig, allowedWidth, split[0]);
             if (!underline) {
                 addTextSimple(stream, textConfig, x, nextLineY, split[0]);
             } else {
