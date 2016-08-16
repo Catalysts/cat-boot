@@ -44,6 +44,10 @@ public class ReportTextBox implements ReportElement {
         this.align = object.align;
     }
 
+    public ReportTextBox clone(String newString) {
+        return new ReportTextBox(this, newString);
+    }
+
     @Override
     public float print(PDDocument document, PDPageContentStream stream, int pageNumber, float textX, float textY, float allowedWidth) {
         return PdfBoxHelper.addTextWithLineBreaks(stream, textConfig, textX, textY, allowedWidth, lineDistance, align, text);
