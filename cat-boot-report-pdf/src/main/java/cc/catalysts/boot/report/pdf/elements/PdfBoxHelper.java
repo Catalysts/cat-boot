@@ -10,9 +10,7 @@ import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
-import org.w3c.dom.Text;
 
-import javax.naming.OperationNotSupportedException;
 import java.io.IOException;
 import java.text.Normalizer;
 import java.util.ArrayList;
@@ -25,14 +23,13 @@ final class PdfBoxHelper {
 
     private static final Logger LOG = LoggerFactory.getLogger(PdfBoxHelper.class);
     private static final char FALLBACK_CHAR = '?';
-    private static float lastTextEndX = 0;
 
 
     private PdfBoxHelper() {
     }
 
     /**
-     * Calculates the position whee a string needs to be drawn in order to conform to the alignment
+     * Calculates the position where a string needs to be drawn in order to conform to the alignment
      *
      * @param x the desired position, will be corrected as necessary
      * @return the corrected position
@@ -53,7 +50,7 @@ final class PdfBoxHelper {
         }
     }
 
-    private static float calculateAlignPosition(float x, ReportAlignType align, float totalWidth, float allowedWidth) {
+    private static float calculateAlignBlockPosition(float x, ReportAlignType align, float totalWidth, float allowedWidth) {
         switch (align) {
             case LEFT:
                 return x;
@@ -71,14 +68,14 @@ final class PdfBoxHelper {
     /**
      * Adds text of any length, will parse it if necessary.
      *
-     * @param stream         stream
-     * @param textConfig     text config
-     * @param textX          starting X position of text
-     * @param textY          starting Y position of text
-     * @param allowedWidth   max width of text (where to wrap)
-     * @param lineHeightD    line height delta of text (line height will be: fontSize + this)
-     * @param text           text
-     * @param underline      true to underline the text
+     * @param stream       stream
+     * @param textConfig   text config
+     * @param textX        starting X position of text
+     * @param textY        starting Y position of text
+     * @param allowedWidth max width of text (where to wrap)
+     * @param lineHeightD  line height delta of text (line height will be: fontSize + this)
+     * @param text         text
+     * @param underline    true to underline the text
      * @return ending Y position of this line
      */
     public static float addText(PDPageContentStream stream, PdfTextStyle textConfig, float textX, float textY, float allowedWidth, float lineHeightD, ReportAlignType align, String text, boolean underline) {
@@ -264,8 +261,8 @@ final class PdfBoxHelper {
         for (String line : lines) {
             List<TextSegment> segments = findTextSegments(textConfig, replaceBulletPoints(line));
 
-            List<TextSegment> row = null;
-            float totalRowWidth = 0;
+            List<TextSegment> row;
+            float totalRowWidth;
 
             while (segments.size() > 0) {
                 row = new ArrayList<>();
@@ -286,7 +283,7 @@ final class PdfBoxHelper {
                         totalRowWidth += seg.getTextWidth();
                     }
 
-                    if(i < segments.size() - 1) {
+                    if (i < segments.size() - 1) {
                         space.setStyle(seg.getStyle());
                         space.setUnderlined(seg.isUnderlined() && segments.get(i + 1).isUnderlined());
                         if (totalRowWidth + space.getTextWidth() <= allowedWidth) {
@@ -299,7 +296,7 @@ final class PdfBoxHelper {
                 }
                 segments.removeAll(row);
 
-                currX = calculateAlignPosition(currX, align, totalRowWidth, allowedWidth);
+                currX = calculateAlignBlockPosition(currX, align, totalRowWidth, allowedWidth);
                 for (TextSegment segment : row) {
                     addText(stream, segment.getStyle(), currX, currY, allowedWidth - (currX - textX), lineHeightD, ReportAlignType.LEFT, segment.getText(), segment.isUnderlined());
                     currX += segment.getTextWidth();
@@ -383,8 +380,6 @@ final class PdfBoxHelper {
             stream.moveTextPositionByAmount(textX, textY);
             stream.drawString(text);
             stream.endText();
-
-            lastTextEndX = textX + getTextWidth(textConfig.getFont(), textConfig.getFontSize(), text);
         } catch (Exception e) {
             LOG.warn("Could not add text: " + e.getClass() + " - " + e.getMessage());
         }
