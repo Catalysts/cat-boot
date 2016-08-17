@@ -23,14 +23,13 @@ final class PdfBoxHelper {
 
     private static final Logger LOG = LoggerFactory.getLogger(PdfBoxHelper.class);
     private static final char FALLBACK_CHAR = '?';
-    private static float lastTextEndX = 0;
 
 
     private PdfBoxHelper() {
     }
 
     /**
-     * Calculates the position whee a string needs to be drawn in order to conform to the alignment
+     * Calculates the position where a string needs to be drawn in order to conform to the alignment
      *
      * @param x the desired position, will be corrected as necessary
      * @return the corrected position
@@ -51,21 +50,35 @@ final class PdfBoxHelper {
         }
     }
 
+    private static float calculateAlignBlockPosition(float x, ReportAlignType align, float totalWidth, float allowedWidth) {
+        switch (align) {
+            case LEFT:
+                return x;
+            case RIGHT:
+                return x + allowedWidth - totalWidth;
+            case CENTER:
+                float halfW = totalWidth / 2F;
+                float absoluteCenter = allowedWidth / 2F + x;
+                return absoluteCenter - halfW;
+            default:
+                throw new IllegalArgumentException("Align type " + align + " not implemented for text");
+        }
+    }
+
     /**
      * Adds text of any length, will parse it if necessary.
      *
-     * @param stream         stream
-     * @param textConfig     text config
-     * @param firstLineTextX starting X position of the first line of text (neccessary for richtextboxes)
-     * @param textX          starting X position of text
-     * @param textY          starting Y position of text
-     * @param allowedWidth   max width of text (where to wrap)
-     * @param lineHeightD    line height delta of text (line height will be: fontSize + this)
-     * @param text           text
-     * @param underline      true to underline the text
+     * @param stream       stream
+     * @param textConfig   text config
+     * @param textX        starting X position of text
+     * @param textY        starting Y position of text
+     * @param allowedWidth max width of text (where to wrap)
+     * @param lineHeightD  line height delta of text (line height will be: fontSize + this)
+     * @param text         text
+     * @param underline    true to underline the text
      * @return ending Y position of this line
      */
-    public static float addText(PDPageContentStream stream, PdfTextStyle textConfig, float firstLineTextX, float textX, float textY, float allowedWidth, float lineHeightD, ReportAlignType align, String text, boolean underline) {
+    public static float addText(PDPageContentStream stream, PdfTextStyle textConfig, float textX, float textY, float allowedWidth, float lineHeightD, ReportAlignType align, String text, boolean underline) {
         String fixedText = text;
         if (textConfig.getFont() == null || textConfig.getFont().getFontEncoding() instanceof WinAnsiEncoding) {
             // only necessary if the font doesn't support unicode
@@ -74,15 +87,15 @@ final class PdfBoxHelper {
 
         float nextLineY = nextLineY((int) textY, textConfig.getFontSize(), lineHeightD);
         try {
-            String[] split = splitText(textConfig.getFont(), textConfig.getFontSize(), allowedWidth - (firstLineTextX - textX), fixedText);
-            float x = calculateAlignPosition(firstLineTextX, align, textConfig, allowedWidth, split[0]);
+            String[] split = splitText(textConfig.getFont(), textConfig.getFontSize(), allowedWidth, fixedText);
+            float x = calculateAlignPosition(textX, align, textConfig, allowedWidth, split[0]);
             if (!underline) {
                 addTextSimple(stream, textConfig, x, nextLineY, split[0]);
             } else {
                 addTextSimpleUnderlined(stream, textConfig, x, nextLineY, split[0]);
             }
             if (!StringUtils.isEmpty(split[1])) {
-                return addText(stream, textConfig, textX, textX, nextLineY, allowedWidth, lineHeightD, align, split[1], underline);
+                return addText(stream, textConfig, textX, nextLineY, allowedWidth, lineHeightD, align, split[1], underline);
             } else {
                 return nextLineY;
             }
@@ -97,7 +110,7 @@ final class PdfBoxHelper {
      * Compatibility overload for {@link #addText}.
      */
     public static float addText(PDPageContentStream stream, PdfTextStyle textConfig, float textX, float textY, float allowedWidth, float lineHeightD, ReportAlignType align, String text) {
-        return addText(stream, textConfig, textX, textX, textY, allowedWidth, lineHeightD, align, text, false);
+        return addText(stream, textConfig, textX, textY, allowedWidth, lineHeightD, align, text, false);
     }
 
     private static String generalizeLineSeparators(String text) {
@@ -137,6 +150,13 @@ final class PdfBoxHelper {
             this.underlined = underline;
         }
 
+        public TextSegment clone() {
+            return new TextSegment(text, style, underlined);
+        }
+
+        public float getTextWidth() {
+            return PdfBoxHelper.getTextWidth(style.getFont(), style.getFontSize(), text);
+        }
 
         public boolean isUnderlined() {
             return underlined;
@@ -184,8 +204,7 @@ final class PdfBoxHelper {
             // markdown character must not be followed by a whitespace character
             if (markdownChars.contains(c) && i < str.length() - 1 && !whiteSpaces.contains(str.charAt(i + 1))) {
                 if (temp.length() > 0) {
-                    // remove trailing spaces. they will be added afterwards
-                    segments.add(new TextSegment(temp.replaceAll("\\s+$", ""), bodyText));
+                    segments.add(new TextSegment(temp, bodyText));
                 }
                 temp = "";
 
@@ -228,7 +247,7 @@ final class PdfBoxHelper {
             }
         }
         if (temp.length() > 0) {
-            segments.add(new TextSegment(temp.replaceAll("\\s+$", ""), bodyText));
+            segments.add(new TextSegment(temp, bodyText));
         }
 
         return segments;
@@ -241,25 +260,39 @@ final class PdfBoxHelper {
         for (String line : lines) {
             List<TextSegment> segments = findTextSegments(textConfig, replaceBulletPoints(line));
 
-            int i = 0;
-            for (TextSegment seg : segments) {
-                float absoluteLineHeight = -nextLineY(0, seg.getStyle().getFontSize(), lineHeightD);
+            List<TextSegment> row;
+            float totalRowWidth;
 
-                float endY = addText(stream, seg.getStyle(), currX, textX, currY, allowedWidth, lineHeightD, align, seg.getText(), seg.isUnderlined());
-                currY = endY + absoluteLineHeight;
-                currX = lastTextEndX;
+            while (segments.size() > 0) {
+                row = new ArrayList<>();
+                totalRowWidth = 0;
 
-                // due to some strange bug some spaces between text segments are trimmed so we have to add it manually
-                boolean underline = (seg.isUnderlined() && i + 1 < segments.size() && segments.get(i + 1).isUnderlined());
-                endY = addText(stream, seg.getStyle(), currX, textX, currY, allowedWidth, lineHeightD, align, " ", underline);
-                currX = lastTextEndX;
-                currY = endY + absoluteLineHeight;
+                TextSegment seg;
+                for (int i = 0; i < segments.size(); i++) {
+                    seg = segments.get(i);
 
-                i++;
+                    if (totalRowWidth + seg.getTextWidth() > allowedWidth) {
+                        String[] splitted = splitText(seg.getStyle().getFont(), seg.getStyle().getFontSize(), allowedWidth - totalRowWidth, seg.getText());
+                        row.add(new TextSegment(splitted[0], seg.getStyle(), seg.isUnderlined()));
+                        totalRowWidth += row.get(row.size() - 1).getTextWidth();
+                        seg.setText(splitted[1]);
+                        break;
+                    } else {
+                        row.add(seg);
+                        totalRowWidth += seg.getTextWidth();
+                    }
+                }
+                segments.removeAll(row);
+
+                currX = calculateAlignBlockPosition(currX, align, totalRowWidth, allowedWidth);
+                for (TextSegment segment : row) {
+                    addText(stream, segment.getStyle(), currX, currY, allowedWidth - (currX - textX), lineHeightD, ReportAlignType.LEFT, segment.getText(), segment.isUnderlined());
+                    currX += segment.getTextWidth();
+                }
+
+                currY = nextLineY((int) currY, textConfig.getFontSize(), lineHeightD);
+                currX = textX;
             }
-
-            currY = nextLineY((int) currY, textConfig.getFontSize(), lineHeightD);
-            currX = textX;
         }
 
         return currY;
@@ -335,8 +368,6 @@ final class PdfBoxHelper {
             stream.moveTextPositionByAmount(textX, textY);
             stream.drawString(text);
             stream.endText();
-
-            lastTextEndX = textX + getTextWidth(textConfig.getFont(), textConfig.getFontSize(), text);
         } catch (Exception e) {
             LOG.warn("Could not add text: " + e.getClass() + " - " + e.getMessage());
         }
@@ -402,11 +433,11 @@ final class PdfBoxHelper {
         String part1;
         String part2;
         if (cleanSplit) {
-            part1 = shortenedText.substring(start, end).trim();
-            part2 = shortenedText.substring(end + 1, shortenedText.length()).concat(endPart).trim();
+            part1 = shortenedText.substring(start, end).replaceAll("\\s+$", "");
+            part2 = shortenedText.substring(end + 1, shortenedText.length()).concat(endPart).replaceAll("^\\s+", "");
         } else {
-            part1 = shortenedText.substring(start, end - 1).concat("-").trim();
-            part2 = shortenedText.substring(end - 1, shortenedText.length()).concat(endPart).trim();
+            part1 = shortenedText.substring(start, end - 1).concat("-").replaceAll("\\s+$", "");
+            part2 = shortenedText.substring(end - 1, shortenedText.length()).concat(endPart).replaceAll("^\\s+", "");
         }
         return new String[]{part1, part2};
     }
