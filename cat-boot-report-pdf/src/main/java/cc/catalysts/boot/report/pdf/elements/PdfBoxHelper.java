@@ -204,8 +204,7 @@ final class PdfBoxHelper {
             // markdown character must not be followed by a whitespace character
             if (markdownChars.contains(c) && i < str.length() - 1 && !whiteSpaces.contains(str.charAt(i + 1))) {
                 if (temp.length() > 0) {
-                    // remove trailing spaces. they will be added afterwards
-                    segments.add(new TextSegment(temp.replaceAll("\\s+$", ""), bodyText));
+                    segments.add(new TextSegment(temp, bodyText));
                 }
                 temp = "";
 
@@ -248,7 +247,7 @@ final class PdfBoxHelper {
             }
         }
         if (temp.length() > 0) {
-            segments.add(new TextSegment(temp.replaceAll("\\s+$", ""), bodyText));
+            segments.add(new TextSegment(temp, bodyText));
         }
 
         return segments;
@@ -268,10 +267,10 @@ final class PdfBoxHelper {
                 row = new ArrayList<>();
                 totalRowWidth = 0;
 
-                TextSegment space = new TextSegment(" ", textConfig);
                 TextSegment seg;
                 for (int i = 0; i < segments.size(); i++) {
                     seg = segments.get(i);
+
                     if (totalRowWidth + seg.getTextWidth() > allowedWidth) {
                         String[] splitted = splitText(seg.getStyle().getFont(), seg.getStyle().getFontSize(), allowedWidth - totalRowWidth, seg.getText());
                         row.add(new TextSegment(splitted[0], seg.getStyle(), seg.isUnderlined()));
@@ -281,17 +280,6 @@ final class PdfBoxHelper {
                     } else {
                         row.add(seg);
                         totalRowWidth += seg.getTextWidth();
-                    }
-
-                    if (i < segments.size() - 1) {
-                        space.setStyle(seg.getStyle());
-                        space.setUnderlined(seg.isUnderlined() && segments.get(i + 1).isUnderlined());
-                        if (totalRowWidth + space.getTextWidth() <= allowedWidth) {
-                            row.add(space.clone());
-                            totalRowWidth += space.getTextWidth();
-                        } else {
-                            break;
-                        }
                     }
                 }
                 segments.removeAll(row);
@@ -445,11 +433,11 @@ final class PdfBoxHelper {
         String part1;
         String part2;
         if (cleanSplit) {
-            part1 = shortenedText.substring(start, end).trim();
-            part2 = shortenedText.substring(end + 1, shortenedText.length()).concat(endPart).trim();
+            part1 = shortenedText.substring(start, end).replaceAll("\\s+$", "");
+            part2 = shortenedText.substring(end + 1, shortenedText.length()).concat(endPart).replaceAll("^\\s+", "");
         } else {
-            part1 = shortenedText.substring(start, end - 1).concat("-").trim();
-            part2 = shortenedText.substring(end - 1, shortenedText.length()).concat(endPart).trim();
+            part1 = shortenedText.substring(start, end - 1).concat("-").replaceAll("\\s+$", "");
+            part2 = shortenedText.substring(end - 1, shortenedText.length()).concat(endPart).replaceAll("^\\s+", "");
         }
         return new String[]{part1, part2};
     }
