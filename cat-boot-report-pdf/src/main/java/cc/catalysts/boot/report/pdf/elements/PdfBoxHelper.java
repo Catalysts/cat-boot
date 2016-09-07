@@ -18,6 +18,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 final class PdfBoxHelper {
 
@@ -400,6 +401,18 @@ final class PdfBoxHelper {
     public static String[] splitText(PDFont font, int fontSize, float allowedWidth, String text) {
         String endPart = "";
         String shortenedText = text;
+
+        // look for manual line breaks which have priority
+        List<String> breakSplitted = Arrays.asList(shortenedText.split("(\\r\\n)|(\\n)|(\\n\\r)")).stream().collect(Collectors.toList());
+        if (breakSplitted.size() > 1) {
+            // be sure that there do not have to be some breaks before \n
+            String[] splittedFirst = splitText(font, fontSize, allowedWidth, breakSplitted.get(0));
+            // concat remaining strings incl. (removed) linebreaks
+            StringBuilder remaining = new StringBuilder(splittedFirst[1] == null ? "" : splittedFirst[1] + "\n");
+            breakSplitted.stream().skip(1).forEach(s -> remaining.append(s + "\n"));
+            remaining.deleteCharAt(remaining.length() - 1);
+            return new String[]{splittedFirst[0], remaining.toString()};
+        }
 
         if (getTextWidth(font, fontSize, shortenedText) <= allowedWidth && shortenedText.indexOf((char) 13) == -1) {
             return new String[]{shortenedText, null};
