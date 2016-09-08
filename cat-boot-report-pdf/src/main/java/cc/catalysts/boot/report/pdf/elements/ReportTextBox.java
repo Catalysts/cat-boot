@@ -114,11 +114,11 @@ public class ReportTextBox implements ReportElement {
         if (text == null) {
             return new String[]{null, null};
         }
-        CacheKey key = new CacheKey(textConfig.getFont(), textConfig.getFontSize(), allowedWidth, text);
+        CacheKey key = new CacheKey(textConfig.getCurrentFontStyle(), textConfig.getFontSize(), allowedWidth, text);
         if (cache.containsKey(key)) {
             return cache.get(key);
         } else {
-            String[] split = PdfBoxHelper.splitText(textConfig.getFont(), textConfig.getFontSize(), allowedWidth, text);
+            String[] split = PdfBoxHelper.splitText(textConfig.getCurrentFontStyle(), textConfig.getFontSize(), allowedWidth, text);
             cache.put(key, split);
             return split;
         }

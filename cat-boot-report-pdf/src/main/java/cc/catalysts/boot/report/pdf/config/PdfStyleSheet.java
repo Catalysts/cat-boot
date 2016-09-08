@@ -27,17 +27,17 @@ public abstract class PdfStyleSheet {
     /**
      * the text style for heading1 (h1)
      */
-    private PdfTextStyle heading1Text = new PdfTextStyle(20, PDType1Font.HELVETICA_BOLD, Color.BLACK);
+    private PdfTextStyle heading1Text = new PdfTextStyle(20, PdfFont.HELVETICA, Color.BLACK, "bold");
 
     /**
      * the text style for the body text
      */
-    private PdfTextStyle bodyText = new PdfTextStyle(12, PDType1Font.HELVETICA, Color.BLACK);
+    private PdfTextStyle bodyText = new PdfTextStyle(12, PdfFont.HELVETICA, Color.BLACK, "regular");
 
-    private PdfTextStyle tableTitleText = new PdfTextStyle(12, PDType1Font.HELVETICA_BOLD, Color.BLACK);
-    private PdfTextStyle tableBodyText = new PdfTextStyle(12, PDType1Font.HELVETICA, Color.BLACK);
+    private PdfTextStyle tableTitleText = new PdfTextStyle(12, PdfFont.HELVETICA, Color.BLACK, "bold");
+    private PdfTextStyle tableBodyText = new PdfTextStyle(12, PdfFont.HELVETICA, Color.BLACK, "regular");
 
-    private PdfTextStyle footerText = new PdfTextStyle(7, PDType1Font.HELVETICA, Color.BLACK);
+    private PdfTextStyle footerText = new PdfTextStyle(7, PdfFont.HELVETICA, Color.BLACK, "regular");
 
     public int getSectionPadding() {
         return sectionPadding;

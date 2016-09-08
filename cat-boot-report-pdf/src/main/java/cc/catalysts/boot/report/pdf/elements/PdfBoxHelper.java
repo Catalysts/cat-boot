@@ -1,5 +1,6 @@
 package cc.catalysts.boot.report.pdf.elements;
 
+import cc.catalysts.boot.report.pdf.config.PdfFont;
 import cc.catalysts.boot.report.pdf.config.PdfTextStyle;
 import cc.catalysts.boot.report.pdf.utils.ReportAlignType;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
@@ -37,10 +38,10 @@ final class PdfBoxHelper {
             case LEFT:
                 return x;
             case RIGHT:
-                float w = getTextWidth(textConfig.getFont(), textConfig.getFontSize(), text);
+                float w = getTextWidth(textConfig.getCurrentFontStyle(), textConfig.getFontSize(), text);
                 return x + allowedWidth - w;
             case CENTER:
-                float halfW = getTextWidth(textConfig.getFont(), textConfig.getFontSize(), text) / 2;
+                float halfW = getTextWidth(textConfig.getCurrentFontStyle(), textConfig.getFontSize(), text) / 2;
                 float absoluteCenter = allowedWidth / 2 + x;
                 return absoluteCenter - halfW;
             default:
@@ -86,7 +87,7 @@ final class PdfBoxHelper {
         }
 
         try {
-            String[] split = splitText(textConfig.getFont(), textConfig.getFontSize(), allowedWidth, text);
+            String[] split = splitText(textConfig.getCurrentFontStyle(), textConfig.getFontSize(), allowedWidth, text);
             float x = calculateAlignPosition(textX, align, textConfig, allowedWidth, split[0]);
 
             if (!underline) {
@@ -156,7 +157,7 @@ final class PdfBoxHelper {
         }
 
         public float getTextWidth() {
-            return PdfBoxHelper.getTextWidth(style.getFont(), style.getFontSize(), text);
+            return PdfBoxHelper.getTextWidth(style.getCurrentFontStyle(), style.getFontSize(), text);
         }
 
         public boolean isUnderlined() {
@@ -196,7 +197,7 @@ final class PdfBoxHelper {
         List<Character> whiteSpaces = Arrays.asList(' ', '\r', '\n', '\t');
 
         //TODO: generalize bold font generation
-        PdfTextStyle boldText = new PdfTextStyle(bodyText.getFontSize(), PDType1Font.HELVETICA_BOLD, bodyText.getColor());
+        PdfTextStyle boldText = new PdfTextStyle(bodyText.getFontSize(), PdfFont.HELVETICA, bodyText.getColor(), "bold");
 
         String temp = "";
         for (int i = 0; i < str.length(); i++) {
@@ -273,7 +274,7 @@ final class PdfBoxHelper {
                     seg = segments.get(i);
 
                     if (totalRowWidth + seg.getTextWidth() > allowedWidth) {
-                        String[] splitted = splitText(seg.getStyle().getFont(), seg.getStyle().getFontSize(), allowedWidth - totalRowWidth, seg.getText());
+                        String[] splitted = splitText(seg.getStyle().getCurrentFontStyle(), seg.getStyle().getFontSize(), allowedWidth - totalRowWidth, seg.getText());
                         row.add(new TextSegment(splitted[0], seg.getStyle(), seg.isUnderlined()));
                         totalRowWidth += row.get(row.size() - 1).getTextWidth();
                         seg.setText(splitted[1]);
@@ -321,7 +322,7 @@ final class PdfBoxHelper {
      */
     public static void addTextSimple(PDPageContentStream stream, PdfTextStyle textConfig, float textX, float textY, String text) {
         try {
-            stream.setFont(textConfig.getFont(), textConfig.getFontSize());
+            stream.setFont(textConfig.getCurrentFontStyle(), textConfig.getFontSize());
             stream.setNonStrokingColor(textConfig.getColor());
             stream.beginText();
             stream.setTextMatrix(new Matrix(1,0,0,1, textX, textY));
@@ -345,7 +346,7 @@ final class PdfBoxHelper {
             stream.setStrokingColor(textConfig.getColor());
             stream.setLineWidth(0.5F);
             stream.moveTo(textX, textY - lineOffset);
-            stream.lineTo(textX + getTextWidth(textConfig.getFont(), textConfig.getFontSize(), text), textY - lineOffset);
+            stream.lineTo(textX + getTextWidth(textConfig.getCurrentFontStyle(), textConfig.getFontSize(), text), textY - lineOffset);
             stream.stroke();
         } catch (IOException e) {
             e.printStackTrace();

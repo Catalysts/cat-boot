@@ -3,6 +3,7 @@ package cc.catalysts.boot.report.pdf.impl;
 import cc.catalysts.boot.report.pdf.PdfReport;
 import cc.catalysts.boot.report.pdf.PdfReportService;
 import cc.catalysts.boot.report.pdf.config.DefaultPdfStyleSheet;
+import cc.catalysts.boot.report.pdf.config.PdfFont;
 import cc.catalysts.boot.report.pdf.config.PdfPageLayout;
 import cc.catalysts.boot.report.pdf.config.PdfTextStyle;
 import cc.catalysts.boot.report.pdf.elements.ReportImage;
@@ -32,7 +33,7 @@ public class Demo2Test {
         final PdfReportFilePrinter pdfReportFilePrinter = new PdfReportFilePrinter();
 
         DefaultPdfStyleSheet styleSheet = new DefaultPdfStyleSheet();
-        styleSheet.setBodyText(new PdfTextStyle(10, PDType1Font.HELVETICA, Color.BLACK));
+        styleSheet.setBodyText(new PdfTextStyle(10, PdfFont.HELVETICA, Color.BLACK, "regular"));
 
         BufferedImage img = null;
         try {
@@ -60,7 +61,7 @@ public class Demo2Test {
                 .createRow().withValues(new ReportTextBox(styleSheet.getBodyText(), styleSheet.getLineDistance(), "y1"), new ReportTextBox(styleSheet.getBodyText(), styleSheet.getLineDistance(), "y3"), sampleTable)
                 .endTable()
                 .beginNewSection("Formatting", false)
-                .addText("You can also format text as you can see here.", new PdfTextStyle(13, PDType1Font.TIMES_BOLD_ITALIC, Color.BLUE))
+                .addText("You can also format text as you can see here.", new PdfTextStyle(13, PdfFont.TIMES_ROMAN, Color.BLUE, "boldItalic"))
                 .withFooterOnAllPages("Demo-PDF", "cat-boot-report-pdf", PdfFooterGenerator.PAGE_TEMPLATE_CURR + "/"
                         + PdfFooterGenerator.PAGE_TEMPLATE_TOTAL)
                 .withHeaderOnPages("Demo-PDF", "cat-boot-report-pdf", "not include me on first pageq", PositionOfStaticElements.ON_ALL_PAGES_BUT_FIRST)
