@@ -11,10 +11,12 @@ import cc.catalysts.boot.report.pdf.elements.*;
 import cc.catalysts.boot.report.pdf.utils.PositionOfStaticElements;
 import cc.catalysts.boot.report.pdf.utils.ReportAlignType;
 import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.font.PDType0Font;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
 import javax.imageio.ImageIO;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,13 +38,27 @@ class PdfReportBuilderImpl implements PdfReportBuilder {
     }
 
     private void loadResourceFonts() {
-        String[] fontFiles;
-        Resource fontDirectory = new ClassPathResource("/fonts/");
-        System.out.println(fontDirectory.toString());
+        Resource fontDirectory = new ClassPathResource("/fonts/", PdfReportBuilder.class);
+        File[] fontFiles = new File[0];
         try {
-            System.out.println(fontDirectory.getFile().isDirectory());
+            File fontDirectoryFile = fontDirectory.getFile();
+            if(fontDirectoryFile.isDirectory()) {
+                fontFiles = fontDirectoryFile.listFiles(f -> true);
+            } else {
+                // TODO: do logging
+            }
         } catch (IOException e) {
+            // TODO: maybe logging?
             e.printStackTrace();
+        }
+
+        for(File file : fontFiles) {
+            try {
+                PdfTextStyle.registerFont(PDType0Font.load(document, file));
+            } catch (IOException e) {
+                // TODO: maybe logging?
+                e.printStackTrace();
+            }
         }
     }
 

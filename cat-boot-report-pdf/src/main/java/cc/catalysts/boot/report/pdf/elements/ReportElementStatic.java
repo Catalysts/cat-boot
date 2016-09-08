@@ -54,8 +54,8 @@ public class ReportElementStatic implements ReportElement {
      */
     @Override
     public float print(PDDocument document, PDPageContentStream stream, int pageNumber, float startX, float startY, float allowedWidth) throws IOException {
-        PDPage currPage = (PDPage) document.getDocumentCatalog().getPages().get(pageNo);
-        PDPageContentStream pageStream = new PDPageContentStream(document, currPage, true, false);
+        PDPage currPage = document.getDocumentCatalog().getPages().get(pageNo);
+        PDPageContentStream pageStream = new PDPageContentStream(document, currPage, PDPageContentStream.AppendMode.APPEND, false);
         base.print(document, pageStream, pageNo, x, y, width);
         pageStream.close();
         return 0F;
