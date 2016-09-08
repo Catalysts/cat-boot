@@ -12,6 +12,8 @@ import cc.catalysts.boot.report.pdf.utils.PositionOfStaticElements;
 import cc.catalysts.boot.report.pdf.utils.ReportAlignType;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.font.PDType0Font;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
@@ -30,6 +32,7 @@ class PdfReportBuilderImpl implements PdfReportBuilder {
     private final PDDocument document;
     private List<ReportElement> elements = new ArrayList<>();
     private List<AbstractFixedLineGenerator> fixedLineGenerators = new ArrayList<>();
+    private static final Logger LOG = LoggerFactory.getLogger(PdfReportBuilderImpl.class);
 
     public PdfReportBuilderImpl(PdfStyleSheet configuration) {
         this.configuration = configuration;
@@ -45,19 +48,17 @@ class PdfReportBuilderImpl implements PdfReportBuilder {
             if(fontDirectoryFile.isDirectory()) {
                 fontFiles = fontDirectoryFile.listFiles(f -> true);
             } else {
-                // TODO: do logging
+                LOG.warn("Given path is not a directory!");
             }
         } catch (IOException e) {
-            // TODO: maybe logging?
-            e.printStackTrace();
+            LOG.warn("Failed to get files!", e);
         }
 
         for(File file : fontFiles) {
             try {
                 PdfTextStyle.registerFont(PDType0Font.load(document, file));
             } catch (IOException e) {
-                // TODO: maybe logging?
-                e.printStackTrace();
+                LOG.warn("Failed to register font!", e);
             }
         }
     }
