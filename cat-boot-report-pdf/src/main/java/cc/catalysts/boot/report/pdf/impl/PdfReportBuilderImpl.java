@@ -11,6 +11,7 @@ import cc.catalysts.boot.report.pdf.elements.*;
 import cc.catalysts.boot.report.pdf.utils.PositionOfStaticElements;
 import cc.catalysts.boot.report.pdf.utils.ReportAlignType;
 import org.apache.pdfbox.pdmodel.PDDocument;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
 import javax.imageio.ImageIO;
@@ -24,11 +25,25 @@ import java.util.List;
 class PdfReportBuilderImpl implements PdfReportBuilder {
 
     private final PdfStyleSheet configuration;
+    private final PDDocument document;
     private List<ReportElement> elements = new ArrayList<>();
     private List<AbstractFixedLineGenerator> fixedLineGenerators = new ArrayList<>();
 
     public PdfReportBuilderImpl(PdfStyleSheet configuration) {
         this.configuration = configuration;
+        document = new PDDocument();
+        loadResourceFonts();
+    }
+
+    private void loadResourceFonts() {
+        String[] fontFiles;
+        Resource fontDirectory = new ClassPathResource("/fonts/");
+        System.out.println(fontDirectory.toString());
+        try {
+            System.out.println(fontDirectory.getFile().isDirectory());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public PdfReportBuilderImpl addElement(ReportElement element) {
@@ -152,7 +167,7 @@ class PdfReportBuilderImpl implements PdfReportBuilder {
 
     public PdfReport buildReport(String fileName, PdfPageLayout pageConfig, Resource templateResource, PDDocument document) throws IOException {
         PdfReportStructure report = this.buildReport(pageConfig);
-        document = new PdfReportGenerator().generate(pageConfig, templateResource, report, document);
+        new PdfReportGenerator().generate(pageConfig, templateResource, report, document);
         return new PdfReport(fileName, document);
     }
 

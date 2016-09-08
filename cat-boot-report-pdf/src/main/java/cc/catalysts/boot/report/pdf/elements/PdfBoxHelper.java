@@ -1,7 +1,6 @@
 package cc.catalysts.boot.report.pdf.elements;
 
 import cc.catalysts.boot.report.pdf.config.PdfTextStyle;
-import cc.catalysts.boot.report.pdf.exception.PdfBoxHelperException;
 import cc.catalysts.boot.report.pdf.utils.ReportAlignType;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.font.PDFont;
@@ -10,7 +9,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 
 import java.io.IOException;
-import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -379,9 +377,15 @@ final class PdfBoxHelper {
             //stream.setTextMatrix(new Matrix(1,0,0,1,textX, textY));
             stream.newLineAtOffset(textX, textY);
             stream.showText(text);
-            stream.endText();
         } catch (Exception e) {
             LOG.warn("Could not add text: " + e.getClass() + " - " + e.getMessage());
+        }
+        finally {
+            try {
+                stream.endText();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 

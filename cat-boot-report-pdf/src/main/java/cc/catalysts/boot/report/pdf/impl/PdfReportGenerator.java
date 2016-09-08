@@ -23,10 +23,11 @@ import java.util.Queue;
 class PdfReportGenerator {
 
     public PdfReportGenerator() {
+
     }
 
-    public void printToStream(PdfPageLayout pageConfig, Resource templateResource, PdfReportStructure report, OutputStream stream) throws IOException {
-        PDDocument page = generate(pageConfig, templateResource, report);
+    public void printToStream(PdfPageLayout pageConfig, Resource templateResource, PdfReportStructure report, OutputStream stream, PDDocument document) throws IOException {
+        PDDocument page = generate(pageConfig, templateResource, report, document);
         page.save(stream);
         page.close();
     }
@@ -129,8 +130,8 @@ class PdfReportGenerator {
             PDPage templatePage = (PDPage) templateDoc.getDocumentCatalog().getPages().get(0);
             document.importPage(templatePage);
         }
-        PDPage currPage = (PDPage) document.getDocumentCatalog().getPages().get(++cursor.currentPageNumber);
-        cursor.currentStream = new PDPageContentStream(document, currPage, true, false);
+        PDPage currPage = document.getDocumentCatalog().getPages().get(++cursor.currentPageNumber);
+        cursor.currentStream = new PDPageContentStream(document, currPage, PDPageContentStream.AppendMode.APPEND, false);
         cursor.yPos = printData.pageConfig.getStartY(cursor.currentPageNumber);
         cursor.xPos = printData.pageConfig.getStartX();
     }
