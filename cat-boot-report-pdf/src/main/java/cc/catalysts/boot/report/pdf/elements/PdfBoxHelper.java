@@ -1,11 +1,9 @@
 package cc.catalysts.boot.report.pdf.elements;
 
-import cc.catalysts.boot.report.pdf.config.PdfFont;
 import cc.catalysts.boot.report.pdf.config.PdfTextStyle;
 import cc.catalysts.boot.report.pdf.utils.ReportAlignType;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.font.PDFont;
-import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.apache.pdfbox.util.Matrix;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -185,7 +183,7 @@ final class PdfBoxHelper {
         }
     }
 
-    private static List<TextSegment> findTextSegments(PdfTextStyle bodyText, String str) {
+    private static List<TextSegment> findTextSegments(PdfTextStyle bodyText, String str, String boldFontStyle, String italicFontStyle) {
         List<TextSegment> segments = new ArrayList<>();
 
         if (str.isEmpty()) {
@@ -196,8 +194,8 @@ final class PdfBoxHelper {
         List<Character> markdownChars = Arrays.asList('*', '+');
         List<Character> whiteSpaces = Arrays.asList(' ', '\r', '\n', '\t');
 
-        //TODO: generalize bold font generation
-        PdfTextStyle boldText = new PdfTextStyle(bodyText.getFontSize(), PdfFont.HELVETICA, bodyText.getColor(), "bold");
+        PdfTextStyle boldText = new PdfTextStyle(bodyText.getFontSize(), bodyText.getFont(), bodyText.getColor(), boldFontStyle);
+        PdfTextStyle italicText = new PdfTextStyle(bodyText.getFontSize(), bodyText.getFont(), bodyText.getColor(), italicFontStyle);
 
         String temp = "";
         for (int i = 0; i < str.length(); i++) {
@@ -228,7 +226,7 @@ final class PdfBoxHelper {
                 }
 
                 String stringSegment = str.substring(i + 1, endIndex);
-                List<TextSegment> subSegments = findTextSegments(bodyText, stringSegment);
+                List<TextSegment> subSegments = findTextSegments(bodyText, stringSegment, boldFontStyle, italicFontStyle);
                 segments.addAll(subSegments);
 
                 // manipulate segments accordingly
@@ -239,6 +237,9 @@ final class PdfBoxHelper {
                             break;
                         case '+':
                             segment.setUnderlined(true);
+                            break;
+                        case '_':
+                            segment.setStyle(italicText);
                             break;
                     }
                 }
@@ -256,11 +257,15 @@ final class PdfBoxHelper {
     }
 
     public static float addRichText(PDPageContentStream stream, PdfTextStyle textConfig, float textX, float textY, float allowedWidth, float lineHeightD, ReportAlignType align, String text) {
+        return addRichText(stream, textConfig, textX, textY, allowedWidth, lineHeightD, align, text, "bold", "italic");
+    }
+
+    public static float addRichText(PDPageContentStream stream, PdfTextStyle textConfig, float textX, float textY, float allowedWidth, float lineHeightD, ReportAlignType align, String text, String boldFontStyle, String italicFontStyle) {
         String[] lines = generalizeLineSeparators(text).split(System.lineSeparator());
 
         float currX = textX, currY = textY;
         for (String line : lines) {
-            List<TextSegment> segments = findTextSegments(textConfig, replaceBulletPoints(line));
+            List<TextSegment> segments = findTextSegments(textConfig, replaceBulletPoints(line), boldFontStyle, italicFontStyle);
 
             List<TextSegment> row;
             float totalRowWidth;

@@ -10,8 +10,19 @@ import org.springframework.util.StringUtils;
  */
 public class ReportRichTextBox extends ReportTextBox {
 
+    private String boldFontStyle;
+    private String italicFontStyle;
+
+    public ReportRichTextBox(PdfTextStyle textConfig, float lineDistance, String text, String boldFontStyle, String italicFontStyle) {
+        this(textConfig, lineDistance, text);
+        this.boldFontStyle = boldFontStyle;
+        this.italicFontStyle = italicFontStyle;
+    }
+
     public ReportRichTextBox(PdfTextStyle textConfig, float lineDistance, String text) {
         super(textConfig, lineDistance, text);
+        this.boldFontStyle = "bold";
+        this.italicFontStyle = "italic";
     }
 
     /**
@@ -21,7 +32,7 @@ public class ReportRichTextBox extends ReportTextBox {
      * @param text   text of text box
      */
     public ReportRichTextBox(ReportRichTextBox object, String text) {
-        super(object, text);
+        this(object.textConfig, object.lineDistance, text, object.boldFontStyle, object.italicFontStyle);
     }
 
     @Override
@@ -31,7 +42,7 @@ public class ReportRichTextBox extends ReportTextBox {
 
     @Override
     public float print(PDDocument document, PDPageContentStream stream, int pageNumber, float textX, float textY, float allowedWidth) {
-        return PdfBoxHelper.addRichText(stream, textConfig, textX, textY, allowedWidth, lineDistance, align, text);
+        return PdfBoxHelper.addRichText(stream, textConfig, textX, textY, allowedWidth, lineDistance, align, text, boldFontStyle, italicFontStyle);
     }
 
     @Override

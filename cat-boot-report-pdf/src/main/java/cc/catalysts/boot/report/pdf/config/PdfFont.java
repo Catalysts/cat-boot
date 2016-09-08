@@ -72,7 +72,7 @@ public class PdfFont {
             NamingTable ttfNamingTable = (NamingTable) tmpFont.getTrueTypeFont().getTableMap().get("name");
 
             fontBaseName = ttfNamingTable.getFontFamily();
-            fontStyle = ttfNamingTable.getFontSubFamily();
+            fontStyle = ttfNamingTable.getFontSubFamily().toLowerCase();
         }
 
         PdfFont f;
@@ -82,7 +82,7 @@ public class PdfFont {
         } else {
             f = new PdfFont(fontBaseName);
             f.addStyle(fontStyle, font);
-            fonts.put(font.getName(), f);
+            fonts.put(fontBaseName, f);
         }
 
         return f;
@@ -105,6 +105,8 @@ public class PdfFont {
     }
 
     public PDFont getStyle(String style) {
+        style = style.toLowerCase();
+
         if (styles.containsKey(style)) {
             return styles.get(style);
         }

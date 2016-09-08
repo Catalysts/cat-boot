@@ -43,7 +43,7 @@ class PdfReportBuilderImpl implements PdfReportBuilder {
         try {
             File fontDirectoryFile = fontDirectory.getFile();
             if(fontDirectoryFile.isDirectory()) {
-                fontFiles = fontDirectoryFile.listFiles(f -> true);
+                fontFiles = fontDirectoryFile.listFiles(f -> f.toString().endsWith(".ttf"));
             } else {
                 LOG.warn("Given path is not a directory!");
             }
