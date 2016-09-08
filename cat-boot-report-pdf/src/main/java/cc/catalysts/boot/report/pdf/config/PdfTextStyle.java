@@ -1,6 +1,9 @@
 package cc.catalysts.boot.report.pdf.config;
 
+import org.apache.fontbox.ttf.NamingTable;
+import org.apache.pdfbox.pdmodel.font.PDCIDFontType2;
 import org.apache.pdfbox.pdmodel.font.PDFont;
+import org.apache.pdfbox.pdmodel.font.PDType0Font;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.springframework.util.Assert;
 
@@ -12,7 +15,15 @@ public class PdfTextStyle {
 
     static Map<String, PDFont> fonts = new HashMap<>();
 
-    public static void registerFont(PDFont font) {
+    public static void registerFont(PDType0Font font) {
+        if(font.getDescendantFont() instanceof PDCIDFontType2) {
+            PDCIDFontType2 tmpFont = (PDCIDFontType2) font.getDescendantFont();
+            NamingTable ttfNamingTable = (NamingTable) tmpFont.getTrueTypeFont().getTableMap().get("name");
+
+            String fontBaseName = ttfNamingTable.getFontFamily();
+            String fontStyle = ttfNamingTable.getFontSubFamily();
+        }
+
         fonts.put(font.getName(), font);
     }
 
