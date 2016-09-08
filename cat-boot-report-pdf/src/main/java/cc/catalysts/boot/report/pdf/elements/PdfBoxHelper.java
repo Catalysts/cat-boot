@@ -5,7 +5,6 @@ import cc.catalysts.boot.report.pdf.config.PdfTextStyle;
 import cc.catalysts.boot.report.pdf.utils.ReportAlignType;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.font.PDFont;
-import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.apache.pdfbox.util.Matrix;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -81,7 +80,7 @@ final class PdfBoxHelper {
 
         float nextLineY = nextLineY((int) textY, textConfig.getFontSize(), lineHeightD);
 
-        if(text.equals("")) {
+        if (text.equals("")) {
             addTextSimple(stream, textConfig, textX, nextLineY, "");
             return nextLineY;
         }
@@ -325,12 +324,11 @@ final class PdfBoxHelper {
             stream.setFont(textConfig.getCurrentFontStyle(), textConfig.getFontSize());
             stream.setNonStrokingColor(textConfig.getColor());
             stream.beginText();
-            stream.setTextMatrix(new Matrix(1,0,0,1, textX, textY));
+            stream.setTextMatrix(new Matrix(1, 0, 0, 1, textX, textY));
             stream.showText(text);
         } catch (Exception e) {
             LOG.warn("Could not add text: " + e.getClass() + " - " + e.getMessage());
-        }
-        finally {
+        } finally {
             try {
                 stream.endText();
             } catch (IOException e) {

@@ -10,7 +10,6 @@ import cc.catalysts.boot.report.pdf.elements.ReportImage;
 import cc.catalysts.boot.report.pdf.elements.ReportTable;
 import cc.catalysts.boot.report.pdf.elements.ReportTextBox;
 import cc.catalysts.boot.report.pdf.utils.PositionOfStaticElements;
-import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;

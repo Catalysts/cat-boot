@@ -42,7 +42,7 @@ class PdfReportBuilderImpl implements PdfReportBuilder {
         File[] fontFiles = new File[0];
         try {
             File fontDirectoryFile = fontDirectory.getFile();
-            if(fontDirectoryFile.isDirectory()) {
+            if (fontDirectoryFile.isDirectory()) {
                 fontFiles = fontDirectoryFile.listFiles(f -> true);
             } else {
                 LOG.warn("Given path is not a directory!");
@@ -51,7 +51,7 @@ class PdfReportBuilderImpl implements PdfReportBuilder {
             LOG.warn("Failed to get files!", e);
         }
 
-        for(File file : fontFiles) {
+        for (File file : fontFiles) {
             try {
                 PdfFont.registerFont(PDType0Font.load(document, file));
             } catch (IOException e) {

@@ -136,7 +136,9 @@ public class ReportTextBox implements ReportElement {
         return text;
     }
 
-    public void setText(String text) { this.text = text; }
+    public void setText(String text) {
+        this.text = text;
+    }
 
     private static final class CacheKey {
         private PDFont font;
@@ -161,9 +163,8 @@ public class ReportTextBox implements ReportElement {
             if (!text.equals(cacheKey.text)) return false;
             if (fontSize != cacheKey.fontSize) return false;
             if (Float.compare(cacheKey.width, width) != 0) return false;
-            if (!font.equals(cacheKey.font)) return false;
+            return font.equals(cacheKey.font);
 
-            return true;
         }
 
         @Override

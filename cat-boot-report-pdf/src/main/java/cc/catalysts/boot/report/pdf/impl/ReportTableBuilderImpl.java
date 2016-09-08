@@ -4,7 +4,9 @@ import cc.catalysts.boot.report.pdf.PdfReportBuilder;
 import cc.catalysts.boot.report.pdf.ReportTableBuilder;
 import cc.catalysts.boot.report.pdf.ReportTableRowBuilder;
 import cc.catalysts.boot.report.pdf.config.PdfStyleSheet;
-import cc.catalysts.boot.report.pdf.elements.*;
+import cc.catalysts.boot.report.pdf.elements.ReportElement;
+import cc.catalysts.boot.report.pdf.elements.ReportTable;
+import cc.catalysts.boot.report.pdf.elements.ReportTextBox;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -130,13 +132,13 @@ public class ReportTableBuilderImpl implements ReportTableBuilder {
             return this;
         }
 
-        public ReportTableRowBuilderImpl addValue(String value){
-            values.add(new ReportTextBox(parent.pdfStyleSheet.getBodyText(), parent.pdfStyleSheet.getLineDistance(),value));
+        public ReportTableRowBuilderImpl addValue(String value) {
+            values.add(new ReportTextBox(parent.pdfStyleSheet.getBodyText(), parent.pdfStyleSheet.getLineDistance(), value));
             return this;
         }
 
         public ReportTableBuilderImpl withValues(String... rowValues) {
-            for(String value : rowValues){
+            for (String value : rowValues) {
                 values.add(new ReportTextBox(parent.pdfStyleSheet.getBodyText(), parent.pdfStyleSheet.getLineDistance(), value));
             }
             return endRow();
