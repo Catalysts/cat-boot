@@ -3,10 +3,7 @@ package cc.catalysts.boot.report.pdf.impl;
 import cc.catalysts.boot.report.pdf.PdfReport;
 import cc.catalysts.boot.report.pdf.PdfReportBuilder;
 import cc.catalysts.boot.report.pdf.ReportTableBuilder;
-import cc.catalysts.boot.report.pdf.config.DefaultPdfStyleSheet;
-import cc.catalysts.boot.report.pdf.config.PdfPageLayout;
-import cc.catalysts.boot.report.pdf.config.PdfStyleSheet;
-import cc.catalysts.boot.report.pdf.config.PdfTextStyle;
+import cc.catalysts.boot.report.pdf.config.*;
 import cc.catalysts.boot.report.pdf.elements.*;
 import cc.catalysts.boot.report.pdf.utils.PositionOfStaticElements;
 import cc.catalysts.boot.report.pdf.utils.ReportAlignType;
@@ -54,7 +51,7 @@ class PdfReportBuilderImpl implements PdfReportBuilder {
 
         for(File file : fontFiles) {
             try {
-                PdfTextStyle.registerFont(PDType0Font.load(document, file));
+                PdfFont.registerFont(PDType0Font.load(document, file));
             } catch (IOException e) {
                 // TODO: maybe logging?
                 e.printStackTrace();
