@@ -6,10 +6,7 @@ import cc.catalysts.boot.report.pdf.PdfReportService;
 import cc.catalysts.boot.report.pdf.config.*;
 import cc.catalysts.boot.report.pdf.elements.ReportTextBox;
 import org.apache.commons.io.FileUtils;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.*;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
@@ -50,6 +47,7 @@ public class PdfReportStructureServiceTest {
     }
 
     @Test
+    @Ignore
     public void generateAndSavePlainExample() throws Exception {
         final PdfReport pdfReport = createTestReport().buildReport("example-plain.pdf", PdfPageLayout.getPortraitA4Page(), null);
 
@@ -75,6 +73,7 @@ public class PdfReportStructureServiceTest {
     }
 
     @Test
+    @Ignore
     public void generateAndSaveHeaderFooterSmallMarginExample() throws Exception {
         PdfReportBuilder report = createTestReport()
                 .withHeaderOnAllPages("one", "two", "three")
