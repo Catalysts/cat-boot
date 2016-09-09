@@ -11,7 +11,7 @@ import java.util.List;
 
 /**
  * Used to force elements to be rendered on the same page.
- *
+ * <p>
  * Created by skaupper on 04.08.2016.
  */
 public class ReportCompositeElement extends AbstractReportElement {

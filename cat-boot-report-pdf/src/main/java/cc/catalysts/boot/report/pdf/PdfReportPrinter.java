@@ -1,6 +1,5 @@
 package cc.catalysts.boot.report.pdf;
 
-import java.io.File;
 import java.io.IOException;
 
 /**

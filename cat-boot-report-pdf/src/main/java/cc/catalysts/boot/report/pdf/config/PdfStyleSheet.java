@@ -1,7 +1,5 @@
 package cc.catalysts.boot.report.pdf.config;
 
-import org.apache.pdfbox.pdmodel.font.PDType1Font;
-
 import java.awt.*;
 
 /**

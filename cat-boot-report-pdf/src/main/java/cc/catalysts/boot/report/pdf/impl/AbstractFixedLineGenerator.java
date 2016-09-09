@@ -39,8 +39,12 @@ public abstract class AbstractFixedLineGenerator {
 
     protected abstract float getVerticalPosition(PdfPageLayout pageConfig);
 
-    public PositionOfStaticElements getFooterOnPages() { return footerOnPages; }
+    public PositionOfStaticElements getFooterOnPages() {
+        return footerOnPages;
+    }
 
-    public ReportElement getFooterElement() { return footerElement; }
+    public ReportElement getFooterElement() {
+        return footerElement;
+    }
 
 }

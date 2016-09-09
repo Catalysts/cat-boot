@@ -1,7 +1,7 @@
 package cc.catalysts.boot.report.pdf.impl;
 
-import cc.catalysts.boot.report.pdf.elements.*;
 import cc.catalysts.boot.report.pdf.config.PdfStyleSheet;
+import cc.catalysts.boot.report.pdf.elements.*;
 import cc.catalysts.boot.report.pdf.utils.PositionOfStaticElements;
 
 import java.util.ArrayList;

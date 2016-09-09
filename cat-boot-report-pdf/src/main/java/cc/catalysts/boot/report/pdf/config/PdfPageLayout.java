@@ -100,33 +100,59 @@ public class PdfPageLayout {
         this.lineDistance = lineDistance;
     }
 
-    public PositionOfStaticElements getFooterPosition() { return footerPosition; }
+    public PositionOfStaticElements getFooterPosition() {
+        return footerPosition;
+    }
 
-    public void setFooterPosition(PositionOfStaticElements footerPosition) { this.footerPosition = footerPosition; }
+    public void setFooterPosition(PositionOfStaticElements footerPosition) {
+        this.footerPosition = footerPosition;
+    }
 
-    public PositionOfStaticElements getHeaderPosition() { return headerPosition; }
+    public PositionOfStaticElements getHeaderPosition() {
+        return headerPosition;
+    }
 
-    public void setHeaderPosition(PositionOfStaticElements headerPosition) { this.headerPosition = headerPosition; }
+    public void setHeaderPosition(PositionOfStaticElements headerPosition) {
+        this.headerPosition = headerPosition;
+    }
 
     public void setFooter(float footerSize) {
         this.footer = footerSize;
     }
 
-    public void setHeader(float headerSize) { this.header = headerSize; }
+    public void setHeader(float headerSize) {
+        this.header = headerSize;
+    }
 
-    public float getUsableWidth() { return width - marginLeft - marginRight; }
+    public float getUsableWidth() {
+        return width - marginLeft - marginRight;
+    }
 
-    public PDRectangle getPageSize() { return new PDRectangle(width, height); }
+    public PDRectangle getPageSize() {
+        return new PDRectangle(width, height);
+    }
 
-    public float getStartY() { return height - marginTop - header; }
+    public float getStartY() {
+        return height - marginTop - header;
+    }
 
-    public float getStartY(int pageNo) { return pageNo == 0 && headerPosition == PositionOfStaticElements.ON_ALL_PAGES_BUT_FIRST ? height - marginTop : getStartY(); }
+    public float getStartY(int pageNo) {
+        return pageNo == 0 && headerPosition == PositionOfStaticElements.ON_ALL_PAGES_BUT_FIRST ? height - marginTop : getStartY();
+    }
 
-    public float getStartX() { return marginLeft; }
+    public float getStartX() {
+        return marginLeft;
+    }
 
-    public float getLastY() { return marginBottom + footer; }
+    public float getLastY() {
+        return marginBottom + footer;
+    }
 
-    public float getLastY(int pageNo) { return pageNo == 0 && footerPosition == PositionOfStaticElements.ON_ALL_PAGES_BUT_FIRST ? marginBottom : getLastY(); }
+    public float getLastY(int pageNo) {
+        return pageNo == 0 && footerPosition == PositionOfStaticElements.ON_ALL_PAGES_BUT_FIRST ? marginBottom : getLastY();
+    }
 
-    public float getLastX() { return width - marginRight; }
+    public float getLastX() {
+        return width - marginRight;
+    }
 }

@@ -79,7 +79,7 @@ final class PdfBoxHelper {
 
         float nextLineY = nextLineY((int) textY, textConfig.getFontSize(), lineHeightD);
 
-        if(text.equals("")) {
+        if (text.equals("")) {
             addTextSimple(stream, textConfig, textX, nextLineY, "");
             return nextLineY;
         }
@@ -330,12 +330,11 @@ final class PdfBoxHelper {
             stream.setFont(textConfig.getCurrentFontStyle(), textConfig.getFontSize());
             stream.setNonStrokingColor(textConfig.getColor());
             stream.beginText();
-            stream.setTextMatrix(new Matrix(1,0,0,1, textX, textY));
+            stream.setTextMatrix(new Matrix(1, 0, 0, 1, textX, textY));
             stream.showText(text);
         } catch (Exception e) {
             LOG.warn("Could not add text: " + e.getClass() + " - " + e.getMessage());
-        }
-        finally {
+        } finally {
             try {
                 stream.endText();
             } catch (IOException e) {

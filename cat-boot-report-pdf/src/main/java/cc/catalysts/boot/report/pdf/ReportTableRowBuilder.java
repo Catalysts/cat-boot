@@ -2,8 +2,6 @@ package cc.catalysts.boot.report.pdf;
 
 import cc.catalysts.boot.report.pdf.elements.ReportElement;
 
-import java.awt.image.BufferedImage;
-
 /**
  * @author Klaus Lehner, Catalysts GmbH
  */

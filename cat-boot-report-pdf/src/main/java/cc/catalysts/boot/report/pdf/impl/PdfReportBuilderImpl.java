@@ -51,7 +51,7 @@ class PdfReportBuilderImpl implements PdfReportBuilder {
             LOG.warn("Failed to get files!", e);
         }
 
-        for(File file : fontFiles) {
+        for (File file : fontFiles) {
             try {
                 PdfFont.registerFont(PDType0Font.load(document, file));
             } catch (IOException e) {

@@ -6,7 +6,6 @@ import cc.catalysts.boot.report.pdf.PdfReportService;
 import cc.catalysts.boot.report.pdf.config.*;
 import cc.catalysts.boot.report.pdf.elements.ReportTextBox;
 import org.apache.commons.io.FileUtils;
-import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
