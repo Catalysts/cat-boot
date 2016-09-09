@@ -3,9 +3,9 @@ package cc.catalysts.boot.report.pdf.impl;
 import cc.catalysts.boot.report.pdf.PdfReport;
 import cc.catalysts.boot.report.pdf.PdfReportService;
 import cc.catalysts.boot.report.pdf.config.DefaultPdfStyleSheet;
+import cc.catalysts.boot.report.pdf.config.PdfFont;
 import cc.catalysts.boot.report.pdf.config.PdfPageLayout;
 import cc.catalysts.boot.report.pdf.config.PdfTextStyle;
-import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
@@ -25,7 +25,7 @@ public class DemoTest {
         final PdfReportFilePrinter pdfReportFilePrinter = new PdfReportFilePrinter();
 
         DefaultPdfStyleSheet styleSheet = new DefaultPdfStyleSheet();
-        styleSheet.setBodyText(new PdfTextStyle(10, PDType1Font.HELVETICA, Color.BLACK));
+        styleSheet.setBodyText(new PdfTextStyle(10, PdfFont.HELVETICA, Color.BLACK, "regular"));
 
         final PdfReport pdfReport = pdfReportService.createBuilder(styleSheet)
                 .addHeading("Dear Github users")
@@ -41,7 +41,7 @@ public class DemoTest {
                 .createRow().withValues("y1", "y2", "y3")
                 .endTable()
                 .beginNewSection("Formatting", false)
-                .addText("You can also format text as you can see here.", new PdfTextStyle(13, PDType1Font.TIMES_BOLD_ITALIC, Color.BLUE))
+                .addText("You can also format text as you can see here.", new PdfTextStyle(13, PdfFont.TIMES_ROMAN, Color.BLUE, "boldItalic"))
                 .beginNewSection("Images", false)
                 .addText("Images are also supported out-of-the-box:")
                 .addPadding(10)

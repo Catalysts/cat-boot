@@ -5,10 +5,10 @@ import cc.catalysts.boot.report.pdf.elements.ReportElement;
 import cc.catalysts.boot.report.pdf.elements.ReportElementStatic;
 import cc.catalysts.boot.report.pdf.elements.ReportImage;
 import cc.catalysts.boot.report.pdf.elements.ReportTable;
-import org.apache.pdfbox.exceptions.COSVisitorException;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
-import org.apache.pdfbox.pdmodel.edit.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.PDPageTree;
 import org.springframework.core.io.Resource;
 
 import java.io.IOException;
@@ -24,10 +24,11 @@ import java.util.Queue;
 class PdfReportGenerator {
 
     public PdfReportGenerator() {
+
     }
 
-    public void printToStream(PdfPageLayout pageConfig, Resource templateResource, PdfReportStructure report, OutputStream stream) throws IOException, COSVisitorException {
-        PDDocument page = generate(pageConfig, templateResource, report);
+    public void printToStream(PdfPageLayout pageConfig, Resource templateResource, PdfReportStructure report, OutputStream stream, PDDocument document) throws IOException {
+        PDDocument page = generate(pageConfig, templateResource, report, document);
         page.save(stream);
         page.close();
     }
@@ -86,6 +87,15 @@ class PdfReportGenerator {
                     continue;
                 }
             }
+
+            // without this block pdfbox 2.0.2 does not render properly
+            // TODO: find a more elegant solution
+            cursor.currentStream.close();
+            PDPageTree pageTree = document.getDocumentCatalog().getPages();
+            PDPage currPage = pageTree.get(pageTree.getCount() - 1);
+            cursor.currentStream = new PDPageContentStream(document, currPage, PDPageContentStream.AppendMode.APPEND, false);
+            // ---
+
             float nextY = currentReportElement.print(document, cursor.currentStream, cursor.currentPageNumber, cursor.xPos, cursor.yPos, maxWidth);
             nextY -= pageConfig.getLineDistance();
             cursor.imageList.addAll(currentReportElement.getImageIntents());
@@ -127,11 +137,11 @@ class PdfReportGenerator {
         } else {
             PDDocument templateDoc = PDDocument.load(printData.templateResource.getInputStream());
             cursor.cacheTempalte(templateDoc);
-            PDPage templatePage = (PDPage) templateDoc.getDocumentCatalog().getAllPages().get(0);
+            PDPage templatePage = templateDoc.getDocumentCatalog().getPages().get(0);
             document.importPage(templatePage);
         }
-        PDPage currPage = (PDPage) document.getDocumentCatalog().getAllPages().get(++cursor.currentPageNumber);
-        cursor.currentStream = new PDPageContentStream(document, currPage, true, false);
+        PDPage currPage = document.getDocumentCatalog().getPages().get(++cursor.currentPageNumber);
+        cursor.currentStream = new PDPageContentStream(document, currPage, PDPageContentStream.AppendMode.APPEND, false);
         cursor.yPos = printData.pageConfig.getStartY(cursor.currentPageNumber);
         cursor.xPos = printData.pageConfig.getStartX();
     }

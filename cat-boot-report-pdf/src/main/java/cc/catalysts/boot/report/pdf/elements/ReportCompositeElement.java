@@ -1,7 +1,7 @@
 package cc.catalysts.boot.report.pdf.elements;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.pdmodel.edit.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.PDPageContentStream;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -11,7 +11,7 @@ import java.util.List;
 
 /**
  * Used to force elements to be rendered on the same page.
- *
+ * <p>
  * Created by skaupper on 04.08.2016.
  */
 public class ReportCompositeElement extends AbstractReportElement {

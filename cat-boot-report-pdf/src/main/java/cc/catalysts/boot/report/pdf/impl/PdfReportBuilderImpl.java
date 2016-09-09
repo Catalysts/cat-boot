@@ -3,17 +3,19 @@ package cc.catalysts.boot.report.pdf.impl;
 import cc.catalysts.boot.report.pdf.PdfReport;
 import cc.catalysts.boot.report.pdf.PdfReportBuilder;
 import cc.catalysts.boot.report.pdf.ReportTableBuilder;
-import cc.catalysts.boot.report.pdf.config.DefaultPdfStyleSheet;
-import cc.catalysts.boot.report.pdf.config.PdfPageLayout;
-import cc.catalysts.boot.report.pdf.config.PdfStyleSheet;
-import cc.catalysts.boot.report.pdf.config.PdfTextStyle;
+import cc.catalysts.boot.report.pdf.config.*;
 import cc.catalysts.boot.report.pdf.elements.*;
 import cc.catalysts.boot.report.pdf.utils.PositionOfStaticElements;
 import cc.catalysts.boot.report.pdf.utils.ReportAlignType;
 import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.font.PDType0Font;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
 import javax.imageio.ImageIO;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,11 +26,38 @@ import java.util.List;
 class PdfReportBuilderImpl implements PdfReportBuilder {
 
     private final PdfStyleSheet configuration;
+    private final PDDocument document;
     private List<ReportElement> elements = new ArrayList<>();
     private List<AbstractFixedLineGenerator> fixedLineGenerators = new ArrayList<>();
+    private static final Logger LOG = LoggerFactory.getLogger(PdfReportBuilderImpl.class);
 
     public PdfReportBuilderImpl(PdfStyleSheet configuration) {
         this.configuration = configuration;
+        document = new PDDocument();
+        loadResourceFonts();
+    }
+
+    private void loadResourceFonts() {
+        Resource fontDirectory = new ClassPathResource("/fonts/", PdfReportBuilder.class);
+        File[] fontFiles = new File[0];
+        try {
+            File fontDirectoryFile = fontDirectory.getFile();
+            if(fontDirectoryFile.isDirectory()) {
+                fontFiles = fontDirectoryFile.listFiles(f -> f.toString().endsWith(".ttf"));
+            } else {
+                LOG.warn("Given path is not a directory!");
+            }
+        } catch (IOException e) {
+            LOG.warn("Failed to get files!", e);
+        }
+
+        for (File file : fontFiles) {
+            try {
+                PdfFont.registerFont(PDType0Font.load(document, file));
+            } catch (IOException e) {
+                LOG.warn("Failed to register font!", e);
+            }
+        }
     }
 
     public PdfReportBuilderImpl addElement(ReportElement element) {
@@ -152,7 +181,7 @@ class PdfReportBuilderImpl implements PdfReportBuilder {
 
     public PdfReport buildReport(String fileName, PdfPageLayout pageConfig, Resource templateResource, PDDocument document) throws IOException {
         PdfReportStructure report = this.buildReport(pageConfig);
-        document = new PdfReportGenerator().generate(pageConfig, templateResource, report, document);
+        new PdfReportGenerator().generate(pageConfig, templateResource, report, document);
         return new PdfReport(fileName, document);
     }
 

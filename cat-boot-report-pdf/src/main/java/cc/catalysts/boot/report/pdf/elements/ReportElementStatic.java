@@ -3,7 +3,7 @@ package cc.catalysts.boot.report.pdf.elements;
 import cc.catalysts.boot.report.pdf.utils.PositionOfStaticElements;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
-import org.apache.pdfbox.pdmodel.edit.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.PDPageContentStream;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -54,8 +54,8 @@ public class ReportElementStatic implements ReportElement {
      */
     @Override
     public float print(PDDocument document, PDPageContentStream stream, int pageNumber, float startX, float startY, float allowedWidth) throws IOException {
-        PDPage currPage = (PDPage) document.getDocumentCatalog().getAllPages().get(pageNo);
-        PDPageContentStream pageStream = new PDPageContentStream(document, currPage, true, false);
+        PDPage currPage = document.getDocumentCatalog().getPages().get(pageNo);
+        PDPageContentStream pageStream = new PDPageContentStream(document, currPage, PDPageContentStream.AppendMode.APPEND, false);
         base.print(document, pageStream, pageNo, x, y, width);
         pageStream.close();
         return 0F;

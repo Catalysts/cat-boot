@@ -44,7 +44,7 @@ final PdfReportService pdfReportService = new PdfReportServiceImpl(new DefaultPd
 final PdfReportFilePrinter pdfReportFilePrinter = new PdfReportFilePrinter();
 
 DefaultPdfStyleSheet styleSheet = new DefaultPdfStyleSheet();
-styleSheet.setBodyText(new PdfTextStyle(10, PDType1Font.HELVETICA, Color.BLACK));
+styleSheet.setBodyText(new PdfTextStyle(10, PdfFont.HELVETICA, Color.BLACK, "regular"));
 
 final PdfReport pdfReport = pdfReportService.createBuilder(styleSheet)
         .addHeading("Dear Github users")

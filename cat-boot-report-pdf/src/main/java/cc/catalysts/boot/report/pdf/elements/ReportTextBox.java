@@ -3,7 +3,7 @@ package cc.catalysts.boot.report.pdf.elements;
 import cc.catalysts.boot.report.pdf.config.PdfTextStyle;
 import cc.catalysts.boot.report.pdf.utils.ReportAlignType;
 import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.pdmodel.edit.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.font.PDFont;
 import org.springframework.util.StringUtils;
 
@@ -114,11 +114,11 @@ public class ReportTextBox implements ReportElement {
         if (text == null) {
             return new String[]{null, null};
         }
-        CacheKey key = new CacheKey(textConfig.getFont(), textConfig.getFontSize(), allowedWidth, text);
+        CacheKey key = new CacheKey(textConfig.getCurrentFontStyle(), textConfig.getFontSize(), allowedWidth, text);
         if (cache.containsKey(key)) {
             return cache.get(key);
         } else {
-            String[] split = PdfBoxHelper.splitText(textConfig.getFont(), textConfig.getFontSize(), allowedWidth, text);
+            String[] split = PdfBoxHelper.splitText(textConfig.getCurrentFontStyle(), textConfig.getFontSize(), allowedWidth, text);
             cache.put(key, split);
             return split;
         }
@@ -136,7 +136,9 @@ public class ReportTextBox implements ReportElement {
         return text;
     }
 
-    public void setText(String text) { this.text = text; }
+    public void setText(String text) {
+        this.text = text;
+    }
 
     private static final class CacheKey {
         private PDFont font;
@@ -161,9 +163,8 @@ public class ReportTextBox implements ReportElement {
             if (!text.equals(cacheKey.text)) return false;
             if (fontSize != cacheKey.fontSize) return false;
             if (Float.compare(cacheKey.width, width) != 0) return false;
-            if (!font.equals(cacheKey.font)) return false;
+            return font.equals(cacheKey.font);
 
-            return true;
         }
 
         @Override

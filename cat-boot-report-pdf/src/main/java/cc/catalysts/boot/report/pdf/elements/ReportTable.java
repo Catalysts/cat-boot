@@ -4,7 +4,7 @@ import cc.catalysts.boot.report.pdf.config.PdfStyleSheet;
 import cc.catalysts.boot.report.pdf.utils.ReportAlignType;
 import cc.catalysts.boot.report.pdf.utils.ReportVerticalAlignType;
 import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.pdmodel.edit.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.PDPageContentStream;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -135,28 +135,42 @@ public class ReportTable implements ReportElement {
             float y1 = endY - (BORDER_Y_DELTA + 1);
             if (!noInnerBorders) {
                 if (!noTopBorder || noTopBorder && !placeFirstBorder) {
-                    stream.drawLine(x, y0, x + allowedWidth, y0);
+                    stream.moveTo(x, y0);
+                    stream.lineTo(x + allowedWidth, y0);
+                    stream.stroke();
                 }
                 if (!noBottomBorder || noBottomBorder && !placeLastBorder) {
-                    stream.drawLine(x, y1, x + allowedWidth, y1);
+                    stream.moveTo(x, y1);
+                    stream.lineTo(x + allowedWidth, y1);
+                    stream.stroke();
                 }
             } else {
                 if (!noTopBorder && placeFirstBorder) {
-                    stream.drawLine(x, y0, x + allowedWidth, y0);
+                    stream.moveTo(x, y0);
+                    stream.lineTo(x + allowedWidth, y0);
+                    stream.stroke();
                 }
                 if (!noBottomBorder && placeLastBorder) {
-                    stream.drawLine(x, y1, x + allowedWidth, y1);
+                    stream.moveTo(x, y1);
+                    stream.lineTo(x + allowedWidth, y1);
+                    stream.stroke();
                 }
             }
             float currX = x;
-            stream.drawLine(currX, y0, currX, y1);
+            stream.moveTo(currX, y0);
+            stream.lineTo(currX, y1);
+            stream.stroke();
             for (float width : cellWidths) {
                 if (!noInnerBorders) {
-                    stream.drawLine(currX, y0, currX, y1);
+                    stream.moveTo(currX, y0);
+                    stream.lineTo(currX, y1);
+                    stream.stroke();
                 }
                 currX += width * allowedWidth;
             }
-            stream.drawLine(currX, y0, currX, y1);
+            stream.moveTo(currX, y0);
+            stream.lineTo(currX, y1);
+            stream.stroke();
         }
     }
 

@@ -3,13 +3,9 @@ package cc.catalysts.boot.report.pdf.impl;
 import cc.catalysts.boot.report.pdf.PdfReport;
 import cc.catalysts.boot.report.pdf.PdfReportBuilder;
 import cc.catalysts.boot.report.pdf.PdfReportService;
-import cc.catalysts.boot.report.pdf.config.DefaultPdfStyleSheet;
-import cc.catalysts.boot.report.pdf.config.PdfPageLayout;
-import cc.catalysts.boot.report.pdf.config.PdfStyleSheet;
-import cc.catalysts.boot.report.pdf.config.PdfTextStyle;
+import cc.catalysts.boot.report.pdf.config.*;
 import cc.catalysts.boot.report.pdf.elements.ReportTextBox;
 import org.apache.commons.io.FileUtils;
-import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -98,7 +94,7 @@ public class PdfReportStructureServiceTest {
             longText.append("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.");
         }
 
-        PdfTextStyle otherConfig = new PdfTextStyle(12, PDType1Font.HELVETICA_BOLD, Color.BLACK);
+        PdfTextStyle otherConfig = new PdfTextStyle(12, PdfFont.HELVETICA, Color.BLACK, "bold");
 
         return pdfReportService.createBuilder()
                 .beginNewSection("Test 1, Table", true)
