@@ -1,5 +1,6 @@
 package cc.catalysts.boot.report.pdf.elements;
 
+import cc.catalysts.boot.report.pdf.config.PdfFont;
 import cc.catalysts.boot.report.pdf.config.PdfTextStyle;
 import cc.catalysts.boot.report.pdf.utils.ReportAlignType;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
@@ -10,17 +11,20 @@ import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-final class PdfBoxHelper {
+public final class PdfBoxHelper {
 
     private static final Logger LOG = LoggerFactory.getLogger(PdfBoxHelper.class);
 
+    private static Map<PDFont, Map<Character, Float>> fontSizeMap;
+
+    static {
+        fontSizeMap = new HashMap<>();
+    }
 
     private PdfBoxHelper() {
     }
@@ -425,12 +429,28 @@ final class PdfBoxHelper {
     }
 
     public static float getTextWidth(PDFont font, int fontSize, String text) {
-        try {
-            return font.getStringWidth(text) / 1000F * (float) fontSize;
-        } catch (Exception e) {
-            LOG.warn("Could not calculate string length: " + e.getClass() + " - " + e.getMessage());
-            return 0;
+        Map<Character, Float> sizeMap = fontSizeMap.get(font);
+        if (sizeMap == null) {
+            sizeMap = new HashMap<>();
+            fontSizeMap.put(font, sizeMap);
         }
+
+        Float sum = 0F;
+        for (int i = 0; i < text.length(); i++) {
+            Character c = text.charAt(i);
+            Float value = sizeMap.get(c);
+            if (value == null) {
+                try {
+                    value = font.getStringWidth(c.toString());
+                } catch (IOException e) {
+                    LOG.warn("Could not calculate string length: " + e.getClass() + " - " + e.getMessage());
+                    return 0;
+                }
+                sizeMap.put(c, value);
+            }
+            sum += value;
+        }
+        return sum / 1000F * fontSize;
     }
 
     public static float nextLineY(int currentY, int fontSize, float lineHeightD) {
