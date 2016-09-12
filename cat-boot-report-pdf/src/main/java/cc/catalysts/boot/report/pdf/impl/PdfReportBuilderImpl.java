@@ -11,11 +11,11 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.font.PDType0Font;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+import org.springframework.core.io.support.ResourcePatternResolver;
 
 import javax.imageio.ImageIO;
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,22 +38,19 @@ class PdfReportBuilderImpl implements PdfReportBuilder {
     }
 
     private void loadResourceFonts() {
-        Resource fontDirectory = new ClassPathResource("/fonts/", PdfReportBuilder.class);
-        File[] fontFiles = new File[0];
+
+        Resource[] resources;
         try {
-            File fontDirectoryFile = fontDirectory.getFile();
-            if(fontDirectoryFile.isDirectory()) {
-                fontFiles = fontDirectoryFile.listFiles(f -> f.toString().endsWith(".ttf"));
-            } else {
-                LOG.warn("Given path is not a directory!");
-            }
+            ResourcePatternResolver resourcePatternResolver = new PathMatchingResourcePatternResolver();
+            resources = resourcePatternResolver.getResources("classpath:/fonts/*.ttf");
         } catch (IOException e) {
             LOG.warn("Failed to get files!", e);
+            return;
         }
 
-        for (File file : fontFiles) {
+        for (Resource resource : resources) {
             try {
-                PdfFont.registerFont(PDType0Font.load(document, file));
+                PdfFont.registerFont(PDType0Font.load(document, resource.getInputStream()));
             } catch (IOException e) {
                 LOG.warn("Failed to register font!", e);
             }
