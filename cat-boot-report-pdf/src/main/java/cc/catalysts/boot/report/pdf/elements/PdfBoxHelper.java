@@ -362,7 +362,7 @@ public final class PdfBoxHelper {
     }
 
     private static List<Integer> getWrapableIndexes(String text) {
-        List<Integer> list = new ArrayList<Integer>();
+        List<Integer> list = new ArrayList<>();
         Pattern pt = Pattern.compile("\\s+");
         Matcher m = pt.matcher(text);
         while (m.find()) {
@@ -375,8 +375,10 @@ public final class PdfBoxHelper {
     public static String[] splitText(PDFont font, int fontSize, float allowedWidth, String text) {
         String endPart = "";
 
+        text = text.replaceAll("\\r", "");
+
         // look for manual line breaks which have priority
-        List<String> breakSplitted = Arrays.asList(text.split("(\\r\\n)|(\\n)|(\\n\\r)")).stream().collect(Collectors.toList());
+        List<String> breakSplitted = Arrays.asList(text.split("\\n"));
         if (breakSplitted.size() > 1) {
             // be sure that there do not have to be some breaks before \n
             String[] splittedFirst = splitText(font, fontSize, allowedWidth, breakSplitted.get(0));
@@ -387,7 +389,7 @@ public final class PdfBoxHelper {
             return new String[]{splittedFirst[0], remaining.toString()};
         }
 
-        if (getTextWidth(font, fontSize, text) <= allowedWidth && text.indexOf((char) 13) == -1) {
+        if (text.indexOf(10) == -1 && getTextWidth(font, fontSize, text) <= allowedWidth) {
             return new String[]{text, null};
         }
 
@@ -429,28 +431,34 @@ public final class PdfBoxHelper {
     }
 
     public static float getTextWidth(PDFont font, int fontSize, String text) {
+
         Map<Character, Float> sizeMap = fontSizeMap.get(font);
         if (sizeMap == null) {
             sizeMap = new HashMap<>();
             fontSizeMap.put(font, sizeMap);
         }
 
-        Float sum = 0F;
-        for (int i = 0; i < text.length(); i++) {
-            Character c = text.charAt(i);
-            Float value = sizeMap.get(c);
-            if (value == null) {
-                try {
-                    value = font.getStringWidth(c.toString());
-                } catch (IOException e) {
-                    LOG.warn("Could not calculate string length: " + e.getClass() + " - " + e.getMessage());
-                    return 0;
+        Float maxSum = 0F;
+        for (String line : text.split("\\n")) {
+            Float sum = 0F;
+            for (int i = 0; i < line.length(); i++) {
+                Character c = line.charAt(i);
+                Float value = sizeMap.get(c);
+                if (value == null) {
+                    try {
+                        value = font.getStringWidth(c.toString());
+                    } catch (IOException e) {
+                        LOG.warn("Could not calculate string length: " + e.getClass() + " - " + e.getMessage());
+                        return 0;
+                    }
+                    sizeMap.put(c, value);
                 }
-                sizeMap.put(c, value);
+                sum += value;
             }
-            sum += value;
+
+            maxSum = Math.max(maxSum, sum);
         }
-        return sum / 1000F * fontSize;
+        return maxSum / 1000F * fontSize;
     }
 
     public static float nextLineY(int currentY, int fontSize, float lineHeightD) {
