@@ -18,7 +18,7 @@ dependencies {
 
     optional('org.springframework.boot:spring-boot-configuration-processor')
 
-    testCompile('junit:junit:4.11')
+    testCompile('junit:junit:4.12')
     testCompile('org.springframework:spring-test')
     testCompile('commons-logging:commons-logging:1.2')
 }

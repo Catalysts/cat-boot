@@ -15,7 +15,7 @@ dependencies {
     compile 'org.aspectj:aspectjweaver'
 
     testCompile 'org.springframework:spring-test'
-    testCompile 'junit:junit:4.11'
+    testCompile 'junit:junit:4.12'
     testCompile 'commons-logging:commons-logging:1.2'
     testCompile 'ch.qos.logback:logback-classic'
 }

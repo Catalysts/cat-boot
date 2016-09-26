@@ -21,7 +21,7 @@ dependencies {
     provided('javax.servlet:javax.servlet-api')
     provided('org.springframework:spring-web')
 
-    testCompile( 'junit:junit:4.11')
+    testCompile( 'junit:junit:4.12')
     testCompile( 'org.mockito:mockito-core')
     testCompile( 'org.springframework:spring-test')
     testCompile( 'commons-logging:commons-logging:1.2')

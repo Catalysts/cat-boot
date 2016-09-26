@@ -35,7 +35,7 @@ public class SpringSessionConfig {
      */
     @Primary
     @Bean
-    public SessionRepository sessionRepository(RedisTemplate<String, ExpiringSession> sessionRedisTemplate,
+    public SessionRepository sessionRepository(RedisTemplate<Object, Object> sessionRedisTemplate,
                                                CounterService counterService, ServerConfig serverConfig) {
         RedisOperationsSessionRepository sessionRepository = new RedisOperationsSessionRepository(sessionRedisTemplate);
         sessionRepository.setDefaultMaxInactiveInterval(serverConfig.getSessionTimeout());
