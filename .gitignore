@@ -49,3 +49,6 @@ crashlytics-build.properties
 
 cat-boot-report-pdf/build
 cat-boot-report-pdf/pdf-out
+
+demo.pdf
+demo2.pdf
