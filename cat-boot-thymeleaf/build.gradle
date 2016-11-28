@@ -6,7 +6,7 @@ bootRepackage {
 }
 
 dependencies {
-    compile('org.springframework.boot:spring-boot-starter-thymeleaf')
+    compile('org.springframework.boot:spring-boot-starter-thymeleaf:1.+')
 
     testCompile('junit:junit:4.11')
     testCompile('org.assertj:assertj-core:3.2.0')
