@@ -2,6 +2,7 @@ package cc.catalysts.boot.report.pdf.elements;
 
 import cc.catalysts.boot.report.pdf.config.PdfTextStyle;
 import cc.catalysts.boot.report.pdf.utils.ReportAlignType;
+import cc.catalysts.boot.report.pdf.utils.Utf8Utils;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.font.PDFont;
 import org.apache.pdfbox.util.Matrix;
@@ -87,7 +88,7 @@ public final class PdfBoxHelper {
         }
 
         try {
-            String[] split = splitText(textConfig.getCurrentFontStyle(), textConfig.getFontSize(), allowedWidth, text);
+            String[] split = splitText(textConfig.getCurrentFontStyle(), textConfig.getFontSize(), allowedWidth, Utf8Utils.removeCharactersWithZeroLength(text));
             float x = calculateAlignPosition(textX, align, textConfig, allowedWidth, split[0]);
 
             if (!underline) {
@@ -263,7 +264,7 @@ public final class PdfBoxHelper {
     }
 
     public static float addRichText(PDPageContentStream stream, PdfTextStyle textConfig, float textX, float textY, float allowedWidth, float lineHeightD, ReportAlignType align, String text, String boldFontStyle, String italicFontStyle) {
-        String[] lines = generalizeLineSeparators(text).split(System.lineSeparator());
+        String[] lines = generalizeLineSeparators(Utf8Utils.removeCharactersWithZeroLength(text)).split(System.lineSeparator());
 
         float currX = textX, currY = textY;
         for (String line : lines) {
@@ -373,6 +374,7 @@ public final class PdfBoxHelper {
     public static String[] splitText(PDFont font, int fontSize, float allowedWidth, String text) {
         String endPart = "";
 
+        text = Utf8Utils.removeCharactersWithZeroLength(text);
         text = text.replaceAll("\\r", "");
 
         // look for manual line breaks which have priority
