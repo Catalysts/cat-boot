@@ -97,6 +97,23 @@ public class RichTextTest {
         printReport("rt-specialText.pdf");
     }
 
+    @Test
+    public void longText() throws Exception {
+        String text = "Loremipsumdolorsitametconsetetursadipscingelitrseddiamnonumyeirmodtemporinviduntutlaboreetdoloremagnamagnaaliquyameratseddiamvoluptua.";
+        pdfReportBuilder.addElement(new ReportRichTextBox(textStyle, 1.f, text));
+
+        printReport("rt-longText.pdf");
+    }
+
+    @Test
+    public void longText2() throws Exception {
+        String text = "*bold* Loremipsumdolorsitametconsetetursadipscingelitrseddiamnonumyeirmodtemporinviduntutlaboreetdoloremagnamagnaaliquyameratseddiamvoluptua.";
+        pdfReportBuilder.addElement(new ReportRichTextBox(textStyle, 1.f, text));
+
+        printReport("rt-longText2.pdf");
+    }
+
+
     private void printReport(String fileName) throws IOException {
         final PdfReport pdfReport = pdfReportBuilder.buildReport(fileName,
                 PdfPageLayout.getPortraitA4Page(), null);
