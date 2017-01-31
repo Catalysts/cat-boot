@@ -49,10 +49,10 @@ public class RichTextTest {
     public void simpleText() throws Exception {
         String text = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut " +
                 "labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores" +
-                " et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. " +
-                "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut " +
+                " et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. \n" +
+                "+Lorem+ ipsum dolor *sit amet*, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut " +
                 "labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores " +
-                "et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.";
+                "et ea rebum. Stet clita kasd +gubergren+, no sea takimata sanctus est Lorem ipsum dolor sit amet.";
         pdfReportBuilder.addElement(new ReportRichTextBox(textStyle, 1.f, text));
 
         printReport("rt-simpleText.pdf");
@@ -62,7 +62,7 @@ public class RichTextTest {
     public void boldText() throws Exception {
         String text = "Lorem ipsum dolor sit amet, consetetur *sadipscing* elitr, sed diam nonumy eirmod tempor invidunt ut " +
                 "labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores" +
-                " et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. " +
+                " et ea rebum. Stet clita kasd gubergren, no *sea* takimata sanctus est Lorem ipsum dolor sit amet. " +
                 "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut " +
                 "labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores " +
                 "et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.";
@@ -82,6 +82,19 @@ public class RichTextTest {
         pdfReportBuilder.addElement(new ReportRichTextBox(textStyle, 1.f, text));
 
         printReport("rt-underlineText.pdf");
+    }
+
+    @Test
+    public void specialText() throws Exception {
+        String text = "Lorem ipsum dolor sit amet, consetetur +sadipscing+ elitr, sed diam nonumy eirmod *tempor invidunt*, ut " +
+                "*laboreetdoloremagna*, magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores" +
+                " et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. " +
+                "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut " +
+                "labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores " +
+                "et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.";
+        pdfReportBuilder.addElement(new ReportRichTextBox(textStyle, 1.f, text));
+
+        printReport("rt-specialText.pdf");
     }
 
     private void printReport(String fileName) throws IOException {
