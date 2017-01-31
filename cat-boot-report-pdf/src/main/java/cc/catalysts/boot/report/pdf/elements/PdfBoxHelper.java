@@ -421,9 +421,12 @@ public final class PdfBoxHelper {
         if (cleanSplit) {
             part1 = text.substring(start, end).replaceAll("\\s+$", "");
             part2 = text.substring(end + 1, text.length()).concat(endPart).replaceAll("^\\s+", "");
-        } else {
+        } else if (end >= 2) {
             part1 = text.substring(start, end - 1).concat("-").replaceAll("\\s+$", "");
             part2 = text.substring(end - 1, text.length()).concat(endPart).replaceAll("^\\s+", "");
+        } else {
+            part1 = "";
+            part2 = text;
         }
         return new String[]{part1, part2};
     }
