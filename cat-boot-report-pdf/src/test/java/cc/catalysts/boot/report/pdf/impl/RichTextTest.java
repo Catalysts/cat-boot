@@ -113,6 +113,14 @@ public class RichTextTest {
         printReport("rt-longText2.pdf");
     }
 
+    @Test
+    public void specialCharacters() throws IOException {
+        String text = "This is some \u2009text with strange characters\u25FB which cannot \u200B be printed";
+        pdfReportBuilder.addElement(new ReportRichTextBox(textStyle, 1.f, text));
+
+        printReport("rt-specialCharacters.pdf");
+    }
+
 
     private void printReport(String fileName) throws IOException {
         final PdfReport pdfReport = pdfReportBuilder.buildReport(fileName,
