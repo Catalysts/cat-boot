@@ -411,25 +411,33 @@ public final class PdfBoxHelper {
                 end = indexes.get(--j);
             }
         }
-        if (!cleanSplit) {
+
+        String part1 = "";
+        String part2 = text;
+        if (cleanSplit) {
+            part1 = text.substring(start, end).replaceAll("\\s+$", "");
+            part2 = text.substring(end + 1, text.length()).concat(endPart).replaceAll("^\\s+", "");
+        } else {
             //no good wrap point found
             end = text.length();
             while (getTextWidth(font, fontSize, text.substring(start, end)) > allowedWidth) {
                 end--;
             }
+
+            boolean splittable = end >= 2;
+            boolean enoughSpaceAfterSplit = false;
+            if (splittable) {
+                part1 = text.substring(start, end - 1).concat("-").replaceAll("\\s+$", "");
+                part2 = text.substring(end - 1, text.length()).concat(endPart).replaceAll("^\\s+", "");
+
+                enoughSpaceAfterSplit = getTextWidth(font, fontSize, part1) <= allowedWidth;
+            }
+
+            if (!splittable || !enoughSpaceAfterSplit) {
+               return new String[]{"", text};
+            }
         }
-        String part1;
-        String part2;
-        if (cleanSplit) {
-            part1 = text.substring(start, end).replaceAll("\\s+$", "");
-            part2 = text.substring(end + 1, text.length()).concat(endPart).replaceAll("^\\s+", "");
-        } else if (end >= 2) {
-            part1 = text.substring(start, end - 1).concat("-").replaceAll("\\s+$", "");
-            part2 = text.substring(end - 1, text.length()).concat(endPart).replaceAll("^\\s+", "");
-        } else {
-            part1 = "";
-            part2 = text;
-        }
+
         return new String[]{part1, part2};
     }
 
