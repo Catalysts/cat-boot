@@ -1,0 +1,27 @@
+apply plugin: 'java'
+
+apply plugin: 'spring-boot'
+
+bootRepackage {
+    enabled = false
+}
+
+configure(allprojects) {
+    apply plugin: 'propdeps'
+    apply plugin: 'propdeps-maven'
+    apply plugin: 'propdeps-idea'
+    apply plugin: 'propdeps-eclipse'
+}
+
+sourceCompatibility = 1.8
+
+dependencies {
+    compile 'org.slf4j:slf4j-api'
+
+    compile 'com.structurizr:structurizr-core:1.0.0-RC2'
+    compile 'org.springframework.boot:spring-boot'
+
+    optional "org.springframework.boot:spring-boot-configuration-processor"
+
+    testCompile 'org.springframework.boot:spring-boot-starter'
+}
