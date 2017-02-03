@@ -14,7 +14,6 @@ public interface ViewProvider {
     /**
      * <p>This method is called automatically after the whole {@link org.springframework.context.ApplicationContext} is refreshed,
      * thus the {@link com.structurizr.model.Model} definition should be complete.</p>
-     * <p>
      * <p>Implementations of this method might create one or more {@link com.structurizr.view.View} inside this method</p>
      *
      * @param viewSet the {@link ViewSet} of the {@link com.structurizr.Workspace} after the whole {@link com.structurizr.model.Model}
