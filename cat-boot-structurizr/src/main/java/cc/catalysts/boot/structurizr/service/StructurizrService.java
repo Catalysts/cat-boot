@@ -11,6 +11,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Service;
 
 import java.util.Set;
@@ -19,6 +21,7 @@ import java.util.Set;
  * @author Klaus Lehner, Catalysts GmbH
  */
 @Service
+@Order(Ordered.HIGHEST_PRECEDENCE)
 public class StructurizrService implements ApplicationListener<ContextRefreshedEvent> {
 
     private static final Logger LOG = LoggerFactory.getLogger(StructurizrService.class);
