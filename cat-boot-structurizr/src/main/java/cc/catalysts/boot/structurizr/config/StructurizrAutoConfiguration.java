@@ -1,16 +1,19 @@
 package cc.catalysts.boot.structurizr.config;
 
+import cc.catalysts.boot.structurizr.service.StructurizrService;
 import com.structurizr.Workspace;
 import com.structurizr.api.StructurizrClient;
 import com.structurizr.model.Model;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
 /**
  * @author Klaus Lehner, Catalysts GmbH
  */
 @Configuration
+@ComponentScan(basePackageClasses = StructurizrService.class)
 @EnableConfigurationProperties(value = {StructurizrConfigurationProperties.class})
 public class StructurizrAutoConfiguration {
 
