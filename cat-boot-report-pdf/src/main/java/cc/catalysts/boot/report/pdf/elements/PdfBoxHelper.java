@@ -229,6 +229,8 @@ public final class PdfBoxHelper {
                 }
 
                 if (endIndex == -1) {
+                    // there is no end markdown char, so the start markdown char should be treated as a normal char
+                    temp += c;
                     continue;
                 }
 
