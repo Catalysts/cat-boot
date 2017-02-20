@@ -121,6 +121,21 @@ public class RichTextTest {
         printReport("rt-specialCharacters.pdf");
     }
 
+    @Test
+    public void textStyles() throws Exception {
+        String text = "*bold* _italic_ +underline+";
+        pdfReportBuilder.addElement(new ReportRichTextBox(textStyle, 1.f, text));
+
+        printReport("rt-textStyles.pdf");
+    }
+
+    @Test
+    public void notTextStyles() throws Exception {
+        String text = "*notBold not_italic notUnderline+";
+        pdfReportBuilder.addElement(new ReportRichTextBox(textStyle, 1.f, text));
+
+        printReport("rt-notTextStyles.pdf");
+    }
 
     private void printReport(String fileName) throws IOException {
         final PdfReport pdfReport = pdfReportBuilder.buildReport(fileName,

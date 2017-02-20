@@ -19,6 +19,10 @@ public final class PdfBoxHelper {
 
     private static final Logger LOG = LoggerFactory.getLogger(PdfBoxHelper.class);
 
+    private static final char BOLD_MARKDOWN = '*';
+    private static final char ITALIC_MARKDOWN = '_';
+    private static final char UNDERLINED_MARKDOWN = '+';
+
     private static Map<PDFont, Map<Character, Float>> fontSizeMap;
 
     static {
@@ -194,7 +198,7 @@ public final class PdfBoxHelper {
             return segments;
         }
 
-        List<Character> markdownChars = Arrays.asList('*', '+');
+        List<Character> markdownChars = Arrays.asList(BOLD_MARKDOWN, ITALIC_MARKDOWN, UNDERLINED_MARKDOWN);
         List<Character> whiteSpaces = Arrays.asList(' ', '\r', '\n', '\t');
 
         PdfTextStyle boldText = new PdfTextStyle(bodyText.getFontSize(), bodyText.getFont(), bodyText.getColor(), boldFontStyle);
@@ -225,6 +229,8 @@ public final class PdfBoxHelper {
                 }
 
                 if (endIndex == -1) {
+                    // there is no end markdown char, so the start markdown char should be treated as a normal char
+                    temp += c;
                     continue;
                 }
 
@@ -235,13 +241,13 @@ public final class PdfBoxHelper {
                 // manipulate segments accordingly
                 for (TextSegment segment : subSegments) {
                     switch (c) {
-                        case '*':
+                        case BOLD_MARKDOWN:
                             segment.setStyle(boldText);
                             break;
-                        case '+':
+                        case UNDERLINED_MARKDOWN:
                             segment.setUnderlined(true);
                             break;
-                        case '_':
+                        case ITALIC_MARKDOWN:
                             segment.setStyle(italicText);
                             break;
                     }
