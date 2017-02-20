@@ -123,10 +123,18 @@ public class RichTextTest {
 
     @Test
     public void textStyles() throws Exception {
-        String text = "*bold* _italic_ not_italic +underline+";
+        String text = "*bold* _italic_ +underline+";
         pdfReportBuilder.addElement(new ReportRichTextBox(textStyle, 1.f, text));
 
         printReport("rt-textStyles.pdf");
+    }
+
+    @Test
+    public void notTextStyles() throws Exception {
+        String text = "*notBold not_italic notUnderline+";
+        pdfReportBuilder.addElement(new ReportRichTextBox(textStyle, 1.f, text));
+
+        printReport("rt-notTextStyles.pdf");
     }
 
     private void printReport(String fileName) throws IOException {
