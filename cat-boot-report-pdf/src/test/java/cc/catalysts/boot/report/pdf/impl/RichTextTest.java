@@ -115,7 +115,7 @@ public class RichTextTest {
 
     @Test
     public void specialCharacters() throws IOException {
-        String text = "This is some \u2009text with \u2010strange characters\u25FB which cannot \u200B be printed";
+        String text = "This is some \u2009text with \u2010strange characters\u25FB which cannot \u200B be printed \u0308";
         pdfReportBuilder.addElement(new ReportRichTextBox(textStyle, 1.f, text));
 
         printReport("rt-specialCharacters.pdf");
