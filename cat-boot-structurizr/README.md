@@ -177,4 +177,4 @@ public class WebShop implements ViewProvider {
 
 That's all you need to do. You can find the full example code under [https://github.com/Catalysts/cat-boot-structurizr-sample](https://github.com/Catalysts/cat-boot-structurizr-sample).  
 
-The corresponding workspace of the sample code is public on Structurizr.com and can be viewed at [https://structurizr.com/workspace/26741](https://structurizr.com/workspace/26741)
+The corresponding workspace of the sample code is public on Structurizr.com and can be viewed at [https://structurizr.com/share/26741](https://structurizr.com/share/26741)
