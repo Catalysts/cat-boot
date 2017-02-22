@@ -47,12 +47,17 @@ Create a new Java project and embed the library
 With Gradle that would look like that:
 
 ```groovy
+apply plugin: 'java'
+
+sourceCompatibility = 1.8
+
 repositories {
     jcenter()
 }
 
 dependencies {
     compile 'cc.catalysts.boot:cat-boot-structurizr:0.1.10'
+    compile "org.springframework.boot:spring-boot-starter:1.5.1.RELEASE"
 }
 ```
 
