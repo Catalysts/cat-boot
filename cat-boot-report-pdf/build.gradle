@@ -3,7 +3,7 @@ apply plugin: 'propdeps'
 apply plugin: 'propdeps-maven'
 apply plugin: 'propdeps-idea'
 
-apply plugin: 'spring-boot'
+apply plugin: 'org.springframework.boot'
 
 bootRepackage {
     enabled = false

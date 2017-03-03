@@ -1,6 +1,6 @@
 apply plugin: 'java'
 
-apply plugin: 'spring-boot'
+apply plugin: 'org.springframework.boot'
 
 bootRepackage {
     enabled = false
