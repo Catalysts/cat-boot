@@ -5,6 +5,7 @@ import cc.catalysts.boot.report.pdf.elements.ReportElement;
 import cc.catalysts.boot.report.pdf.elements.ReportElementStatic;
 import cc.catalysts.boot.report.pdf.elements.ReportImage;
 import cc.catalysts.boot.report.pdf.elements.ReportTable;
+import cc.catalysts.boot.report.pdf.exception.PdfReportGeneratorException;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
@@ -55,6 +56,7 @@ class PdfReportGenerator {
         ReportElement currentReportElement = report.getElements().isEmpty() ? null : report.getElements().get(reportElementIndex);
         ReportElement nextReportElement = null;
 
+        boolean performedBreakPageForCurrentReportElement = false; // for each element max. one break page allowed
         while (currentReportElement != null) {
             boolean forceBreak = false;
             //currentReportElement.setFontLib(fontLibrary);
@@ -82,9 +84,12 @@ class PdfReportGenerator {
                     }
                     currentReportElement = twoElements[0];
                     nextReportElement = twoElements[1];
-                } else {
+                } else if (!performedBreakPageForCurrentReportElement) {
                     breakPage(document, cursor, printData);
+                    performedBreakPageForCurrentReportElement = true;
                     continue;
+                } else {
+                    throw new PdfReportGeneratorException("Could not generate pdf!");
                 }
             }
 
@@ -105,6 +110,7 @@ class PdfReportGenerator {
             if (currentReportElement == null && reportElementIndex + 1 < report.getElements().size()) {
                 currentReportElement = report.getElements().get(++reportElementIndex);
             }
+            performedBreakPageForCurrentReportElement = false;
             cursor.yPos = nextY;
             if (forceBreak) {
                 breakPage(document, cursor, printData);
