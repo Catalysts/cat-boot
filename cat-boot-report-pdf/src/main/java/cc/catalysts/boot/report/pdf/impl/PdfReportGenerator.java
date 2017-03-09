@@ -52,7 +52,7 @@ class PdfReportGenerator {
         breakPage(document, cursor, printData);
         float maxWidth = pageConfig.getUsableWidth();
 
-        int reportElementIndex = 0;
+        int reportElementIndex = 0, nrOfReportElements = report.getElements().size();
         ReportElement currentReportElement = report.getElements().isEmpty() ? null : report.getElements().get(reportElementIndex);
         ReportElement nextReportElement = null;
 
@@ -85,9 +85,13 @@ class PdfReportGenerator {
                     currentReportElement = twoElements[0];
                     nextReportElement = twoElements[1];
                 } else if (!performedBreakPageForCurrentReportElement) {
-                    breakPage(document, cursor, printData);
-                    performedBreakPageForCurrentReportElement = true;
-                    continue;
+                    if (lastNonHeightElement(reportElementIndex, nrOfReportElements, currentReportElement.getHeight(maxWidth))) {
+                        break; // ignores the last padding if there is not enough space for it
+                    } else {
+                        breakPage(document, cursor, printData);
+                        performedBreakPageForCurrentReportElement = true;
+                        continue;
+                    }
                 } else {
                     throw new PdfReportGeneratorException("Could not generate pdf!");
                 }
@@ -127,6 +131,12 @@ class PdfReportGenerator {
         printImages(document, cursor);
 
         return document;
+    }
+
+    private boolean lastNonHeightElement(int reportElementIndex, int nrOfReportElements, float height) {
+        final double epsilon = 0.000001;
+
+        return (reportElementIndex == nrOfReportElements - 1) && (height < epsilon);
     }
 
     ReportElement[] specialSplitTable(ReportTable reportTable, float allowedHeight, float allowedWidth) {
