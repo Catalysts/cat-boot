@@ -5,6 +5,7 @@ import cc.catalysts.boot.report.pdf.elements.ReportElement;
 import cc.catalysts.boot.report.pdf.elements.ReportElementStatic;
 import cc.catalysts.boot.report.pdf.elements.ReportImage;
 import cc.catalysts.boot.report.pdf.elements.ReportTable;
+import cc.catalysts.boot.report.pdf.exception.PdfReportGeneratorException;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
@@ -51,10 +52,11 @@ class PdfReportGenerator {
         breakPage(document, cursor, printData);
         float maxWidth = pageConfig.getUsableWidth();
 
-        int reportElementIndex = 0;
+        int reportElementIndex = 0, nrOfReportElements = report.getElements().size();
         ReportElement currentReportElement = report.getElements().isEmpty() ? null : report.getElements().get(reportElementIndex);
         ReportElement nextReportElement = null;
 
+        boolean performedBreakPageForCurrentReportElement = false; // for each element max. one break page allowed
         while (currentReportElement != null) {
             boolean forceBreak = false;
             //currentReportElement.setFontLib(fontLibrary);
@@ -82,9 +84,16 @@ class PdfReportGenerator {
                     }
                     currentReportElement = twoElements[0];
                     nextReportElement = twoElements[1];
+                } else if (!performedBreakPageForCurrentReportElement) {
+                    if (lastNonHeightElement(reportElementIndex, nrOfReportElements, currentReportElement.getHeight(maxWidth))) {
+                        break; // ignores the last padding if there is not enough space for it
+                    } else {
+                        breakPage(document, cursor, printData);
+                        performedBreakPageForCurrentReportElement = true;
+                        continue;
+                    }
                 } else {
-                    breakPage(document, cursor, printData);
-                    continue;
+                    throw new PdfReportGeneratorException("Could not generate pdf!");
                 }
             }
 
@@ -105,6 +114,7 @@ class PdfReportGenerator {
             if (currentReportElement == null && reportElementIndex + 1 < report.getElements().size()) {
                 currentReportElement = report.getElements().get(++reportElementIndex);
             }
+            performedBreakPageForCurrentReportElement = false;
             cursor.yPos = nextY;
             if (forceBreak) {
                 breakPage(document, cursor, printData);
@@ -121,6 +131,12 @@ class PdfReportGenerator {
         printImages(document, cursor);
 
         return document;
+    }
+
+    private boolean lastNonHeightElement(int reportElementIndex, int nrOfReportElements, float height) {
+        final double epsilon = 0.000001;
+
+        return (reportElementIndex == nrOfReportElements - 1) && (height < epsilon);
     }
 
     ReportElement[] specialSplitTable(ReportTable reportTable, float allowedHeight, float allowedWidth) {
