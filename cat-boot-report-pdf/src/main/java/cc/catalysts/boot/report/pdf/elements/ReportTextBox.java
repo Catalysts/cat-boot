@@ -106,6 +106,11 @@ public class ReportTextBox implements ReportElement {
     }
 
     @Override
+    public float getHeightOfElementToSplit(float allowedWidth, float allowedHeight) {
+        return getHeight(allowedWidth);
+    }
+
+    @Override
     public Collection<ReportImage.ImagePrintIntent> getImageIntents() {
         return Collections.emptyList();
     }

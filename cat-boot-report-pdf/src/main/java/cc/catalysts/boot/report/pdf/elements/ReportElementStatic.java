@@ -87,6 +87,11 @@ public class ReportElementStatic implements ReportElement {
     }
 
     @Override
+    public float getHeightOfElementToSplit(float allowedWidth, float allowedHeight) {
+        throw new IllegalStateException("static elements are not splittable");
+    }
+
+    @Override
     public Collection<ReportImage.ImagePrintIntent> getImageIntents() {
         return base.getImageIntents();
     }

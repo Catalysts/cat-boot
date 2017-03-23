@@ -328,6 +328,18 @@ public class ReportTable implements ReportElement {
     }
 
     @Override
+    public float getHeightOfElementToSplit(float allowedWidth, float allowedHeight) {
+        float currentHeight = 0f;
+        int i = 0;
+        while (i < elements.length && (currentHeight + getLineHeight(elements[i], allowedWidth)) < allowedHeight) {
+            currentHeight += getLineHeight(elements[i], allowedWidth);
+            i++;
+        }
+
+        return getLineHeight(elements[i], allowedWidth);
+    }
+
+    @Override
     public ReportElement[] split(float allowedWidth, float allowedHeight) {
         float currentHeight = 0f;
         int i = 0;

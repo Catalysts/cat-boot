@@ -32,6 +32,11 @@ public abstract class AbstractReportElement implements ReportElement {
     }
 
     @Override
+    public float getHeightOfElementToSplit(float allowedWidth, float allowedHeight) {
+        throw new IllegalStateException("If element is splitable, this method has to be implemented");
+    }
+
+    @Override
     public Collection<ReportImage.ImagePrintIntent> getImageIntents() {
         return Collections.emptyList();
     }
