@@ -68,6 +68,14 @@ public interface ReportElement {
     ReportElement[] split(float allowedWidth, float allowedHeight);
 
     /**
+     * For splittable elements returns the current height of the element that needs to be split.
+     *
+     * @param allowedWidth  width of report element
+     * @param allowedHeight max height of first segment.
+     */
+    float getHeightOfElementToSplit(float allowedWidth, float allowedHeight);
+
+    /**
      * Returns all the images that should have been printed by this element
      *
      * @return collection, can't be null, migth be empty
