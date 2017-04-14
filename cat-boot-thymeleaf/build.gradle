@@ -1,7 +1,7 @@
 apply plugin: 'java'
 
 dependencies {
-    compile('org.springframework.boot:spring-boot-starter-thymeleaf')
+    compile('org.springframework.boot:spring-boot-starter-thymeleaf:1.5.2.RELEASE')
 
     testCompile('junit:junit')
     testCompile('org.assertj:assertj-core')
