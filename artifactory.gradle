@@ -22,6 +22,28 @@ publishing {
                 xmlStringBuilder.setLength(0)
                 xmlStringBuilder.append(pomString)
             }
+
+            pom.withXml {
+                def root = asNode()
+
+                if (root.dependencies) {
+                    // TODO: not working
+                    // eliminate test-scoped dependencies (no need in maven central POMs)
+                    println root.dependencies.removeAll { dep ->
+                        (dep.scope.text() != 'test')
+                    }
+
+                    root.dependencies.get(0).dependency.each() { dep ->
+                        String pomVer = dep.get("version").text();
+                        String pomArtifactId = dep.get("artifactId").text();
+                        String pomGroupId = dep.get("groupId").text();
+                        if(pomVer.isEmpty()){
+                            def depVer = project.dependencyManagement.dependencyManagementContainer.globalDependencyManagement.versions["$pomGroupId:$pomArtifactId"]
+                            dep.appendNode('version',depVer)
+                        }
+                    }
+                }
+            }
         }
     }
 }
