@@ -27,11 +27,12 @@ publishing {
                 def root = asNode()
 
                 if (root.dependencies) {
-                    // TODO: not working
                     // eliminate test-scoped dependencies (no need in maven central POMs)
-                    println root.dependencies.removeAll { dep ->
-                        (dep.scope.text() != 'test')
+                    /* TODO: not working
+                    root.dependencies.removeAll { dep ->
+                        (dep.scope.text() == 'test')
                     }
+                    */
 
                     root.dependencies.get(0).dependency.each() { dep ->
                         String pomVer = dep.get("version").text();
