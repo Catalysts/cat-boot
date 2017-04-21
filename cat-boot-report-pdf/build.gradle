@@ -21,7 +21,7 @@ dependencies {
     optional('org.springframework.boot:spring-boot-configuration-processor')
 
     testCompile 'org.springframework:spring-test'
-    testCompile group: 'junit', name: 'junit'
+    testCompile 'junit:junit'
 }
 
 compileJava.dependsOn(processResources)

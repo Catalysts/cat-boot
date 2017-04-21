@@ -11,6 +11,6 @@ dependencies {
     testCompile 'org.springframework:spring-test'
     testCompile 'org.springframework.boot:spring-boot-test'
     testCompile 'junit:junit'
-    testCompile 'commons-logging:commons-logging:1.2'
+    testCompile 'commons-logging:commons-logging'
     testCompile 'ch.qos.logback:logback-classic'
 }

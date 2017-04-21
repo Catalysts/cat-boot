@@ -16,7 +16,7 @@ dependencies {
 
     testCompile('junit:junit')
     testCompile('org.springframework:spring-test')
-    testCompile('commons-logging:commons-logging:1.2')
+    testCompile('commons-logging:commons-logging')
     testCompile('org.hibernate:hibernate-validator')
 }
 

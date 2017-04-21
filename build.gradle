@@ -40,6 +40,12 @@ subprojects {
     sourceCompatibility = 1.8
     targetCompatibility = 1.8
 
+    dependencyManagement {
+        dependencies {
+            dependency 'commons-logging:commons-logging:1.2'
+        }
+    }
+
     repositories {
         jcenter()
     }
