@@ -61,7 +61,7 @@ public class ReportTextBox implements ReportElement {
             String[] split = split(allowedWidth, currText);
             height += getFirstSegmentHeight(allowedWidth) + lineDistance;
             if (split[1] != null && split[1].equals(currText)) {
-                // see PdfBoxHelper:441, it could be that text is not reduced, but just put in a second row,
+                // see PdfBoxHelper:442, it could be that text is not reduced, but just put in a second row,
                 // in that case we would run in an endless loop
                 // that needs to be fixed in PdfBoxHelper, this is just the attempt to ensure that we do not
                 // run into an endless loop here

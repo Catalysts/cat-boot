@@ -431,12 +431,15 @@ public final class PdfBoxHelper {
             }
 
             boolean splittable = end >= 2;
+            boolean enoughSpaceAfterSplit = false;
             if (splittable) {
                 part1 = text.substring(start, end - 1).concat("-").replaceAll("\\s+$", "");
                 part2 = text.substring(end - 1, text.length()).concat(endPart).replaceAll("^\\s+", "");
+
+                enoughSpaceAfterSplit = getTextWidth(font, fontSize, part1) <= allowedWidth;
             }
 
-            if (!splittable) {
+            if (!splittable || !enoughSpaceAfterSplit) {
                 return new String[]{"", text};
             }
         }
