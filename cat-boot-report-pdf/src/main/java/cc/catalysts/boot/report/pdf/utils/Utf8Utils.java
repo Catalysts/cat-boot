@@ -1,17 +1,30 @@
 package cc.catalysts.boot.report.pdf.utils;
 
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 /**
  * @author Klaus Lehner, Catalysts GmbH
  */
 public class Utf8Utils {
 
+    private static Set<String> specialCharacters = Stream.of(
+            "\u200B", "\u2009", "\u2010", "\u25FB", "\u0308", "\u0009", "\u2192")
+            .collect(Collectors.toSet());
+
     /**
      * Those characters cannot be printed by PDFBox as they have a zero length
      */
     public static String removeCharactersWithZeroLength(String string) {
-        return string.replace("\u200B", "").replace("\u2009", "")
-                .replace("\u2010", "").replace("\u25FB", "")
-                .replace("\u0308", "").replace("\u0009", "")
-                .replace("\u2192", "");
+        for (String specialCharacter: specialCharacters){
+            string = string.replace(specialCharacter, "");
+        }
+
+        return string;
+    }
+
+    public static void addSpecialCharacter(String specialCharacter) {
+        specialCharacters.add(specialCharacter);
     }
 }
