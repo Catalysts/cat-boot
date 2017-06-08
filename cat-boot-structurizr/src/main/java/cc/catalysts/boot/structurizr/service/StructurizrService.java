@@ -62,7 +62,7 @@ public class StructurizrService implements ApplicationListener<ContextRefreshedE
 
         event.getApplicationContext()
                 .getBeansOfType(ViewProvider.class)
-                .values().stream().sorted()
+                .values().stream()
                 .forEach(vp -> vp.createViews(workspace.getViews()));
 
 
