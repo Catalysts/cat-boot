@@ -1,5 +1,6 @@
 package cc.catalysts.boot.structurizr.service;
 
+import cc.catalysts.boot.structurizr.ModelPostProcessor;
 import cc.catalysts.boot.structurizr.ViewProvider;
 import cc.catalysts.boot.structurizr.config.StructurizrConfigurationProperties;
 import com.structurizr.Workspace;
@@ -11,18 +12,24 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
-import org.springframework.core.Ordered;
+import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
+
+import static cc.catalysts.boot.structurizr.service.StructurizrService.ORDER;
 
 /**
  * @author Klaus Lehner, Catalysts GmbH
  */
 @Service
-@Order(Ordered.HIGHEST_PRECEDENCE)
+@Order(ORDER)
 public class StructurizrService implements ApplicationListener<ContextRefreshedEvent> {
+
+    public static final int ORDER = 0;
 
     private static final Logger LOG = LoggerFactory.getLogger(StructurizrService.class);
 
@@ -39,13 +46,23 @@ public class StructurizrService implements ApplicationListener<ContextRefreshedE
 
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
+        List<ModelPostProcessor> postProcessors = event.getApplicationContext()
+                .getBeansOfType(ModelPostProcessor.class).values().stream().collect(Collectors.toList());
+
+        AnnotationAwareOrderComparator.sort(postProcessors);
+
+        for (ModelPostProcessor postProcessor : postProcessors) {
+            postProcessor.postProcess(workspace.getModel());
+        }
+
         if (config.isAddImplicitRelationships()) {
             final Set<Relationship> relationships = workspace.getModel().addImplicitRelationships();
             LOG.info("Added {} implicit relationships.", relationships.size());
         }
+
         event.getApplicationContext()
                 .getBeansOfType(ViewProvider.class)
-                .values()
+                .values().stream().sorted()
                 .forEach(vp -> vp.createViews(workspace.getViews()));
 
 
