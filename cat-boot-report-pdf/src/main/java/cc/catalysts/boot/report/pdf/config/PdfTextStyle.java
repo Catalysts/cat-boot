@@ -29,7 +29,7 @@ public class PdfTextStyle {
         Assert.hasText(config);
         String[] split = config.split(",");
         Assert.isTrue(split.length == 3, "config must look like: 10,Times-Roman,#000000");
-        fontSize = Integer.parseInt(split[0]);
+        fontSize = Float.parseFloat(split[0]);
         font = PdfFont.getFont(split[1]);
         color = new Color(Integer.valueOf(split[2].substring(1), 16));
     }
