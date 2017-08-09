@@ -6,6 +6,8 @@ import cc.catalysts.boot.report.pdf.config.DefaultPdfStyleSheet;
 import cc.catalysts.boot.report.pdf.config.PdfFont;
 import cc.catalysts.boot.report.pdf.config.PdfPageLayout;
 import cc.catalysts.boot.report.pdf.config.PdfTextStyle;
+import org.apache.pdfbox.pdmodel.graphics.color.PDColor;
+import org.apache.pdfbox.pdmodel.graphics.color.PDDeviceRGB;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
@@ -18,6 +20,9 @@ import java.io.File;
  */
 public class DemoTest {
 
+    private final PDColor BLACK = new PDColor(new float[] {0.0f, 0.0f, 0.0f}, PDDeviceRGB.INSTANCE);
+    private final PDColor BLUE = new PDColor(new float[] {0.0f, 0.0f, 1.0f}, PDDeviceRGB.INSTANCE);
+
     @Test
     public void demo() throws Exception {
         // these objects can also be injected via Spring:
@@ -25,7 +30,7 @@ public class DemoTest {
         final PdfReportFilePrinter pdfReportFilePrinter = new PdfReportFilePrinter();
 
         DefaultPdfStyleSheet styleSheet = new DefaultPdfStyleSheet();
-        styleSheet.setBodyText(new PdfTextStyle(10, PdfFont.HELVETICA, Color.BLACK, "regular"));
+        styleSheet.setBodyText(new PdfTextStyle(10, PdfFont.HELVETICA, BLACK, "regular"));
 
         final PdfReport pdfReport = pdfReportService.createBuilder(styleSheet)
                 .addHeading("Dear Github users")
@@ -41,7 +46,7 @@ public class DemoTest {
                 .createRow().withValues("y1", "y2", "y3")
                 .endTable()
                 .beginNewSection("Formatting", false)
-                .addText("You can also format text as you can see here.", new PdfTextStyle(13, PdfFont.TIMES_ROMAN, Color.BLUE, "boldItalic"))
+                .addText("You can also format text as you can see here.", new PdfTextStyle(13, PdfFont.TIMES_ROMAN, BLUE, "boldItalic"))
                 .beginNewSection("Images", false)
                 .addText("Images are also supported out-of-the-box:")
                 .addPadding(10)
