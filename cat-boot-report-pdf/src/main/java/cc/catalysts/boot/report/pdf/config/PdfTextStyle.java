@@ -1,6 +1,8 @@
 package cc.catalysts.boot.report.pdf.config;
 
 import org.apache.pdfbox.pdmodel.font.PDFont;
+import org.apache.pdfbox.pdmodel.graphics.color.PDColor;
+import org.apache.pdfbox.pdmodel.graphics.color.PDDeviceRGB;
 import org.springframework.util.Assert;
 
 import java.awt.*;
@@ -10,10 +12,10 @@ public class PdfTextStyle {
 
     private float fontSize;
     private PdfFont font;
-    private Color color;
+    private PDColor color;
     private String style;
 
-    public PdfTextStyle(float fontSize, PdfFont defaultFont, Color color, String style) {
+    public PdfTextStyle(float fontSize, PdfFont defaultFont, PDColor color, String style) {
         this.fontSize = fontSize;
         this.font = defaultFont;
         this.color = color;
@@ -31,7 +33,9 @@ public class PdfTextStyle {
         Assert.isTrue(split.length == 3, "config must look like: 10,Times-Roman,#000000");
         fontSize = Float.parseFloat(split[0]);
         font = PdfFont.getFont(split[1]);
-        color = new Color(Integer.valueOf(split[2].substring(1), 16));
+        Color tempColor = new Color(Integer.valueOf(split[2].substring(1), 16));
+        float[] components = {tempColor.getRed(), tempColor.getGreen(), tempColor.getBlue()};
+        color = new PDColor(components, PDDeviceRGB.INSTANCE);
     }
 
     public float getFontSize() {
@@ -42,7 +46,7 @@ public class PdfTextStyle {
         return font;
     }
 
-    public Color getColor() {
+    public PDColor getColor() {
         return color;
     }
 

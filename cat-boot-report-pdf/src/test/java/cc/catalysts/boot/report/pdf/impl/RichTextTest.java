@@ -8,6 +8,8 @@ import cc.catalysts.boot.report.pdf.config.PdfFont;
 import cc.catalysts.boot.report.pdf.config.PdfPageLayout;
 import cc.catalysts.boot.report.pdf.config.PdfTextStyle;
 import cc.catalysts.boot.report.pdf.elements.ReportRichTextBox;
+import org.apache.pdfbox.pdmodel.graphics.color.PDColor;
+import org.apache.pdfbox.pdmodel.graphics.color.PDDeviceRGB;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -26,6 +28,7 @@ public class RichTextTest {
     private PdfTextStyle textStyle;
     private PdfReportFilePrinter pdfReportFilePrinter;
     private File target;
+    private final PDColor BLACK = new PDColor(new float[] {0.0f, 0.0f, 0.0f}, PDDeviceRGB.INSTANCE);
 
     @Before
     public void before() {
@@ -34,7 +37,7 @@ public class RichTextTest {
         pdfReportFilePrinter = new PdfReportFilePrinter();
 
         DefaultPdfStyleSheet styleSheet = new DefaultPdfStyleSheet();
-        textStyle = new PdfTextStyle(10, PdfFont.HELVETICA, Color.BLACK, "regular");
+        textStyle = new PdfTextStyle(10, PdfFont.HELVETICA, BLACK, "regular");
         styleSheet.setBodyText(textStyle);
 
         pdfReportBuilder = pdfReportService.createBuilder(styleSheet);

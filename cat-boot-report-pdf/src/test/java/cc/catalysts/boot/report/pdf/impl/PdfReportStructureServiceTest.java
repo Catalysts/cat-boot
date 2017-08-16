@@ -6,6 +6,8 @@ import cc.catalysts.boot.report.pdf.PdfReportService;
 import cc.catalysts.boot.report.pdf.config.*;
 import cc.catalysts.boot.report.pdf.elements.ReportTextBox;
 import org.apache.commons.io.FileUtils;
+import org.apache.pdfbox.pdmodel.graphics.color.PDColor;
+import org.apache.pdfbox.pdmodel.graphics.color.PDDeviceRGB;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -24,6 +26,7 @@ public class PdfReportStructureServiceTest {
 
     private PdfReportService pdfReportService;
     private static File outDirectory = new File("pdf-out");
+    private final PDColor BLACK = new PDColor(new float[] {0.0f, 0.0f, 0.0f}, PDDeviceRGB.INSTANCE);
 
     @BeforeClass
     public static void cleanupDirectory() throws IOException {
@@ -94,7 +97,7 @@ public class PdfReportStructureServiceTest {
             longText.append("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.");
         }
 
-        PdfTextStyle otherConfig = new PdfTextStyle(12, PdfFont.HELVETICA, Color.BLACK, "bold");
+        PdfTextStyle otherConfig = new PdfTextStyle(12, PdfFont.HELVETICA, BLACK, "bold");
 
         return pdfReportService.createBuilder()
                 .beginNewSection("Test 1, Table", true)
