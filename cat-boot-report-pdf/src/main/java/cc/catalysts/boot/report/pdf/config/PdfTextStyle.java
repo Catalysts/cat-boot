@@ -8,12 +8,12 @@ import java.awt.*;
 public class PdfTextStyle {
 
 
-    private int fontSize;
+    private float fontSize;
     private PdfFont font;
     private Color color;
     private String style;
 
-    public PdfTextStyle(int fontSize, PdfFont defaultFont, Color color, String style) {
+    public PdfTextStyle(float fontSize, PdfFont defaultFont, Color color, String style) {
         this.fontSize = fontSize;
         this.font = defaultFont;
         this.color = color;
@@ -29,12 +29,12 @@ public class PdfTextStyle {
         Assert.hasText(config);
         String[] split = config.split(",");
         Assert.isTrue(split.length == 3, "config must look like: 10,Times-Roman,#000000");
-        fontSize = Integer.parseInt(split[0]);
+        fontSize = Float.parseFloat(split[0]);
         font = PdfFont.getFont(split[1]);
         color = new Color(Integer.valueOf(split[2].substring(1), 16));
     }
 
-    public int getFontSize() {
+    public float getFontSize() {
         return fontSize;
     }
 
