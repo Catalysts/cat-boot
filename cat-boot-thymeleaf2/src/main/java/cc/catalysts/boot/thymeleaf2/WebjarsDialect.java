@@ -1,6 +1,7 @@
-package cc.catalysts.boot.thymeleaf.webjars;
+package cc.catalysts.boot.thymeleaf2;
 
-import cc.catalysts.boot.thymeleaf.webjars.processor.WebjarsLinkProcessor;
+import cc.catalysts.boot.thymeleaf.webjars.WebjarRegistrar;
+import cc.catalysts.boot.thymeleaf2.processor.WebjarsLinkProcessor;
 import org.thymeleaf.context.IProcessingContext;
 import org.thymeleaf.dialect.AbstractDialect;
 import org.thymeleaf.dialect.IExpressionEnhancingDialect;

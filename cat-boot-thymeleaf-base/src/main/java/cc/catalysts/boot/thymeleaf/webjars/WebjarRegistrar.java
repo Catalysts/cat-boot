@@ -3,7 +3,7 @@ package cc.catalysts.boot.thymeleaf.webjars;
 import java.util.Map;
 
 /**
- * <p>Use this interface to register the vrsion of your WebJars for the {@link WebjarsDialect}.</p>
+ * <p>Use this interface to register the version of your WebJars for the {@link WebjarsDialect}.</p>
  * <p>Somewhere in one of your Spring-ApplicationContext @Configuration classes you would then have something like: </p>
  * <pre class="code">
  * &#064;Bean
