@@ -377,7 +377,7 @@ public final class PdfBoxHelper {
         return list;
     }
 
-    public static String[] splitText(PDFont font, int fontSize, float allowedWidth, String text) {
+    public static String[] splitText(PDFont font, float fontSize, float allowedWidth, String text) {
         String endPart = "";
 
         text = Utf8Utils.removeCharactersWithZeroLength(text);
@@ -444,7 +444,7 @@ public final class PdfBoxHelper {
         return new String[]{part1, part2};
     }
 
-    public static float getTextWidth(PDFont font, int fontSize, String text) {
+    public static float getTextWidth(PDFont font, float fontSize, String text) {
 
         Map<Character, Float> sizeMap = fontSizeMap.get(font);
         if (sizeMap == null) {
@@ -475,7 +475,7 @@ public final class PdfBoxHelper {
         return maxSum / 1000F * fontSize;
     }
 
-    public static float nextLineY(int currentY, int fontSize, float lineHeightD) {
+    public static float nextLineY(int currentY, float fontSize, float lineHeightD) {
         return currentY - fontSize - lineHeightD;
     }
 }

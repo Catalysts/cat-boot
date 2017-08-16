@@ -157,11 +157,11 @@ public class ReportTextBox implements ReportElement {
 
     private static final class CacheKey {
         private PDFont font;
-        private int fontSize;
+        private float fontSize;
         private float width;
         private String text;
 
-        private CacheKey(PDFont font, int fontSize, float width, String text) {
+        private CacheKey(PDFont font, float fontSize, float width, String text) {
             this.font = font;
             this.fontSize = fontSize;
             this.width = width;
@@ -185,7 +185,7 @@ public class ReportTextBox implements ReportElement {
         @Override
         public int hashCode() {
             int result = font.hashCode();
-            result = 31 * result + fontSize;
+            result = 31 * result + (int)fontSize;
             result = 31 * result + text.hashCode();
             result = 31 * result + (width != +0.0f ? Float.floatToIntBits(width) : 0);
             return result;

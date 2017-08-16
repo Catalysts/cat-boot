@@ -10,6 +10,8 @@ import cc.catalysts.boot.report.pdf.elements.ReportImage;
 import cc.catalysts.boot.report.pdf.elements.ReportTable;
 import cc.catalysts.boot.report.pdf.elements.ReportTextBox;
 import cc.catalysts.boot.report.pdf.utils.PositionOfStaticElements;
+import org.apache.pdfbox.pdmodel.graphics.color.PDColor;
+import org.apache.pdfbox.pdmodel.graphics.color.PDDeviceRGB;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
@@ -25,6 +27,9 @@ import java.io.IOException;
  */
 public class Demo2Test {
 
+    private final PDColor BLACK = new PDColor(new float[] {0.0f, 0.0f, 0.0f}, PDDeviceRGB.INSTANCE);
+    private final PDColor BLUE = new PDColor(new float[] {0.0f, 0.0f, 1.0f}, PDDeviceRGB.INSTANCE);
+
     @Test
     public void demo() throws Exception {
         // these objects can also be injected via Spring:
@@ -32,7 +37,7 @@ public class Demo2Test {
         final PdfReportFilePrinter pdfReportFilePrinter = new PdfReportFilePrinter();
 
         DefaultPdfStyleSheet styleSheet = new DefaultPdfStyleSheet();
-        styleSheet.setBodyText(new PdfTextStyle(10, PdfFont.HELVETICA, Color.BLACK, "regular"));
+        styleSheet.setBodyText(new PdfTextStyle(10, PdfFont.HELVETICA, BLACK, "regular"));
 
         BufferedImage img = null;
         try {
@@ -60,7 +65,7 @@ public class Demo2Test {
                 .createRow().withValues(new ReportTextBox(styleSheet.getBodyText(), styleSheet.getLineDistance(), "y1"), new ReportTextBox(styleSheet.getBodyText(), styleSheet.getLineDistance(), "y3"), sampleTable)
                 .endTable()
                 .beginNewSection("Formatting", false)
-                .addText("You can also format text as you can see here.", new PdfTextStyle(13, PdfFont.TIMES_ROMAN, Color.BLUE, "boldItalic"))
+                .addText("You can also format text as you can see here.", new PdfTextStyle(13, PdfFont.TIMES_ROMAN, BLUE, "boldItalic"))
                 .withFooterOnAllPages("Demo-PDF", "cat-boot-report-pdf", PdfFooterGenerator.PAGE_TEMPLATE_CURR + "/"
                         + PdfFooterGenerator.PAGE_TEMPLATE_TOTAL)
                 .withHeaderOnPages("Demo-PDF", "cat-boot-report-pdf", "not include me on first pageq", PositionOfStaticElements.ON_ALL_PAGES_BUT_FIRST)

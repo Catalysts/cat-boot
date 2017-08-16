@@ -1,5 +1,8 @@
 package cc.catalysts.boot.report.pdf.config;
 
+import org.apache.pdfbox.pdmodel.graphics.color.PDColor;
+import org.apache.pdfbox.pdmodel.graphics.color.PDDeviceRGB;
+
 import java.awt.*;
 
 /**
@@ -25,17 +28,20 @@ public abstract class PdfStyleSheet {
     /**
      * the text style for heading1 (h1)
      */
-    private PdfTextStyle heading1Text = new PdfTextStyle(20, PdfFont.HELVETICA, Color.BLACK, "bold");
+
+    private final PDColor BLACK = new PDColor(new float[] {0.0f, 0.0f, 0.0f}, PDDeviceRGB.INSTANCE);
+
+    private PdfTextStyle heading1Text = new PdfTextStyle(20, PdfFont.HELVETICA, BLACK, "bold");
 
     /**
      * the text style for the body text
      */
-    private PdfTextStyle bodyText = new PdfTextStyle(12, PdfFont.HELVETICA, Color.BLACK, "regular");
+    private PdfTextStyle bodyText = new PdfTextStyle(12, PdfFont.HELVETICA, BLACK, "regular");
 
-    private PdfTextStyle tableTitleText = new PdfTextStyle(12, PdfFont.HELVETICA, Color.BLACK, "bold");
-    private PdfTextStyle tableBodyText = new PdfTextStyle(12, PdfFont.HELVETICA, Color.BLACK, "regular");
+    private PdfTextStyle tableTitleText = new PdfTextStyle(12, PdfFont.HELVETICA, BLACK, "bold");
+    private PdfTextStyle tableBodyText = new PdfTextStyle(12, PdfFont.HELVETICA, BLACK, "regular");
 
-    private PdfTextStyle footerText = new PdfTextStyle(7, PdfFont.HELVETICA, Color.BLACK, "regular");
+    private PdfTextStyle footerText = new PdfTextStyle(7, PdfFont.HELVETICA, BLACK, "regular");
 
     public int getSectionPadding() {
         return sectionPadding;
