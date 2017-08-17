@@ -1,4 +1,4 @@
-package cc.catalysts.boot.thymeleaf.webjars.processor;
+package cc.catalysts.boot.thymeleaf2.processor;
 
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;

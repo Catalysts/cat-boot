@@ -1,0 +1,13 @@
+apply plugin: 'java'
+
+dependencies {
+    compile project(':cat-boot-thymeleaf-base')
+
+    compile('org.springframework.boot:spring-boot-starter')
+    compile('org.thymeleaf:thymeleaf:2.1.5.RELEASE')
+
+    testCompile('junit:junit')
+    testCompile('org.assertj:assertj-core')
+    testCompile('org.springframework.boot:spring-boot-starter-test')
+    testCompile('commons-logging:commons-logging')
+}

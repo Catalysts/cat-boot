@@ -1,13 +1,10 @@
 package cc.catalysts.boot.thymeleaf.config;
 
-import cc.catalysts.boot.thymeleaf.webjars.WebjarRegistrar;
-import cc.catalysts.boot.thymeleaf.webjars.WebjarsDialect;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
+import cc.catalysts.boot.thymeleaf3.WebjarConfig;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingClass;
 import org.springframework.context.annotation.Configuration;
-
-import java.util.Collection;
-import java.util.Collections;
+import org.springframework.context.annotation.Import;
 
 /**
  * @author Klaus Lehner
@@ -15,11 +12,14 @@ import java.util.Collections;
 @Configuration
 public class CatBootThymeleafAutoConfiguration {
 
-    @Autowired(required = false)
-    Collection<WebjarRegistrar> webjarRegistrars = Collections.emptySet();
+    @ConditionalOnClass(name = "org.thymeleaf.templatemode.TemplateMode")
+    @Import(WebjarConfig.class)
+    public static class Thymeleaf3Config {
+    }
 
-    @Bean
-    WebjarsDialect webjarsDialect() {
-        return new WebjarsDialect(webjarRegistrars);
+
+    @ConditionalOnMissingClass("org.thymeleaf.templatemode.TemplateMode")
+    @Import(cc.catalysts.boot.thymeleaf2.WebjarConfig.class)
+    public static class Thymeleaf2Config {
     }
 }
