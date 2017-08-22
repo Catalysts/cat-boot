@@ -7,6 +7,7 @@ CAT-Boot: A set of libraries on top of the famous and fabolous [Spring Boot](htt
 
 ### Version Information
 
+* 0.3.x is compatible with spring-boot 2.0.x
 * 0.2.x is compatible with spring-boot 1.5.x
 * 0.1.x is compatible with spring-boot 1.3.x
 

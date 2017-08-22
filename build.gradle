@@ -7,23 +7,32 @@ buildscript {
     ext.mavenCentralSyncEnabled = project.sonatypeUser && project.sonatypeKey
     
     repositories {
-        maven { url "https://plugins.gradle.org/m2/" }
+        maven { url 'https://plugins.gradle.org/m2/' }
         maven { url 'http://repo.spring.io/plugins-release' }
-        maven { url "http://repo.spring.io/milestone" }
+        maven { url 'http://repo.spring.io/milestone' }
         jcenter()
     }
     dependencies {
-        classpath 'org.springframework.boot:spring-boot-gradle-plugin:1.5.2.RELEASE'
-        classpath 'org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.3'
-        classpath 'org.springframework.build.gradle:propdeps-plugin:0.0.7'
+        classpath 'org.springframework.boot:spring-boot-gradle-plugin:2.0.0.M3'
+        classpath 'org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.5'
+        classpath 'io.spring.gradle:propdeps-plugin:0.0.9.RELEASE'
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3'
         classpath 'org.jfrog.buildinfo:build-info-extractor-gradle:4.4.13'
+        classpath 'io.spring.gradle:dependency-management-plugin:1.0.3.RELEASE'
     }
 }
 
 apply from: 'properties.gradle'
 apply plugin: 'org.sonarqube'
 apply plugin: 'build-dashboard'
+
+configure(allprojects) {
+    apply plugin: 'propdeps'
+    apply plugin: 'propdeps-maven'
+    apply plugin: 'propdeps-idea'
+    apply plugin: 'propdeps-eclipse'
+    apply plugin: 'io.spring.dependency-management'
+}
 
 subprojects {
     apply plugin: 'java'
@@ -43,15 +52,23 @@ subprojects {
     dependencyManagement {
         dependencies {
             dependency 'commons-logging:commons-logging:1.2'
+            dependency 'org.springframework.boot:spring-boot-starter:2.0.0.M3'
         }
+    }
+
+    dependencies {
+        testCompile('junit:junit')
+        testCompile('org.mockito:mockito-core')
+        testCompile('org.assertj:assertj-core')
+        testCompile('org.springframework.boot:spring-boot-starter-test')
+        testCompile('commons-logging:commons-logging')
     }
 
     repositories {
         jcenter()
-    }
-
-    bootRepackage {
-        enabled = false
+        maven {
+            url 'http://repo.spring.io/milestone/'
+        }
     }
 
     // package sources
@@ -66,6 +83,13 @@ subprojects {
         from javadoc.destinationDir
     }
 
+    bootJar {
+        enabled = false
+    }
+
+    jar {
+        enabled = true
+    }
 
     if (bintrayEnabled) {
         apply plugin: 'com.jfrog.bintray'
@@ -86,5 +110,5 @@ subprojects {
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '3.3'
+    gradleVersion = '4.1'
 }

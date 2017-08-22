@@ -1,14 +1,8 @@
-apply plugin: 'java'
-
 dependencies {
     compile 'org.springframework.boot:spring-boot-starter'
     compile 'org.springframework.boot:spring-boot-starter-thymeleaf'
     compile project(':cat-boot-thymeleaf2')
     compile project(':cat-boot-thymeleaf3')
 
-    testCompile('junit:junit')
-    testCompile('org.assertj:assertj-core')
-    testCompile('org.springframework.boot:spring-boot-starter-test')
     testCompile('org.springframework.boot:spring-boot-starter-web')
-    testCompile('commons-logging:commons-logging')
 }

@@ -1,8 +1,3 @@
-apply plugin: 'java'
-apply plugin: 'propdeps'
-apply plugin: 'propdeps-maven'
-apply plugin: 'propdeps-idea'
-
 dependencies {
     compile project(':cat-boot-api')
     compile('org.springframework.boot:spring-boot')
@@ -14,9 +9,6 @@ dependencies {
 
     optional('org.springframework.boot:spring-boot-configuration-processor')
 
-    testCompile('junit:junit')
-    testCompile('org.springframework:spring-test')
-    testCompile('commons-logging:commons-logging')
     testCompile('org.hibernate:hibernate-validator')
 }
 

@@ -42,7 +42,7 @@ public class WebjarsDialectIntegrationTest {
     public void resolveVars() throws Exception {
         final ResultActions resultActions = mockMvc.perform(get("/webjarstest")).andExpect(status().isOk());
         String response = resultActions.andReturn().getResponse().getContentAsString();
-        assertThat(response).contains("<link rel=\"stylesheet\" href=\"/webjars/bootstrap/3.3.5/dist/css/bootstrap.min.css\" />");
+        assertThat(response).contains("<link rel=\"stylesheet\" href=\"/webjars/bootstrap/3.3.5/dist/css/bootstrap.min.css\"/>");
         assertThat(response).contains("<script src=\"/webjars/jquery/2.2.0/dist/jquery.min.js\"></script>");
         assertThat(response).contains("<script src=\"/webjars/bootstrap/3.3.5/dist/js/bootstrap.min.js\"></script>");
     }

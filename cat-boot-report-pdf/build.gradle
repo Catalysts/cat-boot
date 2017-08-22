@@ -1,8 +1,3 @@
-apply plugin: 'java'
-apply plugin: 'propdeps'
-apply plugin: 'propdeps-maven'
-apply plugin: 'propdeps-idea'
-
 dependencies {
     compile 'org.slf4j:slf4j-api'
 
@@ -19,9 +14,6 @@ dependencies {
     runtime 'org.yaml:snakeyaml:1.14'
 
     optional('org.springframework.boot:spring-boot-configuration-processor')
-
-    testCompile 'org.springframework:spring-test'
-    testCompile 'junit:junit'
 }
 
 compileJava.dependsOn(processResources)

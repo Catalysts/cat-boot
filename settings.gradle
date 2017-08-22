@@ -8,7 +8,6 @@ include 'cat-boot-thymeleaf'
 include 'cat-boot-thymeleaf2'
 include 'cat-boot-thymeleaf3'
 include 'cat-boot-thymeleaf-base'
-
 //include 'cat-boot-cluster'
 include 'cat-boot-api'
 include 'cat-boot-profiling'
