@@ -49,19 +49,8 @@ subprojects {
     sourceCompatibility = 1.8
     targetCompatibility = 1.8
 
-    dependencyManagement {
-        dependencies {
-            dependency 'commons-logging:commons-logging:1.2'
-            dependency 'org.springframework.boot:spring-boot-starter:2.0.0.M3'
-        }
-    }
-
     dependencies {
-        testCompile('junit:junit')
-        testCompile('org.mockito:mockito-core')
-        testCompile('org.assertj:assertj-core')
-        testCompile('org.springframework.boot:spring-boot-starter-test')
-        testCompile('commons-logging:commons-logging')
+        testCompile 'org.springframework.boot:spring-boot-starter-test:2.0.0.M3'
     }
 
     repositories {
