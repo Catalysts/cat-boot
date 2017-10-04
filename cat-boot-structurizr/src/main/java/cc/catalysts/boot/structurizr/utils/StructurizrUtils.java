@@ -15,12 +15,9 @@ public class StructurizrUtils {
      *
      * @param containerView
      */
-    public static void addAllContainersAndInfluencers(ContainerView containerView) {
+    public static void addAllInfluencers(ContainerView containerView) {
 
-        // first add all containers of the underlying software system
-        containerView.addAllContainers();
-
-        // then add all software systems with incoming or outgoing dependencies
+        // add all software systems with incoming or outgoing dependencies
         containerView.getModel().getSoftwareSystems()
                 .stream()
                 .filter(softwareSystem -> softwareSystem.hasEfferentRelationshipWith(containerView.getSoftwareSystem()) || containerView.getSoftwareSystem().hasEfferentRelationshipWith(softwareSystem))
@@ -38,6 +35,20 @@ public class StructurizrUtils {
                 .map(view -> view.getRelationship())
                 .filter(relationship -> !isPartOf(relationship.getDestination(), containerView.getSoftwareSystem()) && !isPartOf(relationship.getSource(), containerView.getSoftwareSystem()))
                 .forEach(containerView::remove);
+    }
+
+    /**
+     * <p>Adds all {@link com.structurizr.model.Container}s of the given {@link ContainerView} as well as all external influencers, that is all
+     * persons and all other software systems with incoming or outgoing dependencies.</p>
+     * <p>Additionally, all relationships of external dependencies are omitted to keep the diagram clean</p>
+     *
+     * @param containerView
+     */
+    public static void addAllContainersAndInfluencers(ContainerView containerView) {
+
+        // first add all containers of the underlying software system
+        containerView.addAllContainers();
+        addAllInfluencers(containerView);
     }
 
     private static boolean isPartOf(Element element, Element other) {
