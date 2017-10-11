@@ -12,7 +12,6 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
 
-import java.awt.*;
 import java.io.File;
 
 /**
