@@ -7,15 +7,14 @@ import cc.catalysts.boot.report.pdf.config.DefaultPdfStyleSheet;
 import cc.catalysts.boot.report.pdf.config.PdfFont;
 import cc.catalysts.boot.report.pdf.config.PdfPageLayout;
 import cc.catalysts.boot.report.pdf.config.PdfTextStyle;
+import cc.catalysts.boot.report.pdf.elements.ReportLink;
 import cc.catalysts.boot.report.pdf.elements.ReportRichTextBox;
 import org.apache.pdfbox.pdmodel.graphics.color.PDColor;
 import org.apache.pdfbox.pdmodel.graphics.color.PDDeviceRGB;
-import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 
@@ -138,6 +137,13 @@ public class RichTextTest {
         pdfReportBuilder.addElement(new ReportRichTextBox(textStyle, 1.f, text));
 
         printReport("rt-notTextStyles.pdf");
+    }
+
+    @Test
+    public void textWithLinks() throws IOException {
+        pdfReportBuilder.addElement(new ReportLink("LinkText", "http://www.pdfbox.org", textStyle, 1.f));
+
+        printReport("rt-linkText.pdf");
     }
 
     private void printReport(String fileName) throws IOException {

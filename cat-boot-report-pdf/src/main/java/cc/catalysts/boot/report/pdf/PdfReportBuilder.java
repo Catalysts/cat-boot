@@ -49,4 +49,6 @@ public interface PdfReportBuilder {
     PdfReport buildReport(String fileName, PdfPageLayout pageConfig, Resource templateResource, PDDocument document) throws IOException;
 
     PdfReportBuilder addImage(Resource resource, float width, float height) throws IOException;
+
+    PdfReportBuilder addLink(String text, String link);
 }

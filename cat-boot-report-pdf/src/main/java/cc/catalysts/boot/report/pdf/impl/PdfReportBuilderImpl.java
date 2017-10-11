@@ -188,6 +188,11 @@ class PdfReportBuilderImpl implements PdfReportBuilder {
     }
 
     @Override
+    public PdfReportBuilder addLink(String text, String link) {
+        return addElement(new ReportLink(text, link, configuration.getBodyText(), configuration.getLineDistance()));
+    }
+
+    @Override
     public PdfReportBuilder beginNewSection(String title, boolean startNewPage) {
         if (startNewPage && !elements.isEmpty()) {
             elements.add(new ReportPageBreak());
