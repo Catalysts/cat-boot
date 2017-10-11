@@ -51,6 +51,8 @@ public class DemoTest {
                 .addText("Images are also supported out-of-the-box:")
                 .addPadding(10)
                 .addImage(new ClassPathResource("github_icon.png"), 100, 100)
+                .beginNewSection("Links", false)
+                .addLink("Pdfbox", "http://www.pdfbox.org")
                 .withFooterOnAllPages("Demo-PDF", "cat-boot-report-pdf", PdfFooterGenerator.PAGE_TEMPLATE_CURR + "/"
                         + PdfFooterGenerator.PAGE_TEMPLATE_TOTAL)
                 .buildReport("demo.pdf",
