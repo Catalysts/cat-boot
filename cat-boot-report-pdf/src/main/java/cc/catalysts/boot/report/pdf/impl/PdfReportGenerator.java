@@ -1,10 +1,7 @@
 package cc.catalysts.boot.report.pdf.impl;
 
 import cc.catalysts.boot.report.pdf.config.PdfPageLayout;
-import cc.catalysts.boot.report.pdf.elements.ReportElement;
-import cc.catalysts.boot.report.pdf.elements.ReportElementStatic;
-import cc.catalysts.boot.report.pdf.elements.ReportImage;
-import cc.catalysts.boot.report.pdf.elements.ReportTable;
+import cc.catalysts.boot.report.pdf.elements.*;
 import cc.catalysts.boot.report.pdf.exception.PdfReportGeneratorException;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
@@ -63,27 +60,36 @@ class PdfReportGenerator {
             float height = currentReportElement.getHeight(maxWidth);
             if (cursor.yPos - height < pageConfig.getLastY(cursor.currentPageNumber)) {
                 //out of bounds
-                if (currentReportElement.isSplitable() && currentReportElement instanceof ReportTable && (cursor.yPos -
-                        currentReportElement.getFirstSegmentHeight(maxWidth)) >= pageConfig.getLastY(cursor.currentPageNumber)) {
-                    //it's a Table out of bounds, so we also do a height split
-                    ReportElement[] twoElements = currentReportElement.split(maxWidth, cursor.yPos -
-                            pageConfig.getLastY(cursor.currentPageNumber));
-                    if (twoElements.length != 2) {
-                        throw new IllegalStateException("The split method should always two parts.");
+                if (currentReportElement.isSplitable() && (cursor.yPos - currentReportElement.getFirstSegmentHeight(maxWidth))
+                        >= pageConfig.getLastY(cursor.currentPageNumber)) {
+                    if (currentReportElement instanceof ReportTable) {
+                        //it's a Table out of bounds, so we also do a height split
+                        ReportElement[] twoElements = currentReportElement.split(maxWidth, cursor.yPos -
+                                pageConfig.getLastY(cursor.currentPageNumber));
+                        if (twoElements.length != 2) {
+                            throw new IllegalStateException("The split method should always two parts.");
+                        }
+                        currentReportElement = twoElements[0];
+                        nextReportElement = twoElements[1];
+                        if (((ReportTable) currentReportElement).getExtraSplitting()) {
+                            forceBreak = true;
+                        }
+                    } else if (currentReportElement instanceof ReportCompositeElement) {
+                        ReportElement[] twoElements = currentReportElement.split(maxWidth, cursor.yPos -
+                                pageConfig.getLastY(cursor.currentPageNumber));
+                        if (twoElements.length != 2) {
+                            throw new IllegalStateException("The split method should always two parts.");
+                        }
+                        currentReportElement = twoElements[0];
+                        nextReportElement = twoElements[1];
+                    } else {
+                        ReportElement[] twoElements = currentReportElement.split(maxWidth);
+                        if (twoElements.length != 2) {
+                            throw new IllegalStateException("The split method should always two parts.");
+                        }
+                        currentReportElement = twoElements[0];
+                        nextReportElement = twoElements[1];
                     }
-                    currentReportElement = twoElements[0];
-                    nextReportElement = twoElements[1];
-                    if (((ReportTable) currentReportElement).getExtraSplitting()) {
-                        forceBreak = true;
-                    }
-                } else if (currentReportElement.isSplitable() && (cursor.yPos - currentReportElement.getFirstSegmentHeight(maxWidth)
-                        >= pageConfig.getLastY(cursor.currentPageNumber))) {
-                    ReportElement[] twoElements = currentReportElement.split(maxWidth);
-                    if (twoElements.length != 2) {
-                        throw new IllegalStateException("The split method should always two parts.");
-                    }
-                    currentReportElement = twoElements[0];
-                    nextReportElement = twoElements[1];
                 } else if (!performedBreakPageForCurrentReportElement) {
                     if (lastNonHeightElement(reportElementIndex, nrOfReportElements, currentReportElement.getHeight(maxWidth))) {
                         break; // ignores the last padding if there is not enough space for it
