@@ -464,6 +464,14 @@ public final class PdfBoxHelper {
                     } catch (IOException e) {
                         LOG.warn("Could not calculate string length: " + e.getClass() + " - " + e.getMessage());
                         return 0;
+                    } catch (IllegalArgumentException e) {
+                        try { // for symbols consisting of two characters
+                            String substring = line.substring(i, i + 2);
+                            value = font.getStringWidth(substring);
+                            sizeMap.put(line.charAt(i + 1), 0f);
+                        } catch (Exception ex) {
+                            throw e;
+                        }
                     }
                     sizeMap.put(c, value);
                 }
