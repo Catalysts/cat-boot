@@ -72,6 +72,10 @@ public class ReportTableBuilderImpl implements ReportTableBuilder {
      * build table taking column weights into account
      */
     public ReportTable build() {
+        return buildTableWithWidths(getWidths());
+    }
+
+    private float[] getWidths() {
         float[] widths = new float[columnNames.size()];
         float sum = 0;
         for (Float weight : columnWeights) {
@@ -81,7 +85,21 @@ public class ReportTableBuilderImpl implements ReportTableBuilder {
         for (int i = 0; i < widths.length; i++) {
             widths[i] = singlePartWidth * columnWeights.get(i);
         }
-        return buildTableWithWidths(widths);
+
+        return widths;
+    }
+
+    @Override
+    public ReportTable build(boolean withHeader, boolean withBorder) {
+        ReportTable reportTable;
+        if (withHeader) {
+            reportTable = new ReportTable(pdfStyleSheet, getWidths(), toArray(), null);
+        } else {
+            reportTable = new ReportTable(pdfStyleSheet, getWidths(), toArrayWithoutHeader(), null);
+        }
+
+        reportTable.setBorder(withBorder);
+        return reportTable;
     }
 
     public ReportTable buildTableWithWidths(float[] widths) {
@@ -101,6 +119,21 @@ public class ReportTableBuilderImpl implements ReportTableBuilder {
         }
         row++;
         // body
+        for (List<ReportElement> rowValues : tableValues) {
+            col = 0;
+            for (ReportElement value : rowValues) {
+                result[row][col] = value;
+                col++;
+            }
+            row++;
+        }
+        return result;
+    }
+
+    private ReportElement[][] toArrayWithoutHeader() {
+        ReportElement[][] result = new ReportElement[tableValues.size()][columnNames.size()];
+        int row = 0;
+        int col;
         for (List<ReportElement> rowValues : tableValues) {
             col = 0;
             for (ReportElement value : rowValues) {

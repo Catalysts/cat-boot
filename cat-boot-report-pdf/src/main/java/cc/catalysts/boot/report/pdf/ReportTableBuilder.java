@@ -14,4 +14,6 @@ public interface ReportTableBuilder {
     PdfReportBuilder endTable();
 
     ReportTable build();
+
+    ReportTable build(boolean withHeader, boolean withBorder);
 }
