@@ -3,6 +3,9 @@ package cc.catalysts.boot.report.pdf.elements;
 import cc.catalysts.boot.report.pdf.config.PdfTextStyle;
 import cc.catalysts.boot.report.pdf.utils.ReportAlignType;
 import cc.catalysts.boot.report.pdf.utils.Utf8Utils;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.font.PDFont;
 import org.apache.pdfbox.util.Matrix;
@@ -12,6 +15,8 @@ import org.springframework.util.StringUtils;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -23,11 +28,15 @@ public final class PdfBoxHelper {
     private static final char ITALIC_MARKDOWN = '_';
     private static final char UNDERLINED_MARKDOWN = '+';
 
-    private static Map<PDFont, Map<Character, Float>> fontSizeMap;
+    private static LoadingCache<PDFont, Map<Character, Float>> fontSizeMapCache = CacheBuilder.newBuilder()
+            .expireAfterWrite(10, TimeUnit.MINUTES)
+            .build(new CacheLoader<PDFont, Map<Character, Float>>() {
 
-    static {
-        fontSizeMap = new HashMap<>();
-    }
+                @Override
+                public Map<Character, Float> load(PDFont font) throws Exception {
+                    return new HashMap<>();
+                }
+            });
 
     private PdfBoxHelper() {
     }
@@ -445,11 +454,11 @@ public final class PdfBoxHelper {
     }
 
     public static float getTextWidth(PDFont font, float fontSize, String text) {
-
-        Map<Character, Float> sizeMap = fontSizeMap.get(font);
-        if (sizeMap == null) {
-            sizeMap = new HashMap<>();
-            fontSizeMap.put(font, sizeMap);
+        Map<Character, Float> sizeMap = null;
+        try {
+            sizeMap = fontSizeMapCache.get(font);
+        } catch (ExecutionException e) {
+            e.printStackTrace();
         }
 
         Float maxSum = 0F;
