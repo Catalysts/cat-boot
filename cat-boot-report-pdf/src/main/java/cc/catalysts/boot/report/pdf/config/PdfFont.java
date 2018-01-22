@@ -60,9 +60,7 @@ public class PdfFont {
     }
 
     public void addStyle(String style, PDFont pf) {
-        if (!styles.containsKey(style.toLowerCase())) {
-            styles.put(style.toLowerCase(), pf);
-        }
+        styles.put(style.toLowerCase(), pf);
     }
 
     public static PdfFont registerFont(PDType0Font font) {
