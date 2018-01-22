@@ -57,6 +57,23 @@ public class ReportTableBuilderImpl implements ReportTableBuilder {
         return this;
     }
 
+    public ReportTableBuilderImpl setColumns(int amount) {
+        for (int i = 0; i < amount; i++) {
+            columnNames.add("");
+            columnWeights.add(1f);
+        }
+        return this;
+    }
+
+    public ReportTableBuilderImpl setColumns(int amount, List<Float> weights) {
+        for (int i = 0; i < amount; i++) {
+            columnNames.add("");
+            columnWeights.add(weights.get(i));
+        }
+        return this;
+    }
+
+
     public ReportTableRowBuilderImpl createRow() {
         return new ReportTableRowBuilderImpl(this);
     }
@@ -118,21 +135,19 @@ public class ReportTableBuilderImpl implements ReportTableBuilder {
             result[row][col] = new ReportTextBox(pdfStyleSheet.getTableTitleText(), pdfStyleSheet.getLineDistance(), columnNames.get(col));
         }
         row++;
-        // body
-        for (List<ReportElement> rowValues : tableValues) {
-            col = 0;
-            for (ReportElement value : rowValues) {
-                result[row][col] = value;
-                col++;
-            }
-            row++;
-        }
+        addBody(row, result);
+
         return result;
     }
 
     private ReportElement[][] toArrayWithoutHeader() {
         ReportElement[][] result = new ReportElement[tableValues.size()][columnNames.size()];
-        int row = 0;
+        addBody(0, result);
+
+        return result;
+    }
+
+    private void addBody(int row, ReportElement[][] result) {
         int col;
         for (List<ReportElement> rowValues : tableValues) {
             col = 0;
@@ -142,7 +157,6 @@ public class ReportTableBuilderImpl implements ReportTableBuilder {
             }
             row++;
         }
-        return result;
     }
 
     @Override
