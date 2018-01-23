@@ -57,6 +57,23 @@ public class ReportTableBuilderImpl implements ReportTableBuilder {
         return this;
     }
 
+    public ReportTableBuilderImpl setColumns(int amount) {
+        for (int i = 0; i < amount; i++) {
+            columnNames.add("");
+            columnWeights.add(1f);
+        }
+        return this;
+    }
+
+    public ReportTableBuilderImpl setColumns(int amount, List<Float> weights) {
+        for (int i = 0; i < amount; i++) {
+            columnNames.add("");
+            columnWeights.add(weights.get(i));
+        }
+        return this;
+    }
+
+
     public ReportTableRowBuilderImpl createRow() {
         return new ReportTableRowBuilderImpl(this);
     }
@@ -72,6 +89,10 @@ public class ReportTableBuilderImpl implements ReportTableBuilder {
      * build table taking column weights into account
      */
     public ReportTable build() {
+        return buildTableWithWidths(getWidths());
+    }
+
+    private float[] getWidths() {
         float[] widths = new float[columnNames.size()];
         float sum = 0;
         for (Float weight : columnWeights) {
@@ -81,7 +102,21 @@ public class ReportTableBuilderImpl implements ReportTableBuilder {
         for (int i = 0; i < widths.length; i++) {
             widths[i] = singlePartWidth * columnWeights.get(i);
         }
-        return buildTableWithWidths(widths);
+
+        return widths;
+    }
+
+    @Override
+    public ReportTable build(boolean withHeader, boolean withBorder) {
+        ReportTable reportTable;
+        if (withHeader) {
+            reportTable = new ReportTable(pdfStyleSheet, getWidths(), toArray(), null);
+        } else {
+            reportTable = new ReportTable(pdfStyleSheet, getWidths(), toArrayWithoutHeader(), null);
+        }
+
+        reportTable.setBorder(withBorder);
+        return reportTable;
     }
 
     public ReportTable buildTableWithWidths(float[] widths) {
@@ -100,7 +135,20 @@ public class ReportTableBuilderImpl implements ReportTableBuilder {
             result[row][col] = new ReportTextBox(pdfStyleSheet.getTableTitleText(), pdfStyleSheet.getLineDistance(), columnNames.get(col));
         }
         row++;
-        // body
+        addBody(row, result);
+
+        return result;
+    }
+
+    private ReportElement[][] toArrayWithoutHeader() {
+        ReportElement[][] result = new ReportElement[tableValues.size()][columnNames.size()];
+        addBody(0, result);
+
+        return result;
+    }
+
+    private void addBody(int row, ReportElement[][] result) {
+        int col;
         for (List<ReportElement> rowValues : tableValues) {
             col = 0;
             for (ReportElement value : rowValues) {
@@ -109,7 +157,6 @@ public class ReportTableBuilderImpl implements ReportTableBuilder {
             }
             row++;
         }
-        return result;
     }
 
     @Override
