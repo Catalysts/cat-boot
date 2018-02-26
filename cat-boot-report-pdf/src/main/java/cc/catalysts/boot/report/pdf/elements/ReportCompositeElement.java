@@ -93,7 +93,7 @@ public class ReportCompositeElement implements ReportElement {
             } else {
                 if (element.isSplitable()) {
                     foundFirstSplittableElement = true;
-                    ReportElement[] splitted = element.split(allowedWidth, allowedHeight);
+                    ReportElement[] splitted = element.split(allowedWidth, allowedHeight - first.getHeight(allowedWidth));
                     first.addElement(splitted[0]);
                     next.addElement(splitted[1]);
                 } else {
