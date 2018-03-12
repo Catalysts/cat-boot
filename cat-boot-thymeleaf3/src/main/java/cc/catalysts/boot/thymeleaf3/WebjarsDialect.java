@@ -21,7 +21,7 @@ public class WebjarsDialect extends AbstractProcessorDialect implements IExpress
 
     @Autowired
     public WebjarsDialect(Collection<WebjarRegistrar> webjarRegistrars) {
-        super("osp", "osp", 0);
+        super("webjars", "webjars", 0);
         this.webjarRegistrars = webjarRegistrars;
     }
 
