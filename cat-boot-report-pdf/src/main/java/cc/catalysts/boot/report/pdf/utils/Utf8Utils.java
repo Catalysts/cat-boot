@@ -9,6 +9,8 @@ import java.util.stream.Stream;
  */
 public class Utf8Utils {
 
+    private static String replacement = "";
+
     private static Set<String> specialCharacters = Stream.of(
             "\u200B", "\u2009", "\u2010", "\u25FB", "\u0308", "\u0009", "\u2192")
             .collect(Collectors.toSet());
@@ -18,7 +20,7 @@ public class Utf8Utils {
      */
     public static String removeCharactersWithZeroLength(String string) {
         for (String specialCharacter: specialCharacters){
-            string = string.replace(specialCharacter, "");
+            string = string.replace(specialCharacter, replacement);
         }
 
         return string;
@@ -26,5 +28,9 @@ public class Utf8Utils {
 
     public static void addSpecialCharacter(String specialCharacter) {
         specialCharacters.add(specialCharacter);
+    }
+
+    public static void setReplacement(String customReplacement) {
+        replacement = customReplacement;
     }
 }
