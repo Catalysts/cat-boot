@@ -13,7 +13,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * <p>All {@link org.springframework.stereotype.Component}s in this package and in subpackaged are detected, they
  * build the Structurizr {@link com.structurizr.model.Model}.</p>
  *
- * <p>This class also serves as a {@link ViewProvider} and created the {@link com.structurizr.view.EnterpriseContextView}
+ * <p>This class also serves as a {@link ViewProvider} and created the {@link com.structurizr.view.SystemLandscapeView}
  * or our model.</p>
  *
  * @author Klaus Lehner, Catalysts GmbH
@@ -27,6 +27,6 @@ public class Architecture implements ViewProvider {
 
     @Override
     public void createViews(ViewSet viewSet) {
-        viewSet.createEnterpriseContextView("enterprise", "Enterprise Diagram").addAllElements();
+        viewSet.createSystemLandscapeView("enterprise", "Enterprise Diagram").addAllElements();
     }
 }
