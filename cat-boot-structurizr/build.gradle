@@ -12,7 +12,8 @@ sourceCompatibility = 1.8
 dependencies {
     compile 'org.slf4j:slf4j-api'
 
-    compile 'com.structurizr:structurizr-core:1.0.0-RC4'
+    compile 'com.structurizr:structurizr-core:1.0.0-RC5'
+    compile 'com.structurizr:structurizr-client:1.0.0-RC5'
     compile 'org.springframework.boot:spring-boot'
 
     optional "org.springframework.boot:spring-boot-configuration-processor"
