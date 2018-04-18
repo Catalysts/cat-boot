@@ -2,6 +2,8 @@ package cc.catalysts.boot.structurizr.utils;
 
 import com.structurizr.view.ContainerView;
 
+import javax.annotation.Nonnull;
+
 /**
  * @author Klaus Lehner, Catalysts GmbH
  */
@@ -15,7 +17,7 @@ public class StructurizrUtils {
      * @param containerView
      * @deprecated use {@link ContainerView#addAllInfluencers()}
      */
-    public static void addAllInfluencers(ContainerView containerView) {
+    public static void addAllInfluencers(@Nonnull ContainerView containerView) {
         containerView.addAllInfluencers();
     }
 
@@ -27,7 +29,7 @@ public class StructurizrUtils {
      * @param containerView
      * @deprecated use {@link ContainerView#addAllContainersAndInfluencers()}
      */
-    public static void addAllContainersAndInfluencers(ContainerView containerView) {
+    public static void addAllContainersAndInfluencers(@Nonnull ContainerView containerView) {
         containerView.addAllContainersAndInfluencers();
     }
 }

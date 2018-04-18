@@ -2,6 +2,8 @@ package cc.catalysts.boot.structurizr;
 
 import com.structurizr.view.ViewSet;
 
+import javax.annotation.Nonnull;
+
 /**
  * Implement this interface if you want to create {@link com.structurizr.view.View}s for your {@link com.structurizr.model.Model}.
  * The reason why this is done in a separate method is to ensure that all {@link org.springframework.stereotype.Component}s which
@@ -19,5 +21,5 @@ public interface ViewProvider {
      * @param viewSet the {@link ViewSet} of the {@link com.structurizr.Workspace} after the whole {@link com.structurizr.model.Model}
      *                has been initialized
      */
-    void createViews(ViewSet viewSet);
+    void createViews(@Nonnull ViewSet viewSet);
 }

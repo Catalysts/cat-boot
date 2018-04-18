@@ -4,6 +4,8 @@ import com.structurizr.view.ViewSet;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import javax.annotation.Nonnull;
+
 /**
  * <p>This is the main class of the architecture application. It starts as a {@link SpringBootApplication}, thus
  * also automatically configuring {@link cc.catalysts.boot.structurizr.config.StructurizrAutoConfiguration}.</p>
@@ -26,7 +28,7 @@ public class Architecture implements ViewProvider {
     }
 
     @Override
-    public void createViews(ViewSet viewSet) {
+    public void createViews(@Nonnull ViewSet viewSet) {
         viewSet.createSystemLandscapeView("enterprise", "Enterprise Diagram").addAllElements();
     }
 }

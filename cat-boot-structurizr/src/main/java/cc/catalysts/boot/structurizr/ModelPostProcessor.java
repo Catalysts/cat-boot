@@ -2,6 +2,8 @@ package cc.catalysts.boot.structurizr;
 
 import com.structurizr.model.Model;
 
+import javax.annotation.Nonnull;
+
 /**
  * Implementors of this interface will be called after all spring components have been initialized but before all implicit
  * relationships are created and before all views are generated
@@ -15,5 +17,5 @@ public interface ModelPostProcessor {
      *
      * @param model
      */
-    void postProcess(Model model);
+    void postProcess(@Nonnull Model model);
 }

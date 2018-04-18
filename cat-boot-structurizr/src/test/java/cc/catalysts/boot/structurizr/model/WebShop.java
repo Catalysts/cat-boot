@@ -10,6 +10,8 @@ import com.structurizr.view.ViewSet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Nonnull;
+
 /**
  * @author Klaus Lehner, Catalysts GmbH
  */
@@ -30,7 +32,7 @@ public class WebShop implements ViewProvider {
     }
 
     @Override
-    public void createViews(ViewSet viewSet) {
+    public void createViews(@Nonnull ViewSet viewSet) {
         final ContainerView containerView = viewSet.createContainerView(webShop, "webshop", "WebShop");
         containerView.addAllElements();
     }
