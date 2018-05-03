@@ -433,15 +433,18 @@ public final class PdfBoxHelper {
             part1 = text.substring(start, end).replaceAll("\\s+$", "");
             part2 = text.substring(end + 1, text.length()).concat(endPart).replaceAll("^\\s+", "");
         } else {
+            final String separator = "-";
+            allowedWidth -= getTextWidth(font, fontSize, separator);
+
             //no good wrap point found
             end = text.length();
-            while (getTextWidth(font, fontSize, text.substring(start, end)) > allowedWidth) {
+            while (end > 0 && getTextWidth(font, fontSize, text.substring(start, end)) > allowedWidth) {
                 end--;
             }
 
             boolean splittable = end >= 2;
             if (splittable) {
-                part1 = text.substring(start, end - 1).concat("-").replaceAll("\\s+$", "");
+                part1 = text.substring(start, end - 1).concat(separator).replaceAll("\\s+$", "");
                 part2 = text.substring(end - 1, text.length()).concat(endPart).replaceAll("^\\s+", "");
             }
 
