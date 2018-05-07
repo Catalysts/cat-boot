@@ -33,4 +33,8 @@ public class Utf8Utils {
     public static void setReplacement(String customReplacement) {
         replacement = customReplacement;
     }
+
+    public static void clearSpecialCharacters() {
+        specialCharacters.clear();
+    }
 }
