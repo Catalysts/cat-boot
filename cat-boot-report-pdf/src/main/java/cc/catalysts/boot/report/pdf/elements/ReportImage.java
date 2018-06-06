@@ -3,7 +3,7 @@ package cc.catalysts.boot.report.pdf.elements;
 import cc.catalysts.boot.report.pdf.utils.ReportAlignType;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
-import org.apache.pdfbox.pdmodel.graphics.image.JPEGFactory;
+import org.apache.pdfbox.pdmodel.graphics.image.LosslessFactory;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 
 import java.awt.image.BufferedImage;
@@ -59,7 +59,7 @@ public class ReportImage extends AbstractReportElement implements ReportElement 
      * @throws java.io.IOException in case there are problems at reading or writing the image
      */
     public void printImage(PDDocument document, int pageNumber, float x, float y) throws IOException {
-        PDImageXObject obj = JPEGFactory.createFromImage(document, img);
+        PDImageXObject obj = LosslessFactory.createFromImage(document, img);
 
         PDPageContentStream currentStream = new PDPageContentStream(document,
                 document.getDocumentCatalog().getPages().get(pageNumber), PDPageContentStream.AppendMode.APPEND, false);
