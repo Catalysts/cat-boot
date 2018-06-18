@@ -1,2 +1,0 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-cc.catalysts.boot.structurizr.config.StructurizrAutoConfiguration
