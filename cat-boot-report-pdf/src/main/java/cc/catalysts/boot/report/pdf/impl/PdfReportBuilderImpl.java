@@ -26,33 +26,42 @@ import java.util.List;
 class PdfReportBuilderImpl implements PdfReportBuilder {
 
     private final PdfStyleSheet configuration;
-    private final PDDocument document;
     private List<ReportElement> elements = new ArrayList<>();
     private List<AbstractFixedLineGenerator> fixedLineGenerators = new ArrayList<>();
     private static final Logger LOG = LoggerFactory.getLogger(PdfReportBuilderImpl.class);
 
     public PdfReportBuilderImpl(PdfStyleSheet configuration) {
         this.configuration = configuration;
-        document = new PDDocument();
         loadResourceFonts();
     }
 
     private void loadResourceFonts() {
-
-        Resource[] resources;
+        PDDocument document = null;
         try {
-            ResourcePatternResolver resourcePatternResolver = new PathMatchingResourcePatternResolver();
-            resources = resourcePatternResolver.getResources("classpath:/fonts/*.ttf");
-        } catch (IOException e) {
-            LOG.warn("Failed to get files!", e);
-            return;
-        }
-
-        for (Resource resource : resources) {
+            document = new PDDocument();
+            Resource[] resources;
             try {
-                PdfFont.registerFont(PDType0Font.load(document, resource.getInputStream()));
+                ResourcePatternResolver resourcePatternResolver = new PathMatchingResourcePatternResolver();
+                resources = resourcePatternResolver.getResources("classpath:/fonts/*.ttf");
             } catch (IOException e) {
-                LOG.warn("Failed to register font!", e);
+                LOG.warn("Failed to get files!", e);
+                return;
+            }
+
+            for (Resource resource : resources) {
+                try {
+                    PdfFont.registerFont(PDType0Font.load(document, resource.getInputStream()));
+                } catch (IOException e) {
+                    LOG.warn("Failed to register font!", e);
+                }
+            }
+        } finally {
+            if (document != null) {
+                try {
+                    document.close();
+                } catch (Exception e) {
+                    LOG.error("Failed to close font document");
+                }
             }
         }
     }
