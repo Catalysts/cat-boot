@@ -15,7 +15,7 @@ buildscript {
     dependencies {
         classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.6.2"
         classpath 'io.spring.gradle:propdeps-plugin:0.0.9.RELEASE'
-        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3'
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.4'
         classpath 'org.jfrog.buildinfo:build-info-extractor-gradle:4.4.13'
     }
 }
