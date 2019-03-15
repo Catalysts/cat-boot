@@ -1,8 +1,6 @@
 rootProject.name = 'cat-boot'
 
 include 'cat-boot-javamelody'
-include 'cat-boot-i18n'
-include 'cat-boot-i18n-angular'
 include 'cat-boot-report-pdf'
 include 'cat-boot-thymeleaf'
 include 'cat-boot-thymeleaf2'
