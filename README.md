@@ -7,6 +7,7 @@ CAT-Boot: A set of libraries on top of the famous and fabolous [Spring Boot](htt
 
 ### Version Information
 
+* 1.0.x is compatible with spring-boot 2.1.x
 * 0.2.x is compatible with spring-boot 1.5.x
 * 0.1.x is compatible with spring-boot 1.3.x
 
@@ -32,7 +33,3 @@ See [`/cat-boot-thymeleaf`](/cat-boot-thymeleaf)
 ## PDF Reporting engine
 
 See [`/cat-boot-report-pdf`](/cat-boot-report-pdf)
-
-## Redis-Clustering
-
-See [`/cat-boot-cluster`](/cat-boot-cluster)
