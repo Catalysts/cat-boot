@@ -38,7 +38,7 @@ public class ReportTextBox implements ReportElement {
      * @param text   text of text box
      */
     public ReportTextBox(ReportTextBox object, String text) {
-        this.text = text;
+        this.text = text == null ? "" : text;
         this.textConfig = object.textConfig;
         this.lineDistance = object.lineDistance;
         this.align = object.align;
