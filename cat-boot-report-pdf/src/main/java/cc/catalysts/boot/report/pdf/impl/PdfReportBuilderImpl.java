@@ -41,7 +41,7 @@ class PdfReportBuilderImpl implements PdfReportBuilder {
 
         Resource[] resources;
         try {
-            ResourcePatternResolver resourcePatternResolver = new PathMatchingResourcePatternResolver();
+            ResourcePatternResolver resourcePatternResolver = new PathMatchingResourcePatternResolver(getClass().getClassLoader());
             resources = resourcePatternResolver.getResources("classpath:/fonts/*.ttf");
         } catch (IOException e) {
             LOG.warn("Failed to get files!", e);
