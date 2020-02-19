@@ -1,7 +1,7 @@
 language: java
 sudo: false
 jdk:
-- oraclejdk8
+- openjdk8
 before_cache:
 - rm -f $HOME/.gradle/caches/modules-2/modules-2.lock
 cache:
@@ -9,7 +9,7 @@ cache:
   - "$HOME/.gradle/caches/"
   - "$HOME/.gradle/wrapper/"
 after_success:
-- if [ "$TRAVIS_BRANCH" == "master" ]; then ./gradlew artifactoryPublish bintrayUpload; fi 
+- if [ "$TRAVIS_BRANCH" == "master" ]; then ./gradlew artifactoryPublish bintrayUpload; fi
 env:
   global:
   - secure: jZ0fnEW/CbA+OkSrlSwkxZdyzBKKbBayoH+/Xny0smqHug0r3F7SkkJrr2FDpDhYV+ZpDxiCD6B0vaBr/BsUFmDVeQEYFzJP/aajoe/lSVzl3db80OiHPpyWk7Hiz/3D8YKt6VT43dQeqzKkyMNaWQ0uFQ9QfnPkzf9trgJTHlXJy7mYlMYZ/aB4KMTAB9A2xuuOMv5BDmGT5IhcnYS6OP4SxE6zmnMKl0JQI4942spyWy0CiENf8HUTHQbQr8Uhmky3QnuUVm0kfYFx7MBbYGiBASPw+lRfTeW0y+DA/wGWdBx4fPuXK4j9kUc+u6s0iC6xmTjUr31BU68lDuAEIBKW4F+au55/Mw7wZjvSNiPezDMwaJEuY4978T/ajlRAEBeaXWD0J5qntdPaSjj9GP0J9kBH7JT2ayfrFAX4IW3Tw1N1c71b6nrQxlOVZImllkfqAD58mhuWjeAgMvU/FsQT/qt4z1iFqX5xF3chKLG2YCEA14BXkkrEAMiWsaw8x5OmlF+bi7TKtIQWWTYcPiW8fLSbqgIIZPfrDo9R/UK/UE9B6CEo/P6W8hGv6vN/f2At+cthwV06g+eBGhoYfyWEgC7h9F0guvcr8Ajnv7rrIeftAUrFZAR5VHbeBUgMwdVMcO4lSbyo3EOGtPKzV6/v59ooh0EkQLR5InX+0cg=
