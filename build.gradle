@@ -5,15 +5,15 @@ buildscript {
     ext.sonatypeUser   = project.hasProperty('sonatypeUser') ? project.sonatypeUser : System.getenv('SONATYPE_USER')
     ext.sonatypeKey    = project.hasProperty('sonatypeKey') ? project.sonatypeKey : System.getenv('SONATYPE_KEY')
     ext.mavenCentralSyncEnabled = project.sonatypeUser && project.sonatypeKey
-    
+
     repositories {
-        maven { url "https://plugins.gradle.org/m2/" }
-        maven { url 'http://repo.spring.io/plugins-release' }
-        maven { url "http://repo.spring.io/milestone" }
+        maven { url 'https://plugins.gradle.org/m2/' }
+        maven { url 'https://repo.spring.io/plugins-release' }
+        maven { url 'https://repo.spring.io/milestone' }
         jcenter()
     }
     dependencies {
-        classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.6.2"
+        classpath 'org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.6.2'
         classpath 'io.spring.gradle:propdeps-plugin:0.0.9.RELEASE'
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.4'
         classpath 'org.jfrog.buildinfo:build-info-extractor-gradle:4.4.13'
@@ -61,7 +61,7 @@ subprojects {
         from sourceSets.main.allSource
         classifier = 'sources'
     }
-    
+
     // package javadoc
     task javadocJar(type: Jar, dependsOn: javadoc) {
         classifier = 'javadoc'
