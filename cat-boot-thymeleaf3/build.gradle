@@ -3,11 +3,14 @@ apply plugin: 'java'
 dependencies {
     compile project(':cat-boot-thymeleaf-base')
 
-    compile('org.springframework.boot:spring-boot-starter')
-    compile('org.thymeleaf:thymeleaf:3.0.0.RELEASE')
+    testCompile 'commons-logging:commons-logging'
 
-    testCompile('junit:junit')
-    testCompile('org.assertj:assertj-core')
-    testCompile('org.springframework.boot:spring-boot-starter-test')
-    testCompile('commons-logging:commons-logging')
+    testCompile 'junit:junit'
+
+    testCompile 'org.assertj:assertj-core'
+
+    compile 'org.springframework.boot:spring-boot-starter'
+    testCompile 'org.springframework.boot:spring-boot-starter-test'
+
+    compile 'org.thymeleaf:thymeleaf:3.0.11.RELEASE'
 }

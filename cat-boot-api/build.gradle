@@ -4,8 +4,9 @@ apply plugin: 'propdeps-maven'
 apply plugin: 'propdeps-idea'
 
 dependencies {
-    compile 'com.fasterxml.jackson.core:jackson-annotations:2.6.5'
-    compile 'javax.validation:validation-api:1.1.0.Final'
+    compile 'com.fasterxml.jackson.core:jackson-annotations'
+
+    compile 'javax.validation:validation-api'
 
     compile 'org.springframework:spring-web'
 }

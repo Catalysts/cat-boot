@@ -1,16 +1,22 @@
 apply plugin: 'java'
 
 dependencies {
-    compile 'org.slf4j:slf4j-api'
-    compile('org.springframework.boot:spring-boot-autoconfigure')
-    compile 'org.springframework:spring-core'
-    compile 'org.springframework:spring-context'
-    compile 'org.apache.commons:commons-lang3:3.3.2'
+    testCompile 'ch.qos.logback:logback-classic'
+
+    testCompile 'commons-logging:commons-logging'
+
+    testCompile 'junit:junit'
+
+    compile 'org.apache.commons:commons-lang3'
+
     compile 'org.aspectj:aspectjweaver'
 
+    compile 'org.slf4j:slf4j-api'
+
+    compile 'org.springframework:spring-context'
+    compile 'org.springframework:spring-core'
     testCompile 'org.springframework:spring-test'
+
+    compile 'org.springframework.boot:spring-boot-autoconfigure'
     testCompile 'org.springframework.boot:spring-boot-test'
-    testCompile 'junit:junit'
-    testCompile 'commons-logging:commons-logging'
-    testCompile 'ch.qos.logback:logback-classic'
 }

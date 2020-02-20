@@ -13,15 +13,15 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.6.2'
+        classpath 'org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.8'
         classpath 'io.spring.gradle:propdeps-plugin:0.0.9.RELEASE'
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.4'
-        classpath 'org.jfrog.buildinfo:build-info-extractor-gradle:4.4.13'
+        classpath 'org.jfrog.buildinfo:build-info-extractor-gradle:4.13.0'
     }
 }
 
 plugins {
-    id "io.spring.dependency-management" version "1.0.7.RELEASE"
+    id "io.spring.dependency-management" version "1.0.9.RELEASE"
 }
 
 apply from: 'properties.gradle'
@@ -45,10 +45,17 @@ subprojects {
 
     dependencyManagement {
         imports {
-            mavenBom("org.springframework.boot:spring-boot-dependencies:2.1.3.RELEASE")
+            mavenBom("org.springframework.boot:spring-boot-dependencies:2.2.4.RELEASE")
         }
         dependencies {
-            dependency 'commons-logging:commons-logging:1.2'
+            dependency "com.google.guava:guava:28.2-jre"
+
+            dependency "commons-io:commons-io:2.6"
+            dependency "commons-logging:commons-logging:1.2"
+
+            dependency "net.bull.javamelody:javamelody-core:1.81.0"
+
+            dependency "org.apache.pdfbox:pdfbox:2.0.18"
         }
     }
 

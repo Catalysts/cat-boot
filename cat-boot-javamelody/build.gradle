@@ -4,16 +4,19 @@ apply plugin: 'propdeps-maven'
 apply plugin: 'propdeps-idea'
 
 dependencies {
-    compile('org.springframework.boot:spring-boot')
-    compile('org.springframework.boot:spring-boot-autoconfigure')
-    compile('net.bull.javamelody:javamelody-core:1.76.0')
+    testCompile 'commons-logging:commons-logging'
 
-    provided('javax.servlet:javax.servlet-api:3.1.0')
+    provided 'javax.servlet:javax.servlet-api'
 
-    optional('org.springframework.boot:spring-boot-configuration-processor')
+    testCompile 'junit:junit'
 
-    testCompile('junit:junit')
-    testCompile('org.springframework:spring-test')
-    testCompile('commons-logging:commons-logging')
+    compile 'net.bull.javamelody:javamelody-core'
+
+    testCompile 'org.springframework:spring-test'
+
+    compile 'org.springframework.boot:spring-boot'
+    compile 'org.springframework.boot:spring-boot-autoconfigure'
+    optional 'org.springframework.boot:spring-boot-configuration-processor'
 }
+
 compileJava.dependsOn(processResources)
