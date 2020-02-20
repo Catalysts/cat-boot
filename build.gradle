@@ -1,9 +1,9 @@
 buildscript {
-    ext.bintrayUser    = project.hasProperty('bintrayUser') ? project.bintrayUser : System.getenv('BINTRAY_USER')
-    ext.bintrayKey     = project.hasProperty('bintrayKey')  ? project.bintrayKey  : System.getenv('BINTRAY_KEY')
+    ext.bintrayUser = project.hasProperty('bintrayUser') ? project.bintrayUser : System.getenv('BINTRAY_USER')
+    ext.bintrayKey = project.hasProperty('bintrayKey') ? project.bintrayKey : System.getenv('BINTRAY_KEY')
     ext.bintrayEnabled = project.bintrayUser && project.bintrayKey
-    ext.sonatypeUser   = project.hasProperty('sonatypeUser') ? project.sonatypeUser : System.getenv('SONATYPE_USER')
-    ext.sonatypeKey    = project.hasProperty('sonatypeKey') ? project.sonatypeKey : System.getenv('SONATYPE_KEY')
+    ext.sonatypeUser = project.hasProperty('sonatypeUser') ? project.sonatypeUser : System.getenv('SONATYPE_USER')
+    ext.sonatypeKey = project.hasProperty('sonatypeKey') ? project.sonatypeKey : System.getenv('SONATYPE_KEY')
     ext.mavenCentralSyncEnabled = project.sonatypeUser && project.sonatypeKey
 
     repositories {
@@ -45,7 +45,7 @@ subprojects {
 
     dependencyManagement {
         imports {
-            mavenBom("org.springframework.boot:spring-boot-dependencies:2.2.4.RELEASE")
+            mavenBom "org.springframework.boot:spring-boot-dependencies:2.2.4.RELEASE"
         }
         dependencies {
             dependency "com.google.guava:guava:28.2-jre"

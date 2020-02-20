@@ -24,133 +24,28 @@ import java.util.List;
  * @author Klaus Lehner
  */
 class PdfReportBuilderImpl implements PdfReportBuilder {
+    private static final Logger LOG = LoggerFactory.getLogger(PdfReportBuilderImpl.class);
 
     private final PdfStyleSheet configuration;
     private final PDDocument document;
+
     private List<ReportElement> elements = new ArrayList<>();
     private List<AbstractFixedLineGenerator> fixedLineGenerators = new ArrayList<>();
-    private static final Logger LOG = LoggerFactory.getLogger(PdfReportBuilderImpl.class);
 
     public PdfReportBuilderImpl(PdfStyleSheet configuration) {
         this.configuration = configuration;
-        document = new PDDocument();
+        this.document = new PDDocument();
+
         loadResourceFonts();
     }
 
-    private void loadResourceFonts() {
-
-        Resource[] resources;
-        try {
-            ResourcePatternResolver resourcePatternResolver = new PathMatchingResourcePatternResolver();
-            resources = resourcePatternResolver.getResources("classpath*:/fonts/*.ttf");
-        } catch (IOException e) {
-            LOG.warn("Failed to get files!", e);
-            return;
-        }
-
-        for (Resource resource : resources) {
-            try {
-                PdfFont.registerFont(PDType0Font.load(document, resource.getInputStream()));
-            } catch (IOException e) {
-                LOG.warn("Failed to register font!", e);
-            }
-        }
-    }
-
-    public PdfReportBuilderImpl addElement(ReportElement element) {
-        elements.add(element);
-        return this;
-    }
-
-    @Override
-    public PdfReportBuilder withHeaderOnAllPages(String left, String middle, String right) {
-        PdfStyleSheet HeaderTableConfiguration = new DefaultPdfStyleSheet();
-        HeaderTableConfiguration.setTableTitleText(configuration.getFooterText());
-        ReportTable headerTable = new ReportTableBuilderImpl(HeaderTableConfiguration, this).addColumn(left, 1).addColumn(middle, 1).addColumn(right, 1).build();
-        headerTable.setTextAlignInColumn(0, ReportAlignType.LEFT, false);
-        headerTable.setTextAlignInColumn(1, ReportAlignType.CENTER, false);
-        headerTable.setTextAlignInColumn(2, ReportAlignType.RIGHT, false);
-        headerTable.setBorder(false);
-        fixedLineGenerators.add(new PdfHeaderGenerator(headerTable, PositionOfStaticElements.ON_ALL_PAGES));
-        return this;
-    }
-
-    @Override
-    public PdfReportBuilder withHeaderOnAllPages(ReportElement headerElement) {
-        fixedLineGenerators.add(new PdfHeaderGenerator(headerElement, PositionOfStaticElements.ON_ALL_PAGES));
-        return this;
-    }
-
-    @Override
-    public PdfReportBuilder withHeaderOnPages(String left, String middle, String right, PositionOfStaticElements headerPosition) {
-        PdfStyleSheet HeaderTableConfiguration = new DefaultPdfStyleSheet();
-        HeaderTableConfiguration.setTableTitleText(configuration.getFooterText());
-        ReportTable headerTable = new ReportTableBuilderImpl(HeaderTableConfiguration, this).addColumn(left, 1).addColumn(middle, 1).addColumn(right, 1).build();
-        headerTable.setTextAlignInColumn(0, ReportAlignType.LEFT, false);
-        headerTable.setTextAlignInColumn(1, ReportAlignType.CENTER, false);
-        headerTable.setTextAlignInColumn(2, ReportAlignType.RIGHT, false);
-        headerTable.setBorder(false);
-        fixedLineGenerators.add(new PdfHeaderGenerator(headerTable, headerPosition));
-        return this;
-    }
-
-    @Override
-    public PdfReportBuilder withHeaderOnPages(ReportElement headerElement, PositionOfStaticElements headerPosition) {
-        fixedLineGenerators.add(new PdfHeaderGenerator(headerElement, headerPosition));
-        return this;
-    }
-
-    @Override
-    public PdfReportBuilder withFooterOnAllPages(String left, String middle, String right) {
-        PdfStyleSheet footerTableConfiguration = new DefaultPdfStyleSheet();
-        footerTableConfiguration.setTableTitleText(configuration.getFooterText());
-        ReportTable footerTable = new ReportTableBuilderImpl(footerTableConfiguration, this).addColumn(left, 1).addColumn(middle, 1).addColumn(right, 1).build();
-        footerTable.setTextAlignInColumn(0, ReportAlignType.LEFT, false);
-        footerTable.setTextAlignInColumn(1, ReportAlignType.CENTER, false);
-        footerTable.setTextAlignInColumn(2, ReportAlignType.RIGHT, false);
-        footerTable.setBorder(false);
-        fixedLineGenerators.add(new PdfFooterGenerator(footerTable, PositionOfStaticElements.ON_ALL_PAGES));
-        return this;
-    }
-
-    @Override
-    public PdfReportBuilder withFooterOnAllPages(ReportElement footerElement) {
-        fixedLineGenerators.add(new PdfFooterGenerator(footerElement, PositionOfStaticElements.ON_ALL_PAGES));
-        return this;
-    }
-
-    @Override
-    public PdfReportBuilder withFooterOnPages(String left, String middle, String right, PositionOfStaticElements footerPosition) {
-        PdfStyleSheet footerTableConfiguration = new DefaultPdfStyleSheet();
-        footerTableConfiguration.setTableTitleText(configuration.getFooterText());
-        ReportTable footerTable = new ReportTableBuilderImpl(footerTableConfiguration, this).addColumn(left, 1).addColumn(middle, 1).addColumn(right, 1).build();
-        footerTable.setTextAlignInColumn(0, ReportAlignType.LEFT, false);
-        footerTable.setTextAlignInColumn(1, ReportAlignType.CENTER, false);
-        footerTable.setTextAlignInColumn(2, ReportAlignType.RIGHT, false);
-        footerTable.setBorder(false);
-        fixedLineGenerators.add(new PdfFooterGenerator(footerTable, footerPosition));
-        return this;
-    }
-
-    @Override
-    public PdfReportBuilder withFooterOnPages(ReportElement footerElement, PositionOfStaticElements footerPosition) {
-        fixedLineGenerators.add(new PdfFooterGenerator(footerElement, footerPosition));
-        return this;
-    }
-
-    @Override
-    public PdfReportBuilder addPadding(float padding) {
-        elements.add(new ReportPadding(padding));
-        return this;
-    }
-
-    @Override
-    public ReportTableBuilder startTable() {
-        return new ReportTableBuilderImpl(configuration, this);
+    public List<ReportElement> getElements() {
+        return elements;
     }
 
     public PdfReportStructure buildReport(PdfPageLayout pageConfig) {
         PdfReportStructure report = new PdfReportStructure(configuration);
+
         for (ReportElement element : elements) {
             if (element instanceof ReportElementStatic) {
                 report.addStaticElement((ReportElementStatic) element);
@@ -158,6 +53,7 @@ class PdfReportBuilderImpl implements PdfReportBuilder {
                 report.addElement(element);
             }
         }
+
         for (AbstractFixedLineGenerator generator : fixedLineGenerators) {
             generator.addFooterToAllPages(report, pageConfig);
             if (generator instanceof PdfFooterGenerator) {
@@ -168,7 +64,173 @@ class PdfReportBuilderImpl implements PdfReportBuilder {
                 pageConfig.setHeader(generator.getFooterElement().getHeight(pageConfig.getUsableWidth()) + configuration.getLineDistance());
             }
         }
+
         return report;
+    }
+
+    private void loadResourceFonts() {
+        try {
+            ResourcePatternResolver resourcePatternResolver = new PathMatchingResourcePatternResolver();
+
+            for (Resource font : resourcePatternResolver.getResources("classpath*:fonts/*.ttf")) {
+                registerFont(font);
+            }
+        } catch (IOException e) {
+            LOG.error("Failed to get files!", e);
+        }
+    }
+
+    private void registerFont(Resource resource) {
+        try {
+            LOG.info("Loading Font {}", resource);
+            PdfFont.registerFont(PDType0Font.load(document, resource.getInputStream()));
+        } catch (IOException e) {
+            LOG.error("Failed to register font!", e);
+        }
+    }
+
+    @Override
+    public PdfReportBuilder beginNewSection(String title, boolean startNewPage) {
+        if (startNewPage && !elements.isEmpty()) {
+            elements.add(new ReportPageBreak());
+        }
+
+        addElement(new ReportPadding(configuration.getSectionPadding()));
+        addHeading(title);
+
+        return this;
+    }
+
+    @Override
+    public PdfReportBuilderImpl addHeading(String heading) {
+        addElement(new ReportTextBox(configuration.getHeading1Text(), configuration.getLineDistance(), heading));
+        addPadding(configuration.getHeadingPaddingAfter());
+
+        return this;
+    }
+
+    @Override
+    public PdfReportBuilderImpl addText(String text) {
+        addElement(new ReportTextBox(configuration.getBodyText(), configuration.getLineDistance(), text));
+
+        return this;
+    }
+
+    @Override
+    public PdfReportBuilderImpl addText(String text, PdfTextStyle textConfig) {
+        addElement(new ReportTextBox(textConfig, configuration.getLineDistance(), text));
+
+        return this;
+    }
+
+    public PdfReportBuilderImpl addElement(ReportElement element) {
+        elements.add(element);
+
+        return this;
+    }
+
+    @Override
+    public PdfReportBuilder withHeaderOnAllPages(String left, String middle, String right) {
+        PdfStyleSheet sheet = new DefaultPdfStyleSheet();
+        sheet.setTableTitleText(configuration.getFooterText());
+
+        ReportTable table = new ReportTableBuilderImpl(sheet, this).addColumn(left, 1).addColumn(middle, 1).addColumn(right, 1).build();
+        table.setTextAlignInColumn(0, ReportAlignType.LEFT, false);
+        table.setTextAlignInColumn(1, ReportAlignType.CENTER, false);
+        table.setTextAlignInColumn(2, ReportAlignType.RIGHT, false);
+        table.setBorder(false);
+
+        fixedLineGenerators.add(new PdfHeaderGenerator(table, PositionOfStaticElements.ON_ALL_PAGES));
+
+        return this;
+    }
+
+    @Override
+    public PdfReportBuilder withHeaderOnAllPages(ReportElement headerElement) {
+        fixedLineGenerators.add(new PdfHeaderGenerator(headerElement, PositionOfStaticElements.ON_ALL_PAGES));
+
+        return this;
+    }
+
+    @Override
+    public PdfReportBuilder withHeaderOnPages(String left, String middle, String right, PositionOfStaticElements headerPosition) {
+        PdfStyleSheet sheet = new DefaultPdfStyleSheet();
+        sheet.setTableTitleText(configuration.getFooterText());
+
+        ReportTable table = new ReportTableBuilderImpl(sheet, this).addColumn(left, 1).addColumn(middle, 1).addColumn(right, 1).build();
+        table.setTextAlignInColumn(0, ReportAlignType.LEFT, false);
+        table.setTextAlignInColumn(1, ReportAlignType.CENTER, false);
+        table.setTextAlignInColumn(2, ReportAlignType.RIGHT, false);
+        table.setBorder(false);
+
+        fixedLineGenerators.add(new PdfHeaderGenerator(table, headerPosition));
+
+        return this;
+    }
+
+    @Override
+    public PdfReportBuilder withHeaderOnPages(ReportElement headerElement, PositionOfStaticElements headerPosition) {
+        fixedLineGenerators.add(new PdfHeaderGenerator(headerElement, headerPosition));
+
+        return this;
+    }
+
+    @Override
+    public PdfReportBuilder withFooterOnAllPages(String left, String middle, String right) {
+        PdfStyleSheet sheet = new DefaultPdfStyleSheet();
+        sheet.setTableTitleText(configuration.getFooterText());
+
+        ReportTable table = new ReportTableBuilderImpl(sheet, this).addColumn(left, 1).addColumn(middle, 1).addColumn(right, 1).build();
+        table.setTextAlignInColumn(0, ReportAlignType.LEFT, false);
+        table.setTextAlignInColumn(1, ReportAlignType.CENTER, false);
+        table.setTextAlignInColumn(2, ReportAlignType.RIGHT, false);
+        table.setBorder(false);
+
+        fixedLineGenerators.add(new PdfFooterGenerator(table, PositionOfStaticElements.ON_ALL_PAGES));
+
+        return this;
+    }
+
+    @Override
+    public PdfReportBuilder withFooterOnAllPages(ReportElement footerElement) {
+        fixedLineGenerators.add(new PdfFooterGenerator(footerElement, PositionOfStaticElements.ON_ALL_PAGES));
+
+        return this;
+    }
+
+    @Override
+    public PdfReportBuilder withFooterOnPages(String left, String middle, String right, PositionOfStaticElements footerPosition) {
+        PdfStyleSheet sheet = new DefaultPdfStyleSheet();
+        sheet.setTableTitleText(configuration.getFooterText());
+
+        ReportTable table = new ReportTableBuilderImpl(sheet, this).addColumn(left, 1).addColumn(middle, 1).addColumn(right, 1).build();
+        table.setTextAlignInColumn(0, ReportAlignType.LEFT, false);
+        table.setTextAlignInColumn(1, ReportAlignType.CENTER, false);
+        table.setTextAlignInColumn(2, ReportAlignType.RIGHT, false);
+        table.setBorder(false);
+
+        fixedLineGenerators.add(new PdfFooterGenerator(table, footerPosition));
+
+        return this;
+    }
+
+    @Override
+    public PdfReportBuilder withFooterOnPages(ReportElement footerElement, PositionOfStaticElements footerPosition) {
+        fixedLineGenerators.add(new PdfFooterGenerator(footerElement, footerPosition));
+
+        return this;
+    }
+
+    @Override
+    public PdfReportBuilder addPadding(float padding) {
+        elements.add(new ReportPadding(padding));
+
+        return this;
+    }
+
+    @Override
+    public ReportTableBuilder startTable() {
+        return new ReportTableBuilderImpl(configuration, this);
     }
 
     @Override
@@ -191,38 +253,4 @@ class PdfReportBuilderImpl implements PdfReportBuilder {
     public PdfReportBuilder addLink(String text, String link) {
         return addElement(new ReportLink(text, link, configuration.getBodyText(), configuration.getLineDistance()));
     }
-
-    @Override
-    public PdfReportBuilder beginNewSection(String title, boolean startNewPage) {
-        if (startNewPage && !elements.isEmpty()) {
-            elements.add(new ReportPageBreak());
-        }
-        addElement(new ReportPadding(configuration.getSectionPadding()));
-        addHeading(title);
-        return this;
-    }
-
-    @Override
-    public PdfReportBuilderImpl addHeading(String heading) {
-        addElement(new ReportTextBox(configuration.getHeading1Text(), configuration.getLineDistance(), heading));
-        addPadding(configuration.getHeadingPaddingAfter());
-        return this;
-    }
-
-    @Override
-    public PdfReportBuilderImpl addText(String text, PdfTextStyle textConfig) {
-        addElement(new ReportTextBox(textConfig, configuration.getLineDistance(), text));
-        return this;
-    }
-
-    @Override
-    public PdfReportBuilderImpl addText(String text) {
-        addElement(new ReportTextBox(configuration.getBodyText(), configuration.getLineDistance(), text));
-        return this;
-    }
-
-    public List<ReportElement> getElements() {
-        return elements;
-    }
-
 }
