@@ -14,23 +14,29 @@ import java.io.IOException;
  */
 public interface PdfReportBuilder {
 
-    PdfReportBuilder beginNewSection(String title, boolean startNewPage);
+    PdfReportBuilder addElement(ReportElement element);
 
     PdfReportBuilder addHeading(String heading);
+
+    PdfReportBuilder addImage(Resource resource, float width, float height) throws IOException;
+
+    PdfReportBuilder addLink(String text, String link);
+
+    PdfReportBuilder addPadding(float padding);
 
     PdfReportBuilder addText(String text);
 
     PdfReportBuilder addText(String text, PdfTextStyle textConfig);
 
-    PdfReportBuilder addElement(ReportElement element);
+    PdfReportBuilder beginNewSection(String title, boolean startNewPage);
 
-    PdfReportBuilder withHeaderOnAllPages(String left, String middle, String right);
+    PdfReport buildReport(String fileName, PdfPageLayout pageConfig, Resource templateResource) throws IOException;
 
-    PdfReportBuilder withHeaderOnAllPages(ReportElement headerElement);
+    PdfReport buildReport(String fileName, PdfPageLayout pageConfig, Resource templateResource, PDDocument document) throws IOException;
 
-    PdfReportBuilder withHeaderOnPages(String left, String middle, String right, PositionOfStaticElements headerPosition);
+    void registerFont(Resource resource);
 
-    PdfReportBuilder withHeaderOnPages(ReportElement headerElement, PositionOfStaticElements headerPosition);
+    ReportTableBuilder startTable();
 
     PdfReportBuilder withFooterOnAllPages(String left, String middle, String right);
 
@@ -40,15 +46,11 @@ public interface PdfReportBuilder {
 
     PdfReportBuilder withFooterOnPages(ReportElement footerElement, PositionOfStaticElements footerPosition);
 
-    PdfReportBuilder addPadding(float padding);
+    PdfReportBuilder withHeaderOnAllPages(String left, String middle, String right);
 
-    ReportTableBuilder startTable();
+    PdfReportBuilder withHeaderOnAllPages(ReportElement headerElement);
 
-    PdfReport buildReport(String fileName, PdfPageLayout pageConfig, Resource templateResource) throws IOException;
+    PdfReportBuilder withHeaderOnPages(String left, String middle, String right, PositionOfStaticElements headerPosition);
 
-    PdfReport buildReport(String fileName, PdfPageLayout pageConfig, Resource templateResource, PDDocument document) throws IOException;
-
-    PdfReportBuilder addImage(Resource resource, float width, float height) throws IOException;
-
-    PdfReportBuilder addLink(String text, String link);
+    PdfReportBuilder withHeaderOnPages(ReportElement headerElement, PositionOfStaticElements headerPosition);
 }
