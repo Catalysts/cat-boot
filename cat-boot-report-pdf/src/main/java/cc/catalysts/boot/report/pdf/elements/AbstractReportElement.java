@@ -18,6 +18,9 @@ public abstract class AbstractReportElement implements ReportElement {
 
     @Override
     public float getFirstSegmentHeight(float allowedWidth) {
+        if (!isSplitable()) {
+            return getHeight(allowedWidth);
+        }
         throw new IllegalStateException("If element is splitable, this method has to be implemented");
     }
 

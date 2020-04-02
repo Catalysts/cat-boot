@@ -17,11 +17,12 @@ import java.util.LinkedList;
  * @author Klaus Lehner
  */
 public class ReportTable implements ReportElement {
+    private static boolean LAYOUTING_ASSERTIONS_ENABLED = false;
 
     private static final boolean DEFAULT_BORDER = false;
     private static final float DEFAULT_CELL_PADDING_LEFT_RIGHT = 2;
-    private static final float DEFAULT_CELL_PADDING_TOP_BOTTOM = 0;
-    private static final int BORDER_Y_DELTA = 1;
+    private static final float DEFAULT_CELL_PADDING_TOP_BOTTOM = 2;
+    private static final int BORDER_Y_DELTA = 0;
     private final PdfStyleSheet pdfStyleSheet;
 
     private float[] cellWidths;
@@ -31,9 +32,9 @@ public class ReportTable implements ReportElement {
     private boolean border = DEFAULT_BORDER;
     private boolean noBottomBorder;
     private boolean noTopBorder;
-    private boolean noInnerBorders = false;
-    private boolean placeFirstBorder = true;
-    private boolean placeLastBorder = true;
+    private boolean drawInnerHorizontal = true;
+    private boolean drawInnerVertical = true;
+    private boolean drawOuterVertical = true;
     private boolean enableExtraSplitting;
     private boolean isSplitable = true;
     private Collection<ReportImage.ImagePrintIntent> intents = new LinkedList<ReportImage.ImagePrintIntent>();
@@ -69,7 +70,16 @@ public class ReportTable implements ReportElement {
     }
 
     public void setNoInnerBorders(boolean noInnerBorders) {
-        this.noInnerBorders = noInnerBorders;
+        this.drawInnerHorizontal = !noInnerBorders;
+        this.drawInnerVertical = !noInnerBorders;
+    }
+
+    public void setDrawInnerVertical(boolean drawInnerVertical) {
+        this.drawInnerVertical = drawInnerVertical;
+    }
+
+    public void setDrawInnerHorizontal(boolean drawInnerHorizontal) {
+        this.drawInnerHorizontal = drawInnerHorizontal;
     }
 
     public void setNoBottomBorder(boolean border) {
@@ -78,6 +88,10 @@ public class ReportTable implements ReportElement {
 
     public void setNoTopBorder(boolean border) {
         this.noTopBorder = border;
+    }
+
+    public void setDrawOuterVertical(boolean drawOuterVertical) {
+        this.drawOuterVertical = drawOuterVertical;
     }
 
     public void setBorder(boolean border) {
@@ -112,66 +126,73 @@ public class ReportTable implements ReportElement {
             throw new IllegalStateException("title not implemented!");
         }
         float y = startY;
-        int i = 0;
+        float previousY = y;
+        int lineIndex = 0;
 
-        float lineY = 0;
         for (ReportElement[] line : elements) {
-            float lineHeight = getLineHeight(line, allowedWidth) + pdfStyleSheet.getLineDistance();
-            y = printLine(document, stream, pageNumber, startX, y, allowedWidth, line, lineY);
-            placeFirstBorder = i == 0;
-            placeLastBorder = i == elements.length - 1;
-            placeBorders(stream, startY, y, startX, allowedWidth);
-            i++;
-            lineY += lineHeight;
+            float calculatedHeight = LAYOUTING_ASSERTIONS_ENABLED ? getLineHeight(line, allowedWidth) : -1;
+            y = printLine(document, stream, pageNumber, startX, y, allowedWidth, line);
+            float actualHeight = previousY - y;
+            if (LAYOUTING_ASSERTIONS_ENABLED && calculatedHeight != actualHeight) {
+                throw new RuntimeException(String.format("Layout algorithm bug: layouting height calculation reported "
+                                + "different height (%s) than painting code (%s) in table with %s lines, current line index: %s",
+                        calculatedHeight, actualHeight, elements.length, lineIndex));
+            }
+            boolean isFirstLine = lineIndex == 0;
+            boolean isLastLine = lineIndex == elements.length - 1;
+            placeBorders(stream, previousY, y, startX, allowedWidth, isFirstLine, isLastLine);
+            previousY = y;
+            lineIndex++;
         }
         return y;
     }
 
-    private void placeBorders(PDPageContentStream stream, float startY, float endY, float x, float allowedWidth) throws IOException {
-        if (border) {
-            stream.setStrokingColor(0, 0, 0);
-            stream.setLineWidth(0.3f);
-            float y0 = startY - BORDER_Y_DELTA;
-            float y1 = endY - (BORDER_Y_DELTA + 1);
-            if (!noInnerBorders) {
-                if (!noTopBorder || noTopBorder && !placeFirstBorder) {
-                    stream.moveTo(x, y0);
-                    stream.lineTo(x + allowedWidth, y0);
-                    stream.stroke();
-                }
-                if (!noBottomBorder || noBottomBorder && !placeLastBorder) {
-                    stream.moveTo(x, y1);
-                    stream.lineTo(x + allowedWidth, y1);
-                    stream.stroke();
-                }
-            } else {
-                if (!noTopBorder && placeFirstBorder) {
-                    stream.moveTo(x, y0);
-                    stream.lineTo(x + allowedWidth, y0);
-                    stream.stroke();
-                }
-                if (!noBottomBorder && placeLastBorder) {
-                    stream.moveTo(x, y1);
-                    stream.lineTo(x + allowedWidth, y1);
-                    stream.stroke();
-                }
-            }
-            float currX = x;
-            stream.moveTo(currX, y0);
-            stream.lineTo(currX, y1);
-            stream.stroke();
-            for (float width : cellWidths) {
-                if (!noInnerBorders) {
-                    stream.moveTo(currX, y0);
-                    stream.lineTo(currX, y1);
-                    stream.stroke();
-                }
-                currX += width * allowedWidth;
-            }
-            stream.moveTo(currX, y0);
-            stream.lineTo(currX, y1);
-            stream.stroke();
+    private void placeBorders(PDPageContentStream stream, float startY, float endY, float x, float allowedWidth,
+                              boolean isFirstLine, boolean isLastLine) throws IOException {
+        if (!border) {
+            return;
         }
+        stream.setStrokingColor(0, 0, 0);
+        stream.setLineWidth(0.3f);
+        float y0 = startY;
+        float y1 = endY;
+        float x1 = x + allowedWidth;
+        if (drawInnerHorizontal) {
+            if (!noBottomBorder || noBottomBorder && !isLastLine) {
+                drawLine(stream, x, x1, y1, y1);
+            }
+        }
+
+        // top border
+        if (!noTopBorder && isFirstLine) {
+            drawLine(stream, x, x1, y0, y0);
+        }
+        // bottom border
+        if (!noBottomBorder && isLastLine) {
+            drawLine(stream, x, x1, y1, y1);
+        }
+
+        float currentX = x;
+        for (int i = 0; i < cellWidths.length; i++) {
+            float width = cellWidths[i];
+            if (
+                    (i == 0 && drawOuterVertical) || // left
+                            (i > 0 && drawInnerVertical) // inner
+            ) {
+                drawLine(stream, currentX, currentX, y0, y1);
+            }
+            currentX += width * allowedWidth;
+        }
+        // draw last
+        if (drawOuterVertical) {
+            drawLine(stream, currentX, currentX, y0, y1);
+        }
+    }
+
+    private void drawLine(PDPageContentStream stream, float x0, float x1, float y0, float y1) throws IOException {
+        stream.moveTo(x0, y0);
+        stream.lineTo(x1, y1);
+        stream.stroke();
     }
 
     private float calculateVerticalAlignment(ReportElement[] line, int elementIndex, float y, float allowedWidth) {
@@ -193,24 +214,29 @@ public class ReportTable implements ReportElement {
         return yPos;
     }
 
-    private float printLine(PDDocument document, PDPageContentStream stream, int pageNumber, float startX, float y, float allowedWidth, ReportElement[] line, float previousLineHeight) throws IOException {
+    /**
+     * draws a line.
+     *
+     * @return the new y position of the bottom of the line just drawn
+     */
+    private float printLine(PDDocument document, PDPageContentStream stream, int pageNumber, float startX, float y, float allowedWidth, ReportElement[] line) throws IOException {
         float x = startX + cellPaddingX;
+        // minY = furthest that any cell has expanded to the bottom (min since coordinate system starts at the bottom)
         float minY = y;
         for (int i = 0; i < cellWidths.length; i++) {
             if (line[i] != null) {
                 float yi = 0;
                 float yPos = calculateVerticalAlignment(line, i, y, allowedWidth);
 
+                final float columnNetWidth = getAllowedNetColumnWidth(allowedWidth, i);
                 if (line[i] instanceof ReportImage) {
                     ReportImage reportImage = (ReportImage) line[i];
-                    float initialWidth = reportImage.getWidth();
-                    reportImage.setWidth(cellWidths[i] * allowedWidth - cellPaddingX * 2);
-                    reportImage.setHeight(reportImage.getHeight() * (cellWidths[i] * allowedWidth - cellPaddingX * 2) / initialWidth);
+                    autoShrinkExcessiveImage(columnNetWidth, reportImage);
 
-                    yi = line[i].print(document, stream, pageNumber, x, yPos, cellWidths[i] * allowedWidth - cellPaddingX * 2);
+                    yi = line[i].print(document, stream, pageNumber, x, yPos, columnNetWidth);
                     reportImage.printImage(document, pageNumber, x, yPos);
                 } else {
-                    yi = line[i].print(document, stream, pageNumber, x, yPos, cellWidths[i] * allowedWidth - cellPaddingX * 2);
+                    yi = line[i].print(document, stream, pageNumber, x, yPos, columnNetWidth);
                 }
                 intents.addAll(line[i].getImageIntents());
                 minY = Math.min(minY, yi);
@@ -220,11 +246,21 @@ public class ReportTable implements ReportElement {
         return minY - cellPaddingY;
     }
 
+    private void autoShrinkExcessiveImage(float maxWidth, ReportImage reportImage) {
+        float initialWidth = reportImage.getWidth();
+        final float newHeight = reportImage.getHeight() * maxWidth / initialWidth;
+        // only auto-shrink, don't auto-grow
+        if (maxWidth <= reportImage.getWidth() || newHeight <= reportImage.getHeight()) {
+            reportImage.setWidth(maxWidth);
+            reportImage.setHeight(newHeight);
+        }
+    }
+
     @Override
     public float getHeight(float allowedWidth) {
         float[] maxes = new float[elements.length];
-        for (int i = 0; i < elements.length; i++) {
-            maxes[i] = getLineHeight(elements[i], allowedWidth);
+        for (int lineIndex = 0; lineIndex < elements.length; lineIndex++) {
+            maxes[lineIndex] = getLineHeight(elements[lineIndex], allowedWidth);
         }
         float max = 0;
         for (float f : maxes) {
@@ -254,8 +290,9 @@ public class ReportTable implements ReportElement {
     private float getFirstSegmentHeightFromLine(ReportElement[] line, float allowedWidth) {
         float maxHeight = 0f;
         for (int i = 0; i < line.length; i++) {
-            if (line[i] != null)
+            if (line[i] != null) {
                 maxHeight = Math.max(maxHeight, line[i].getFirstSegmentHeight(cellWidths[i] * allowedWidth - cellPaddingX * 2));
+            }
         }
         return maxHeight + 2 * cellPaddingY;
     }
@@ -263,13 +300,15 @@ public class ReportTable implements ReportElement {
     private float getLineHeight(ReportElement[] line, float allowedWidth) {
         float maxHeight = 0;
         float currentHeight;
-        for (int i = 0; i < line.length; i++) {
-            if (line[i] != null) {
-                if (line[i] instanceof ReportImage) {
-                    ReportImage lineImage = (ReportImage) line[i];
-                    currentHeight = lineImage.getHeight() * (cellWidths[i] * allowedWidth - cellPaddingX * 2) / lineImage.getWidth();
+        for (int columnIndex = 0; columnIndex < line.length; columnIndex++) {
+            final float columnNetWidth = getAllowedNetColumnWidth(allowedWidth, columnIndex);
+            if (line[columnIndex] != null) {
+                if (line[columnIndex] instanceof ReportImage) {
+                    ReportImage reportImage = (ReportImage) line[columnIndex];
+                    autoShrinkExcessiveImage(columnNetWidth, reportImage);
+                    currentHeight = reportImage.getHeight();
                 } else {
-                    currentHeight = line[i].getHeight(cellWidths[i] * allowedWidth - cellPaddingX * 2);
+                    currentHeight = line[columnIndex].getHeight(columnNetWidth);
                 }
                 maxHeight = Math.max(maxHeight, currentHeight);
             }
@@ -342,32 +381,32 @@ public class ReportTable implements ReportElement {
     @Override
     public ReportElement[] split(float allowedWidth, float allowedHeight) {
         float currentHeight = 0f;
-        int i = 0;
-        while (i < elements.length && (currentHeight + getLineHeight(elements[i], allowedWidth)) < allowedHeight) {
-            currentHeight += getLineHeight(elements[i], allowedWidth);
-            i++;
+        int lineIndex = 0;
+        while (lineIndex < elements.length && (currentHeight + getLineHeight(elements[lineIndex], allowedWidth)) < allowedHeight) {
+            currentHeight += getLineHeight(elements[lineIndex], allowedWidth);
+            lineIndex++;
         }
 
-        if (i > 0) {
+        if (lineIndex > 0) {
             //they all fit until i-1, inclusive
             //check if the last row can be split
             ReportElement[][] extraRows = new ReportElement[2][elements[0].length];
             boolean splittable = false;
             if (enableExtraSplitting) {
                 splittable = true;
-                for (int j = 0; j < elements[i].length; j++) {
-                    if (!elements[i][j].isSplitable() || currentHeight + elements[i][j].getFirstSegmentHeight(cellWidths[j] * allowedWidth - cellPaddingX * 2) + 2 * cellPaddingY >= allowedHeight) {
+                for (int j = 0; j < elements[lineIndex].length; j++) {
+                    if (!elements[lineIndex][j].isSplitable() || currentHeight + elements[lineIndex][j].getFirstSegmentHeight(cellWidths[j] * allowedWidth - cellPaddingX * 2) + 2 * cellPaddingY >= allowedHeight) {
                         splittable = false;
                     }
                 }
 
                 if (splittable) {
-                    for (int j = 0; j < elements[i].length; j++) {
-                        if (elements[i][j].getHeight(cellWidths[j] * allowedWidth - cellPaddingX * 2) + currentHeight < allowedHeight) {
-                            extraRows[0][j] = elements[i][j];
+                    for (int j = 0; j < elements[lineIndex].length; j++) {
+                        if (elements[lineIndex][j].getHeight(cellWidths[j] * allowedWidth - cellPaddingX * 2) + currentHeight < allowedHeight) {
+                            extraRows[0][j] = elements[lineIndex][j];
                             extraRows[1][j] = new ReportTextBox(pdfStyleSheet.getBodyText(), pdfStyleSheet.getLineDistance(), "");
                         } else {
-                            ReportElement[] extraSplit = elements[i][j].split(cellWidths[j] * allowedWidth - cellPaddingX * 2, allowedHeight - currentHeight - 2 * cellPaddingY);
+                            ReportElement[] extraSplit = elements[lineIndex][j].split(cellWidths[j] * allowedWidth - cellPaddingX * 2, allowedHeight - currentHeight - 2 * cellPaddingY);
                             extraRows[0][j] = extraSplit[0];
                             extraRows[1][j] = extraSplit[1];
                         }
@@ -375,16 +414,16 @@ public class ReportTable implements ReportElement {
                 }
             }
 
-            ReportElement[][] first = new ReportElement[splittable ? i + 1 : i][elements[0].length];
-            ReportElement[][] next = new ReportElement[elements.length - i][elements[0].length];
+            ReportElement[][] first = new ReportElement[splittable ? lineIndex + 1 : lineIndex][elements[0].length];
+            ReportElement[][] next = new ReportElement[elements.length - lineIndex][elements[0].length];
             for (int j = 0; j < elements.length; j++) {
-                if (j < i)
+                if (j < lineIndex)
                     first[j] = elements[j];
                 else
-                    next[j - i] = elements[j];
+                    next[j - lineIndex] = elements[j];
             }
             if (splittable) {
-                first[i] = extraRows[0];
+                first[lineIndex] = extraRows[0];
                 next[0] = extraRows[1];
             }
             ReportTable firstLine = createNewTableWithClonedSettings(first);
@@ -395,25 +434,39 @@ public class ReportTable implements ReportElement {
             //this means first row does not fit in the given height
             ReportElement[][] first = new ReportElement[1][elements[0].length];
             ReportElement[][] next = new ReportElement[elements.length][elements[0].length];
-            for (i = 1; i < elements.length; i++)
-                next[i] = elements[i];
-            for (i = 0; i < elements[0].length; i++) {
-                ReportElement[] splits = elements[0][i].split(cellWidths[i] * allowedWidth - cellPaddingX * 2, allowedHeight - 2 * cellPaddingY);
+            for (lineIndex = 1; lineIndex < elements.length; lineIndex++)
+                next[lineIndex] = elements[lineIndex];
+            for (lineIndex = 0; lineIndex < elements[0].length; lineIndex++) {
+                ReportElement[] splits = elements[0][lineIndex].split(cellWidths[lineIndex] * allowedWidth - cellPaddingX * 2, allowedHeight - 2 * cellPaddingY);
                 if (splits[0] != null)
-                    first[0][i] = splits[0];
+                    first[0][lineIndex] = splits[0];
                 else
-                    first[0][i] = new ReportTextBox(pdfStyleSheet.getBodyText(), pdfStyleSheet.getLineDistance(), "");
+                    first[0][lineIndex] = new ReportTextBox(pdfStyleSheet.getBodyText(), pdfStyleSheet.getLineDistance(), "");
 
                 if (splits[1] != null)
-                    next[0][i] = splits[1];
+                    next[0][lineIndex] = splits[1];
                 else
-                    next[0][i] = new ReportTextBox(pdfStyleSheet.getBodyText(), pdfStyleSheet.getLineDistance(), "");
+                    next[0][lineIndex] = new ReportTextBox(pdfStyleSheet.getBodyText(), pdfStyleSheet.getLineDistance(), "");
             }
             ReportTable firstLine = createNewTableWithClonedSettings(first);
             ReportTable nextLines = createNewTableWithClonedSettings(next);
 
             return new ReportElement[]{firstLine, nextLines};
         }
+    }
+
+    /**
+     * Gets the net column width (usable space for content, equals column width minus padding).
+     */
+    private float getAllowedNetColumnWidth(float allowedTableWidth, int columnIndex) {
+        return getAllowedGrossColumnWidth(allowedTableWidth, columnIndex) - cellPaddingX * 2;
+    }
+
+    /**
+     * Gets the gross column width (total width of the column).
+     */
+    private float getAllowedGrossColumnWidth(float allowedWidth, int columnIndex) {
+        return cellWidths[columnIndex] * allowedWidth;
     }
 
     @Override
@@ -454,6 +507,10 @@ public class ReportTable implements ReportElement {
 
     public PdfStyleSheet getPdfStyleSheet() {
         return pdfStyleSheet;
+    }
+
+    public static void setLayoutingAssertionsEnabled(boolean enabled) {
+        LAYOUTING_ASSERTIONS_ENABLED = enabled;
     }
 
 }

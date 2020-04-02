@@ -11,6 +11,8 @@ import cc.catalysts.boot.report.pdf.elements.ReportTextBox;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
+import java.util.function.Function;
 
 /**
  * @author Paul Klingelhuber
@@ -161,7 +163,19 @@ public class ReportTableBuilderImpl implements ReportTableBuilder {
 
     @Override
     public PdfReportBuilder endTable() {
-        reportBuilder.addElement(this.build());
+        return endTable(null);
+    }
+
+    @Override
+    public PdfReportBuilder endTable(Function<ReportTableBuilder, ReportTable> tableCustomizer) {
+        ReportTable table = null;
+        if (tableCustomizer != null) {
+            table = tableCustomizer.apply(this);
+            Objects.requireNonNull(table, "tableCustomizer function must not return null");
+        } else {
+            table = this.build();
+        }
+        reportBuilder.addElement(table);
         return reportBuilder;
     }
 
@@ -180,13 +194,13 @@ public class ReportTableBuilderImpl implements ReportTableBuilder {
         }
 
         public ReportTableRowBuilderImpl addValue(String value) {
-            values.add(new ReportTextBox(parent.pdfStyleSheet.getBodyText(), parent.pdfStyleSheet.getLineDistance(), value));
+            values.add(new ReportTextBox(parent.pdfStyleSheet.getTableBodyText(), parent.pdfStyleSheet.getLineDistance(), value));
             return this;
         }
 
         public ReportTableBuilderImpl withValues(String... rowValues) {
             for (String value : rowValues) {
-                values.add(new ReportTextBox(parent.pdfStyleSheet.getBodyText(), parent.pdfStyleSheet.getLineDistance(), value));
+                values.add(new ReportTextBox(parent.pdfStyleSheet.getTableBodyText(), parent.pdfStyleSheet.getLineDistance(), value));
             }
             return endRow();
         }

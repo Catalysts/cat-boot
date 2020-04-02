@@ -6,6 +6,7 @@ import cc.catalysts.boot.report.pdf.config.DefaultPdfStyleSheet;
 import cc.catalysts.boot.report.pdf.config.PdfFont;
 import cc.catalysts.boot.report.pdf.config.PdfPageLayout;
 import cc.catalysts.boot.report.pdf.config.PdfTextStyle;
+import cc.catalysts.boot.report.pdf.elements.ReportTable;
 import org.apache.pdfbox.pdmodel.graphics.color.PDColor;
 import org.apache.pdfbox.pdmodel.graphics.color.PDDeviceRGB;
 import org.junit.Assert;
@@ -19,11 +20,12 @@ import java.io.File;
  */
 public class DemoTest {
 
-    private final PDColor BLACK = new PDColor(new float[] {0.0f, 0.0f, 0.0f}, PDDeviceRGB.INSTANCE);
-    private final PDColor BLUE = new PDColor(new float[] {0.0f, 0.0f, 1.0f}, PDDeviceRGB.INSTANCE);
+    private final PDColor BLACK = new PDColor(new float[]{0.0f, 0.0f, 0.0f}, PDDeviceRGB.INSTANCE);
+    private final PDColor BLUE = new PDColor(new float[]{0.0f, 0.0f, 1.0f}, PDDeviceRGB.INSTANCE);
 
     @Test
     public void demo() throws Exception {
+        ReportTable.setLayoutingAssertionsEnabled(true);
         // these objects can also be injected via Spring:
         final PdfReportService pdfReportService = new PdfReportServiceImpl(new DefaultPdfStyleSheet());
         final PdfReportFilePrinter pdfReportFilePrinter = new PdfReportFilePrinter();
@@ -59,8 +61,6 @@ public class DemoTest {
                         new ClassPathResource("demo-template.pdf"));
 
         final File target = new File("pdf-out");
-
-        pdfReport.getDocument().save("demo.pdf");
 
         if (!target.exists()) {
             Assert.assertTrue(target.mkdirs());
