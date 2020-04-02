@@ -5,21 +5,22 @@ import cc.catalysts.boot.report.pdf.config.DefaultPdfStyleSheet;
 import cc.catalysts.boot.report.pdf.config.PdfFont;
 import cc.catalysts.boot.report.pdf.config.PdfPageLayout;
 import cc.catalysts.boot.report.pdf.config.PdfTextStyle;
+import cc.catalysts.boot.report.pdf.elements.ReportTable;
 import cc.catalysts.boot.report.pdf.exception.PdfReportGeneratorException;
 import org.apache.pdfbox.pdmodel.graphics.color.PDColor;
 import org.apache.pdfbox.pdmodel.graphics.color.PDDeviceRGB;
 import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
 
-import java.awt.*;
 import java.io.IOException;
 
 public class CorruptPdfTest {
 
-    private final PDColor BLACK = new PDColor(new float[] {0.0f, 0.0f, 0.0f}, PDDeviceRGB.INSTANCE);
+    private final PDColor BLACK = new PDColor(new float[]{0.0f, 0.0f, 0.0f}, PDDeviceRGB.INSTANCE);
 
     @Test(expected = PdfReportGeneratorException.class)
     public void generateCorruptPdf() throws IOException {
+        ReportTable.setLayoutingAssertionsEnabled(true);
         final PdfReportService pdfReportService = new PdfReportServiceImpl(new DefaultPdfStyleSheet());
 
         DefaultPdfStyleSheet styleSheet = new DefaultPdfStyleSheet();

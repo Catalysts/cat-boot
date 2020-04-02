@@ -57,7 +57,7 @@ public class ReportTextBox implements ReportElement {
     public float getHeight(float allowedWidth) {
         int height = 0;
         String currText = text;
-        while (!StringUtils.isEmpty(currText)) {
+        while (currText != null) {
             String[] split = split(allowedWidth, currText);
             height += getFirstSegmentHeight(allowedWidth) + lineDistance;
             if (split[1] != null && split[1].equals(currText)) {
@@ -185,7 +185,7 @@ public class ReportTextBox implements ReportElement {
         @Override
         public int hashCode() {
             int result = font.hashCode();
-            result = 31 * result + (int)fontSize;
+            result = 31 * result + (int) fontSize;
             result = 31 * result + text.hashCode();
             result = 31 * result + (width != +0.0f ? Float.floatToIntBits(width) : 0);
             return result;

@@ -14,7 +14,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
@@ -93,7 +97,7 @@ public final class PdfBoxHelper {
      */
     public static float addText(PDPageContentStream stream, PdfTextStyle textConfig, float textX, float textY, float allowedWidth, float lineHeightD, ReportAlignType align, String text, boolean underline) {
 
-        float nextLineY = nextLineY((int) textY, textConfig.getFontSize(), lineHeightD);
+        float nextLineY = nextLineY(textY, textConfig.getFontSize(), lineHeightD);
 
         if (text.equals("")) {
             addTextSimple(stream, textConfig, textX, nextLineY, "");
@@ -431,7 +435,7 @@ public final class PdfBoxHelper {
         String part2 = text;
         if (cleanSplit) {
             part1 = text.substring(start, end).replaceAll("\\s+$", "");
-            part2 = text.substring(end + 1, text.length()).concat(endPart).replaceAll("^\\s+", "");
+            part2 = text.substring(end + 1).concat(endPart).replaceAll("^\\s+", "");
         } else {
             final String separator = "-";
             allowedWidth -= getTextWidth(font, fontSize, separator);
@@ -445,7 +449,7 @@ public final class PdfBoxHelper {
             boolean splittable = end >= 2;
             if (splittable) {
                 part1 = text.substring(start, end - 1).concat(separator).replaceAll("\\s+$", "");
-                part2 = text.substring(end - 1, text.length()).concat(endPart).replaceAll("^\\s+", "");
+                part2 = text.substring(end - 1).concat(endPart).replaceAll("^\\s+", "");
             }
 
             if (!splittable) {
@@ -495,7 +499,7 @@ public final class PdfBoxHelper {
         return maxSum / 1000F * fontSize;
     }
 
-    public static float nextLineY(int currentY, float fontSize, float lineHeightD) {
+    public static float nextLineY(float currentY, float fontSize, float lineHeightD) {
         return currentY - fontSize - lineHeightD;
     }
 }

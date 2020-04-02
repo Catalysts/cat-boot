@@ -1,7 +1,11 @@
 package cc.catalysts.boot.report.pdf.impl;
 
 import cc.catalysts.boot.report.pdf.config.PdfPageLayout;
-import cc.catalysts.boot.report.pdf.elements.*;
+import cc.catalysts.boot.report.pdf.elements.ReportCompositeElement;
+import cc.catalysts.boot.report.pdf.elements.ReportElement;
+import cc.catalysts.boot.report.pdf.elements.ReportElementStatic;
+import cc.catalysts.boot.report.pdf.elements.ReportImage;
+import cc.catalysts.boot.report.pdf.elements.ReportTable;
 import cc.catalysts.boot.report.pdf.exception.PdfReportGeneratorException;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
@@ -56,7 +60,7 @@ class PdfReportGenerator {
         boolean performedBreakPageForCurrentReportElement = false; // for each element max. one break page allowed
         while (currentReportElement != null) {
             boolean forceBreak = false;
-            //currentReportElement.setFontLib(fontLibrary);
+
             float height = currentReportElement.getHeight(maxWidth);
             if (cursor.yPos - height < pageConfig.getLastY(cursor.currentPageNumber)) {
                 //out of bounds
