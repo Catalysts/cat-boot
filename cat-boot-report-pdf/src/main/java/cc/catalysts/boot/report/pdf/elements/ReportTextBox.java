@@ -19,6 +19,8 @@ import java.util.Map;
  */
 public class ReportTextBox implements ReportElement {
 
+    private static final String LINE_SEPARATOR = System.getProperty("line.separator");
+
     protected PdfTextStyle textConfig;
     protected String text;
     protected final float lineDistance;
@@ -58,6 +60,10 @@ public class ReportTextBox implements ReportElement {
         int height = 0;
         String currText = text;
         while (currText != null) {
+            if  (height > 0 && "".equals(currText)) {
+                // a trailing empty string does not add any height
+                break;
+            }
             String[] split = split(allowedWidth, currText);
             height += getFirstSegmentHeight(allowedWidth) + lineDistance;
             if (split[1] != null && split[1].equals(currText)) {
@@ -96,13 +102,13 @@ public class ReportTextBox implements ReportElement {
     @Override
     public ReportElement[] split(float allowedWidth, float allowedHeight) {
         StringBuilder sb = new StringBuilder();
-        float currHeight = getFirstSegmentHeight(allowedWidth) + lineDistance;
+        float currHeight = 0;
         String currText = text;
         while (!StringUtils.isEmpty(currText) && currHeight <= allowedHeight) {
             if (currHeight + getFirstSegmentHeight(allowedWidth) <= allowedHeight) {
                 String[] split = split(allowedWidth, currText);
                 sb.append(split[0].trim());
-                sb.append(System.getProperty("line.separator"));
+                sb.append(LINE_SEPARATOR);
                 currText = split[1];
                 currHeight += getFirstSegmentHeight(allowedWidth) + lineDistance;
             } else {

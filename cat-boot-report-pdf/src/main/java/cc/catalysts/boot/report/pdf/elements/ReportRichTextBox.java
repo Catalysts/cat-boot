@@ -10,6 +10,8 @@ import org.springframework.util.StringUtils;
  */
 public class ReportRichTextBox extends ReportTextBox {
 
+    private static final String LINE_SEPARATOR = System.getProperty("line.separator");
+
     private String boldFontStyle;
     private String italicFontStyle;
 
@@ -62,7 +64,7 @@ public class ReportRichTextBox extends ReportTextBox {
             if (currHeight + getFirstSegmentHeight(allowedWidth) <= allowedHeight) {
                 String[] split = split(allowedWidth, currText);
                 sb.append(split[0].trim());
-                sb.append(System.getProperty("line.separator"));
+                sb.append(LINE_SEPARATOR);
                 currText = split[1];
                 currHeight += getFirstSegmentHeight(allowedWidth) + lineDistance;
             } else {

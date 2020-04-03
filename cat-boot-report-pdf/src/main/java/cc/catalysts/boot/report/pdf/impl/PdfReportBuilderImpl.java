@@ -3,8 +3,19 @@ package cc.catalysts.boot.report.pdf.impl;
 import cc.catalysts.boot.report.pdf.PdfReport;
 import cc.catalysts.boot.report.pdf.PdfReportBuilder;
 import cc.catalysts.boot.report.pdf.ReportTableBuilder;
-import cc.catalysts.boot.report.pdf.config.*;
-import cc.catalysts.boot.report.pdf.elements.*;
+import cc.catalysts.boot.report.pdf.config.DefaultPdfStyleSheet;
+import cc.catalysts.boot.report.pdf.config.PdfFont;
+import cc.catalysts.boot.report.pdf.config.PdfPageLayout;
+import cc.catalysts.boot.report.pdf.config.PdfStyleSheet;
+import cc.catalysts.boot.report.pdf.config.PdfTextStyle;
+import cc.catalysts.boot.report.pdf.elements.ReportElement;
+import cc.catalysts.boot.report.pdf.elements.ReportElementStatic;
+import cc.catalysts.boot.report.pdf.elements.ReportImage;
+import cc.catalysts.boot.report.pdf.elements.ReportLink;
+import cc.catalysts.boot.report.pdf.elements.ReportPadding;
+import cc.catalysts.boot.report.pdf.elements.ReportPageBreak;
+import cc.catalysts.boot.report.pdf.elements.ReportTable;
+import cc.catalysts.boot.report.pdf.elements.ReportTextBox;
 import cc.catalysts.boot.report.pdf.utils.PositionOfStaticElements;
 import cc.catalysts.boot.report.pdf.utils.ReportAlignType;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -139,13 +150,13 @@ class PdfReportBuilderImpl implements PdfReportBuilder {
 
     @Override
     public PdfReport buildReport(String fileName, PdfPageLayout pageConfig, Resource templateResource) throws IOException {
-        return buildReport(fileName, pageConfig, templateResource, new PDDocument());
+        return buildReport(fileName, pageConfig, templateResource, document);
     }
 
     public PdfReport buildReport(String fileName, PdfPageLayout pageConfig, Resource templateResource, PDDocument document) throws IOException {
         PdfReportStructure report = this.buildReport(pageConfig);
-        new PdfReportGenerator().generate(pageConfig, templateResource, report, document);
-        return new PdfReport(fileName, document);
+        final DocumentWithResources documentWithResources = new PdfReportGenerator().generate(pageConfig, templateResource, report, document);
+        return new PdfReport(fileName, documentWithResources);
     }
 
     @Override
