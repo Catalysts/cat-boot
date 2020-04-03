@@ -14,16 +14,24 @@ import org.apache.pdfbox.pdmodel.graphics.color.PDDeviceRGB;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.slf4j.Logger;
 import org.springframework.core.io.ClassPathResource;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.util.concurrent.CyclicBarrier;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+
+import static org.slf4j.LoggerFactory.getLogger;
 
 /**
  * Created by sfarcas on 7/21/2016.
  */
 public class TablePaddingTest {
+    private static final Logger LOG = getLogger(TablePaddingTest.class);
 
     public static final int IMAGE_SIZE_TOO_BIG_FOR_CELL = 1000;
     public static final int IMAGE_SIZE_SMALL = 50;
@@ -53,6 +61,31 @@ public class TablePaddingTest {
         final String reportFileName = "table-paddingTestLargeImages.pdf";
 
         generateTestReport(IMAGE_SIZE_TOO_BIG_FOR_CELL, reportFileName);
+    }
+
+    @Test
+    public void threadSafetyTest() throws Exception {
+        // increase locally for "harder" test - NOTE that the test will stop working if you go beyond
+        //  the actual limit of threads that the executor will start in parallel because of the cyclicbarrier.
+        final int parallelism = 10;
+        final ExecutorService executorService = Executors.newFixedThreadPool(parallelism);
+        final CyclicBarrier gate = new CyclicBarrier(parallelism + 1);
+        for (int i = 0; i < parallelism; i++) {
+            final int threadNumber = i;
+            executorService.execute(() -> {
+                try {
+                    gate.await();
+                    generateTestReport(1 + threadNumber, "parallel-report-" + threadNumber + ".pdf");
+                } catch (Exception e) {
+                    LOG.warn("Exception occured: {}", e.getMessage(), e);
+                }
+            });
+        }
+
+        // make all start at the same time
+        gate.await();
+        executorService.shutdown();
+        executorService.awaitTermination(1, TimeUnit.MINUTES);
     }
 
     private void generateTestReport(float imageSize, String reportFileName) throws Exception {

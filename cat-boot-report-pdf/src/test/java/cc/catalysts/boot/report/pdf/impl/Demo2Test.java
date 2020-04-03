@@ -45,11 +45,7 @@ public class Demo2Test {
         styleSheet.setBodyText(new PdfTextStyle(10, PdfFont.getFont("Noto Sans"), BLACK, "regular"));
         styleSheet.setTableBodyText(new PdfTextStyle(10, PdfFont.getFont("Noto Sans"), BLACK, "regular"));
 
-        BufferedImage img = null;
-        try {
-            img = ImageIO.read(new ClassPathResource("/github_icon.png").getInputStream());
-        } catch (IOException e) {
-        }
+        BufferedImage img = ImageIO.read(new ClassPathResource("/github_icon.png").getInputStream());
 
         ReportTable sampleTable = new ReportTableBuilderImpl(styleSheet, null)
                 .addColumn("1", 1).addColumn("2", 3).createRow().withValues("z1", "z2").build();
@@ -123,7 +119,6 @@ public class Demo2Test {
             Assert.assertTrue(target.mkdirs());
         }
         pdfReportFilePrinter.print(pdfReport, target);
-
     }
 
 }

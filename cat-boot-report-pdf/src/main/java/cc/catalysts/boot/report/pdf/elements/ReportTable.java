@@ -22,7 +22,6 @@ public class ReportTable implements ReportElement {
     private static final boolean DEFAULT_BORDER = false;
     private static final float DEFAULT_CELL_PADDING_LEFT_RIGHT = 2;
     private static final float DEFAULT_CELL_PADDING_TOP_BOTTOM = 2;
-    private static final int BORDER_Y_DELTA = 0;
     private final PdfStyleSheet pdfStyleSheet;
 
     private float[] cellWidths;
@@ -281,7 +280,8 @@ public class ReportTable implements ReportElement {
     @Override
     public float getFirstSegmentHeight(float allowedWidth) {
         if (elements != null && elements.length > 0) {
-            return border ? getFirstSegmentHeightFromLine(elements[0], allowedWidth) + BORDER_Y_DELTA : getFirstSegmentHeightFromLine(elements[0], allowedWidth);
+            final float firstSegmentHeightFromLine = getFirstSegmentHeightFromLine(elements[0], allowedWidth);
+            return firstSegmentHeightFromLine + pdfStyleSheet.getLineDistance();
         } else {
             return 0;
         }
@@ -291,7 +291,7 @@ public class ReportTable implements ReportElement {
         float maxHeight = 0f;
         for (int i = 0; i < line.length; i++) {
             if (line[i] != null) {
-                maxHeight = Math.max(maxHeight, line[i].getFirstSegmentHeight(cellWidths[i] * allowedWidth - cellPaddingX * 2));
+                maxHeight = Math.max(maxHeight, line[i].getFirstSegmentHeight(getAllowedNetColumnWidth(allowedWidth, i)));
             }
         }
         return maxHeight + 2 * cellPaddingY;
@@ -395,18 +395,18 @@ public class ReportTable implements ReportElement {
             if (enableExtraSplitting) {
                 splittable = true;
                 for (int j = 0; j < elements[lineIndex].length; j++) {
-                    if (!elements[lineIndex][j].isSplitable() || currentHeight + elements[lineIndex][j].getFirstSegmentHeight(cellWidths[j] * allowedWidth - cellPaddingX * 2) + 2 * cellPaddingY >= allowedHeight) {
+                    if (!elements[lineIndex][j].isSplitable() || currentHeight + elements[lineIndex][j].getFirstSegmentHeight(getAllowedNetColumnWidth(allowedWidth, j)) + 2 * cellPaddingY >= allowedHeight) {
                         splittable = false;
                     }
                 }
 
                 if (splittable) {
                     for (int j = 0; j < elements[lineIndex].length; j++) {
-                        if (elements[lineIndex][j].getHeight(cellWidths[j] * allowedWidth - cellPaddingX * 2) + currentHeight < allowedHeight) {
+                        if (elements[lineIndex][j].getHeight(getAllowedNetColumnWidth(allowedWidth, j)) + currentHeight < allowedHeight) {
                             extraRows[0][j] = elements[lineIndex][j];
                             extraRows[1][j] = new ReportTextBox(pdfStyleSheet.getBodyText(), pdfStyleSheet.getLineDistance(), "");
                         } else {
-                            ReportElement[] extraSplit = elements[lineIndex][j].split(cellWidths[j] * allowedWidth - cellPaddingX * 2, allowedHeight - currentHeight - 2 * cellPaddingY);
+                            ReportElement[] extraSplit = elements[lineIndex][j].split(getAllowedNetColumnWidth(allowedWidth, j), allowedHeight - currentHeight - 2 * cellPaddingY);
                             extraRows[0][j] = extraSplit[0];
                             extraRows[1][j] = extraSplit[1];
                         }
@@ -437,7 +437,7 @@ public class ReportTable implements ReportElement {
             for (lineIndex = 1; lineIndex < elements.length; lineIndex++)
                 next[lineIndex] = elements[lineIndex];
             for (lineIndex = 0; lineIndex < elements[0].length; lineIndex++) {
-                ReportElement[] splits = elements[0][lineIndex].split(cellWidths[lineIndex] * allowedWidth - cellPaddingX * 2, allowedHeight - 2 * cellPaddingY);
+                ReportElement[] splits = elements[0][lineIndex].split(getAllowedNetColumnWidth(allowedWidth, lineIndex), allowedHeight - 2 * cellPaddingY);
                 if (splits[0] != null)
                     first[0][lineIndex] = splits[0];
                 else

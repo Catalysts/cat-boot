@@ -30,27 +30,26 @@ class PdfReportGenerator {
     }
 
     public void printToStream(PdfPageLayout pageConfig, Resource templateResource, PdfReportStructure report, OutputStream stream, PDDocument document) throws IOException {
-        PDDocument page = generate(pageConfig, templateResource, report, document);
-        page.save(stream);
-        page.close();
+        final DocumentWithResources documentWithResources = generate(pageConfig, templateResource, report, document);
+        documentWithResources.saveAndClose(stream);
     }
 
-    public PDDocument generate(PdfPageLayout pageConfig, Resource templateResource, PdfReportStructure report) throws IOException {
+    public DocumentWithResources generate(PdfPageLayout pageConfig, Resource templateResource, PdfReportStructure report) throws IOException {
         return generate(pageConfig, templateResource, report, new PDDocument());
     }
 
     /**
      * @param pageConfig page config
      * @param report     the report to print
-     * @return the printed PdfBox document
+     * @return object that contains the printed PdfBox document and resources that need to be closed after finally writing the document
      * @throws java.io.IOException
      */
-    public PDDocument generate(PdfPageLayout pageConfig, Resource templateResource, PdfReportStructure report, PDDocument document) throws IOException {
-
+    public DocumentWithResources generate(PdfPageLayout pageConfig, Resource templateResource, PdfReportStructure report, PDDocument document) throws IOException {
+        final DocumentWithResources documentWithResources = new DocumentWithResources(document);
         PrintData printData = new PrintData(templateResource, pageConfig);
         PrintCursor cursor = new PrintCursor();
 
-        breakPage(document, cursor, printData);
+        breakPage(documentWithResources, cursor, printData);
         float maxWidth = pageConfig.getUsableWidth();
 
         int reportElementIndex = 0, nrOfReportElements = report.getElements().size();
@@ -98,12 +97,17 @@ class PdfReportGenerator {
                     if (lastNonHeightElement(reportElementIndex, nrOfReportElements, currentReportElement.getHeight(maxWidth))) {
                         break; // ignores the last padding if there is not enough space for it
                     } else {
-                        breakPage(document, cursor, printData);
+                        breakPage(documentWithResources, cursor, printData);
                         performedBreakPageForCurrentReportElement = true;
                         continue;
                     }
                 } else {
-                    throw new PdfReportGeneratorException("Could not generate pdf!");
+                    // cleanup all dependencies first (there would be no way for the caller to clean this up)
+                    documentWithResources.close();
+
+                    throw new PdfReportGeneratorException(String.format("Could not generate pdf! " +
+                                    "Not enough space (required=%s) for element of type %s",
+                            height, currentReportElement.getClass().getSimpleName()));
                 }
             }
 
@@ -116,7 +120,11 @@ class PdfReportGenerator {
             // ---
 
             float nextY = currentReportElement.print(document, cursor.currentStream, cursor.currentPageNumber, cursor.xPos, cursor.yPos, maxWidth);
-            nextY -= pageConfig.getLineDistance();
+            if (nextReportElement == null) {
+                // only add artificial spacing when there isn't currently a split object being processed
+                //  otherwise rows from split tables would suddenly have empty space between them
+                nextY -= pageConfig.getLineDistance();
+            }
             cursor.imageList.addAll(currentReportElement.getImageIntents());
 
             currentReportElement = nextReportElement;
@@ -127,7 +135,7 @@ class PdfReportGenerator {
             performedBreakPageForCurrentReportElement = false;
             cursor.yPos = nextY;
             if (forceBreak) {
-                breakPage(document, cursor, printData);
+                breakPage(documentWithResources, cursor, printData);
             }
         }
         cursor.currentStream.close();
@@ -140,7 +148,7 @@ class PdfReportGenerator {
 
         printImages(document, cursor);
 
-        return document;
+        return documentWithResources;
     }
 
     private boolean lastNonHeightElement(int reportElementIndex, int nrOfReportElements, float height) {
@@ -153,7 +161,8 @@ class PdfReportGenerator {
         return reportTable.splitFirstCell(allowedHeight, allowedWidth);
     }
 
-    private void breakPage(PDDocument document, PrintCursor cursor, PrintData printData) throws IOException {
+    private void breakPage(DocumentWithResources documentWithResources, PrintCursor cursor, PrintData printData) throws IOException {
+        final PDDocument document = documentWithResources.getDocument();
         if (cursor.currentStream != null) {
             cursor.currentStream.close();
         }
@@ -165,6 +174,8 @@ class PdfReportGenerator {
             cursor.cacheTempalte(templateDoc);
             PDPage templatePage = templateDoc.getDocumentCatalog().getPages().get(0);
             document.importPage(templatePage);
+            // prevent warnings about unclosed resources from finalizers by tracking these dependencies
+            documentWithResources.addResourceDependency(templateDoc);
         }
         PDPage currPage = document.getDocumentCatalog().getPages().get(++cursor.currentPageNumber);
         cursor.currentStream = new PDPageContentStream(document, currPage, PDPageContentStream.AppendMode.APPEND, false);

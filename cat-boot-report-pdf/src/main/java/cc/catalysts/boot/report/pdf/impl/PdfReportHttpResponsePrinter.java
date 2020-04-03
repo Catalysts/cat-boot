@@ -15,8 +15,7 @@ public final class PdfReportHttpResponsePrinter implements PdfReportPrinter<Http
         response.setContentType("application/pdf");
         response.setHeader("Content-disposition", "attachment; filename=" + report.getFileName());
 
-        report.getDocument().save(response.getOutputStream());
-        report.getDocument().close();
+        report.saveAndClose(response.getOutputStream());
         response.getOutputStream().close();
     }
 
