@@ -20,6 +20,8 @@ public interface PdfReportBuilder {
 
     PdfReportBuilder addImage(Resource resource, float width, float height) throws IOException;
 
+    PdfReportBuilder addImageWithMaxSize(Resource resource, float width, float height) throws IOException;
+
     PdfReportBuilder addLink(String text, String link);
 
     PdfReportBuilder addPadding(float padding);

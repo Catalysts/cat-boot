@@ -27,6 +27,7 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
 
 import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -107,8 +108,29 @@ class PdfReportBuilderImpl implements PdfReportBuilder {
 
     @Override
     public PdfReportBuilder addImage(Resource resource, float width, float height) throws IOException {
-        return addElement(new ReportImage(ImageIO.read(resource.getFile()), width, height));
+        return addElement(new ReportImage(ImageIO.read(resource.getInputStream()), width, height));
     }
+
+    @Override
+    public PdfReportBuilder addImageWithMaxSize(Resource resource, float maxWidth, float maxHeight) throws IOException {
+        BufferedImage image = ImageIO.read(resource.getInputStream());
+        float ratio = (float) image.getWidth() / image.getHeight();
+        float width;
+        float height;
+        if (image.getWidth() <= maxWidth) {
+            width = image.getWidth();
+            height = image.getHeight();
+        } else {
+            width = maxWidth;
+            height = width / ratio;
+        }
+        if (height > maxHeight) {
+            height = maxHeight;
+            width = height * ratio;
+        }
+        return addElement(new ReportImage(image, width, height));
+    }
+
 
     @Override
     public PdfReportBuilder addLink(String text, String link) {
