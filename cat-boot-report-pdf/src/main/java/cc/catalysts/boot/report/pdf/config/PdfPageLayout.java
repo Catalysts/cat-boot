@@ -128,6 +128,10 @@ public class PdfPageLayout {
         return width - marginLeft - marginRight;
     }
 
+    public float getUsableHeight(int pageNo) {
+        return getStartY(pageNo) - getLastY(pageNo);
+    }
+
     public PDRectangle getPageSize() {
         return new PDRectangle(width, height);
     }
