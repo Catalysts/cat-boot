@@ -9,6 +9,9 @@ import cc.catalysts.boot.report.pdf.config.PdfPageLayout;
 import cc.catalysts.boot.report.pdf.config.PdfTextStyle;
 import cc.catalysts.boot.report.pdf.elements.ReportLink;
 import cc.catalysts.boot.report.pdf.elements.ReportRichTextBox;
+import cc.catalysts.boot.report.pdf.elements.ReportTextBox;
+import cc.catalysts.boot.report.pdf.utils.PdfFontContext;
+import com.google.common.collect.Lists;
 import org.apache.pdfbox.pdmodel.graphics.color.PDColor;
 import org.apache.pdfbox.pdmodel.graphics.color.PDDeviceRGB;
 import org.junit.Assert;
@@ -23,19 +26,20 @@ import java.io.IOException;
  */
 public class RichTextTest {
 
+    DefaultPdfStyleSheet styleSheet;
     private PdfReportBuilder pdfReportBuilder;
     private PdfTextStyle textStyle;
     private PdfReportFilePrinter pdfReportFilePrinter;
     private File target;
-    private final PDColor BLACK = new PDColor(new float[] {0.0f, 0.0f, 0.0f}, PDDeviceRGB.INSTANCE);
+    private final PDColor BLACK = new PDColor(new float[]{0.0f, 0.0f, 0.0f}, PDDeviceRGB.INSTANCE);
 
     @Before
     public void before() {
+        styleSheet = new DefaultPdfStyleSheet();
         // these objects can also be injected via Spring:
-        final PdfReportService pdfReportService = new PdfReportServiceImpl(new DefaultPdfStyleSheet());
+        final PdfReportService pdfReportService = new PdfReportServiceImpl(styleSheet);
         pdfReportFilePrinter = new PdfReportFilePrinter();
 
-        DefaultPdfStyleSheet styleSheet = new DefaultPdfStyleSheet();
         textStyle = new PdfTextStyle(10, PdfFont.HELVETICA, BLACK, "regular");
         styleSheet.setBodyText(textStyle);
 
@@ -117,10 +121,57 @@ public class RichTextTest {
 
     @Test
     public void specialCharacters() throws IOException {
-        String text = "This is some \u2009text with \u2010strange \u2192 characters\u25FB which cannot \u200B be \u0009 printed \u0308";
+        String text = "This is some \u2009text with \u2010strange \u2192 characters " +
+                "\u25FB which cannot be \u0009 printed \u0308 " +
+                " this tests removal via cc.catalysts.boot.report.pdf.utils.Utf8Utils";
         pdfReportBuilder.addElement(new ReportRichTextBox(textStyle, 1.f, text));
 
         printReport("rt-specialCharacters.pdf");
+    }
+
+    @Test
+    public void unicodeCharactersEmojisChinese() throws IOException {
+        final PdfFontContext context = pdfReportBuilder.getFontContext();
+        context.setFallbackFonts(Lists.newArrayList(
+                context.getInternalFont("Symbola"),
+                context.getInternalFont("HanaMinA")
+        ));
+
+        String text = getUnicodeTestText();
+
+        pdfReportBuilder.addElement(new ReportTextBox(textStyle, 1.f, text));
+
+        printReport("rt-emojiAndUnicodeChars.pdf");
+    }
+
+    @Test
+    public void unicodeCharactersViaExceptionHandler() throws IOException {
+        pdfReportBuilder.getFontContext().registerFontEncodingExceptionHandler((text, codepoint, start, end) ->
+                text.replace(codepoint, "_")
+        );
+
+        String text = getUnicodeTestText();
+        pdfReportBuilder.addElement(new ReportTextBox(textStyle, 1.f, text));
+
+        printReport("rt-emojiAndUnicodeChars-fallbackHandled.pdf");
+    }
+
+    private String getUnicodeTestText() {
+        String woman = "\uD83D\uDC69";
+        String modifier = "\uD83C\uDFFD";
+        String zeroJoin = "\u200D";
+        String computer = "\uD83D\uDCBB";
+
+        return "---=== EMOJI TEST ===---\n" +
+                "Simple emoji: \uD83D\uDE0B\n" +
+                "Other emoji: \uD83D\uDC6B\n" +
+                "More emoji: " + woman + "\n" +
+                "With modifier: " + woman + modifier + "\n" +
+                "Modifier with joiner: " + woman + zeroJoin + modifier + "\n" +
+                "Two emojis with joiner: " + woman + zeroJoin + computer + "\n" +
+                "Emoji with modifier and other joined emoji: " + woman + modifier + zeroJoin + computer + "\n" +
+                "And some other special characters: 鸡汤" +
+                "";
     }
 
     @Test

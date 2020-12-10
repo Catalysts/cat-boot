@@ -16,6 +16,7 @@ import cc.catalysts.boot.report.pdf.elements.ReportPadding;
 import cc.catalysts.boot.report.pdf.elements.ReportPageBreak;
 import cc.catalysts.boot.report.pdf.elements.ReportTable;
 import cc.catalysts.boot.report.pdf.elements.ReportTextBox;
+import cc.catalysts.boot.report.pdf.utils.PdfFontContext;
 import cc.catalysts.boot.report.pdf.utils.PositionOfStaticElements;
 import cc.catalysts.boot.report.pdf.utils.ReportAlignType;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -45,10 +46,17 @@ class PdfReportBuilderImpl implements PdfReportBuilder {
     private List<AbstractFixedLineGenerator> fixedLineGenerators = new ArrayList<>();
 
     public PdfReportBuilderImpl(PdfStyleSheet configuration) {
+        this(configuration, true);
+    }
+
+    public PdfReportBuilderImpl(PdfStyleSheet configuration,
+                                boolean autoRegisterAllResourceFonts) {
         this.configuration = configuration;
         this.document = new PDDocument();
 
-        loadResourceFonts();
+        if (autoRegisterAllResourceFonts) {
+            loadResourceFonts();
+        }
     }
 
     public List<ReportElement> getElements() {
@@ -185,10 +193,16 @@ class PdfReportBuilderImpl implements PdfReportBuilder {
     public void registerFont(Resource resource) {
         try {
             LOG.info("Loading Font {}", resource);
-            PdfFont.registerFont(PDType0Font.load(document, resource.getInputStream()));
+            final PdfFont pdfFont = getFontContext().registerFont(PDType0Font.load(document, resource.getInputStream()));
+            LOG.debug("Registered font '{}'", pdfFont.getBasename());
         } catch (IOException e) {
             LOG.error("Failed to register font!", e);
         }
+    }
+
+    @Override
+    public PdfFontContext getFontContext() {
+        return PdfFontContext.currentOrCreate();
     }
 
     @Override
