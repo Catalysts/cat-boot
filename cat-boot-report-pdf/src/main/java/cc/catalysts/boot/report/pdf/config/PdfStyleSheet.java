@@ -3,8 +3,6 @@ package cc.catalysts.boot.report.pdf.config;
 import org.apache.pdfbox.pdmodel.graphics.color.PDColor;
 import org.apache.pdfbox.pdmodel.graphics.color.PDDeviceRGB;
 
-import java.awt.*;
-
 /**
  * @author Klaus Lehner
  */
@@ -28,8 +26,7 @@ public abstract class PdfStyleSheet {
     /**
      * the text style for heading1 (h1)
      */
-
-    private final PDColor BLACK = new PDColor(new float[] {0.0f, 0.0f, 0.0f}, PDDeviceRGB.INSTANCE);
+    private final PDColor BLACK = new PDColor(new float[]{0.0f, 0.0f, 0.0f}, PDDeviceRGB.INSTANCE);
 
     private PdfTextStyle heading1Text = new PdfTextStyle(20, PdfFont.HELVETICA, BLACK, "bold");
 
@@ -106,4 +103,5 @@ public abstract class PdfStyleSheet {
     public void setLineDistance(float lineDistance) {
         this.lineDistance = lineDistance;
     }
+
 }

@@ -3,6 +3,7 @@ package cc.catalysts.boot.report.pdf;
 import cc.catalysts.boot.report.pdf.config.PdfPageLayout;
 import cc.catalysts.boot.report.pdf.config.PdfTextStyle;
 import cc.catalysts.boot.report.pdf.elements.ReportElement;
+import cc.catalysts.boot.report.pdf.utils.PdfFontContext;
 import cc.catalysts.boot.report.pdf.utils.PositionOfStaticElements;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.springframework.core.io.Resource;
@@ -37,6 +38,8 @@ public interface PdfReportBuilder {
     PdfReport buildReport(String fileName, PdfPageLayout pageConfig, Resource templateResource, PDDocument document) throws IOException;
 
     void registerFont(Resource resource);
+
+    PdfFontContext getFontContext();
 
     ReportTableBuilder startTable();
 

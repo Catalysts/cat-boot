@@ -1,6 +1,8 @@
 package cc.catalysts.boot.report.pdf.elements;
 
 import cc.catalysts.boot.report.pdf.config.PdfTextStyle;
+import cc.catalysts.boot.report.pdf.exception.PdfBoxHelperException;
+import cc.catalysts.boot.report.pdf.utils.PdfFontContext;
 import cc.catalysts.boot.report.pdf.utils.ReportAlignType;
 import cc.catalysts.boot.report.pdf.utils.Utf8Utils;
 import com.google.common.cache.CacheBuilder;
@@ -23,6 +25,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public final class PdfBoxHelper {
 
@@ -348,19 +351,24 @@ public final class PdfBoxHelper {
      * @param text       text
      */
     public static void addTextSimple(PDPageContentStream stream, PdfTextStyle textConfig, float textX, float textY, String text) {
-        try {
-            stream.setFont(textConfig.getCurrentFontStyle(), textConfig.getFontSize());
-            stream.setNonStrokingColor(textConfig.getColor());
-            stream.beginText();
-            stream.setTextMatrix(new Matrix(1, 0, 0, 1, textX, textY));
-            stream.showText(text);
-        } catch (Exception e) {
-            LOG.warn("Could not add text: " + e.getClass() + " - " + e.getMessage());
-        } finally {
+        List<PDFont> fonts = getPossibleFonts(textConfig.getCurrentFontStyle());
+        final List<TextSegmentWithFont> segments = splitTextWithFallbackFonts(fonts, text);
+        for (TextSegmentWithFont segment : segments) {
             try {
-                stream.endText();
-            } catch (IOException e) {
-                e.printStackTrace();
+                stream.setFont(segment.font, textConfig.getFontSize());
+                stream.setNonStrokingColor(textConfig.getColor());
+                stream.beginText();
+                stream.setTextMatrix(new Matrix(1, 0, 0, 1, textX, textY));
+                stream.showText(segment.text);
+                textX += fontMeasurementToPosition(segment.font.getStringWidth(segment.text), textConfig.getFontSize());
+            } catch (Exception e) {
+                LOG.warn("Could not add text: " + e.getClass() + " - " + e.getMessage());
+            } finally {
+                try {
+                    stream.endText();
+                } catch (IOException e) {
+                    LOG.error("Error while generating text {}: {}", text, e.getMessage(), e);
+                }
             }
         }
     }
@@ -375,7 +383,7 @@ public final class PdfBoxHelper {
             stream.lineTo(textX + getTextWidth(textConfig.getCurrentFontStyle(), textConfig.getFontSize(), text), textY - lineOffset);
             stream.stroke();
         } catch (IOException e) {
-            e.printStackTrace();
+            LOG.error("Error while underlining text {}: {}", text, e.getMessage(), e);
         }
     }
 
@@ -460,43 +468,127 @@ public final class PdfBoxHelper {
         return new String[]{part1, part2};
     }
 
-    public static float getTextWidth(PDFont font, float fontSize, String text) {
-        Map<Character, Float> sizeMap = null;
+    private static Map<Character, Float> getFontSizeCache(PDFont font) {
         try {
-            sizeMap = fontSizeMapCache.get(font);
+            return fontSizeMapCache.get(font);
         } catch (ExecutionException e) {
-            e.printStackTrace();
+            LOG.error("Error while getting font size cache data for {}: {}", font, e.getMessage(), e);
         }
+        return new HashMap<>();
+    }
 
-        Float maxSum = 0F;
+    public static float getTextWidth(PDFont font, float fontSize, String text) {
+        List<PDFont> fonts = getPossibleFonts(font);
+
+        float maxSum = 0F;
         for (String line : text.split("\\n")) {
-            Float sum = 0F;
-            for (int i = 0; i < line.length(); i++) {
-                Character c = line.charAt(i);
-                Float value = sizeMap.get(c);
-                if (value == null) {
-                    try {
-                        value = font.getStringWidth(c.toString());
-                    } catch (IOException e) {
-                        LOG.warn("Could not calculate string length: " + e.getClass() + " - " + e.getMessage());
-                        return 0;
-                    } catch (IllegalArgumentException e) {
-                        try { // for symbols consisting of two characters
-                            String substring = line.substring(i, i + 2);
-                            value = font.getStringWidth(substring);
-                            sizeMap.put(line.charAt(i + 1), 0f);
-                        } catch (Exception ex) {
-                            throw e;
-                        }
-                    }
-                    sizeMap.put(c, value);
+            final List<TextSegmentWithFont> segments = splitTextWithFallbackFonts(fonts, line);
+            float sum = 0F;
+            for (TextSegmentWithFont segment : segments) {
+                float value = 0F;
+                try {
+                    value = segment.font.getStringWidth(segment.text);
+                } catch (Exception e) {
+                    LOG.warn("Could not calculate string length: " + e.getClass() + " - " + e.getMessage());
+                    return 0;
                 }
                 sum += value;
             }
 
             maxSum = Math.max(maxSum, sum);
         }
-        return maxSum / 1000F * fontSize;
+        return fontMeasurementToPosition(maxSum, fontSize);
+    }
+
+    private static float fontMeasurementToPosition(float value, float fontSize) {
+        return value / 1000F * fontSize;
+    }
+
+    private static List<PDFont> getPossibleFonts(PDFont font) {
+        final PdfFontContext fontContext = PdfFontContext.current();
+        List<PDFont> fonts;
+        if (fontContext != null) {
+            fonts = fontContext.getPossibleFonts(font);
+        } else {
+            fonts = new ArrayList<>();
+            fonts.add(font);
+        }
+        return fonts;
+    }
+
+    private static List<TextSegmentWithFont> splitTextWithFallbackFonts(List<PDFont> fonts, String text) {
+        List<TextSegmentWithFont> result = new ArrayList<>();
+        if (text.length() > 0) {
+            PDFont currentFont = null;
+            int start = 0;
+            for (int i = 0; i < text.length(); ) {
+                int codePoint = text.codePointAt(i);
+                int codeChars = Character.charCount(codePoint);
+                String codePointString = text.substring(i, i + codeChars);
+                boolean compatibleFontFound = false;
+                for (PDFont font : fonts) {
+                    try {
+                        font.encode(codePointString);
+                        compatibleFontFound = true;
+                        if (font != currentFont) {
+                            if (currentFont != null) {
+                                result.add(new TextSegmentWithFont(currentFont, text.substring(start, i)));
+                            }
+                            currentFont = font;
+                            start = i;
+                        }
+                        break;
+                    } catch (Exception ioe) {
+                        // font cannot encode codepoint
+                        if (LOG.isTraceEnabled()) {
+                            LOG.trace("{} not found in font {}", codePointString, font);
+                        }
+                    }
+                }
+                if (!compatibleFontFound) {
+                    if (LOG.isTraceEnabled()) {
+                        LOG.trace("None of these fonts: {} can encode: '{}'",
+                                fonts.stream()
+                                        .map(it -> it.getName())
+                                        .collect(Collectors.joining(",")),
+                                codePointString
+                        );
+                    }
+                    text = callFontEncodingExceptionHandler(text, codePointString, start, i);
+                } else {
+                    i += codeChars;
+                }
+            }
+            result.add(new TextSegmentWithFont(currentFont, text.substring(start)));
+        }
+        return result;
+    }
+
+    private static String callFontEncodingExceptionHandler(String text, String codePointString, int start, int end) {
+        final PdfFontContext context = PdfFontContext.current();
+        if (context != null) {
+            final String newText = context.handleFontEncodingException(text, codePointString, start, end);
+            if (newText.length() > text.length()) {
+                throw new IllegalStateException("Exceptionhandler must not enlarge string as this causes layout bugs.\n" +
+                        "Transformed:\n" +
+                        text + "\n" +
+                        "to:\n" +
+                        newText);
+            }
+            return newText;
+        }
+        throw new PdfBoxHelperException("Cannot encode '" + codePointString + "'.");
+    }
+
+    private static class TextSegmentWithFont {
+        final PDFont font;
+        final String text;
+
+        TextSegmentWithFont(PDFont font, String text) {
+            this.font = font;
+            this.text = text;
+        }
+
     }
 
     public static float nextLineY(float currentY, float fontSize, float lineHeightD) {

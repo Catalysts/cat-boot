@@ -1,12 +1,14 @@
 package cc.catalysts.boot.report.pdf.impl;
 
 import cc.catalysts.boot.report.pdf.config.PdfPageLayout;
+import cc.catalysts.boot.report.pdf.config.PdfStyleSheet;
 import cc.catalysts.boot.report.pdf.elements.ReportCompositeElement;
 import cc.catalysts.boot.report.pdf.elements.ReportElement;
 import cc.catalysts.boot.report.pdf.elements.ReportElementStatic;
 import cc.catalysts.boot.report.pdf.elements.ReportImage;
 import cc.catalysts.boot.report.pdf.elements.ReportTable;
 import cc.catalysts.boot.report.pdf.exception.PdfReportGeneratorException;
+import cc.catalysts.boot.report.pdf.utils.PdfFontContext;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
@@ -34,8 +36,18 @@ class PdfReportGenerator {
         documentWithResources.saveAndClose(stream);
     }
 
-    public DocumentWithResources generate(PdfPageLayout pageConfig, Resource templateResource, PdfReportStructure report) throws IOException {
+    public DocumentWithResources generate(PdfPageLayout pageConfig,
+                                          Resource templateResource,
+                                          PdfReportStructure report) throws IOException {
         return generate(pageConfig, templateResource, report, new PDDocument());
+    }
+
+
+    public DocumentWithResources generate(PdfStyleSheet styleSheet,
+                                          PdfPageLayout pageConfig,
+                                          Resource templateResource,
+                                          PdfReportStructure report) throws IOException {
+        return generateInternal(pageConfig, templateResource, report, new PDDocument());
     }
 
     /**
@@ -43,8 +55,18 @@ class PdfReportGenerator {
      * @param report     the report to print
      * @return object that contains the printed PdfBox document and resources that need to be closed after finally writing the document
      * @throws java.io.IOException
+     *  fallback fonts from PdfStyleSheet.
      */
-    public DocumentWithResources generate(PdfPageLayout pageConfig, Resource templateResource, PdfReportStructure report, PDDocument document) throws IOException {
+    public DocumentWithResources generate(PdfPageLayout pageConfig,
+                                          Resource templateResource,
+                                          PdfReportStructure report,
+                                          PDDocument document) throws IOException {
+        try (PdfFontContext context = PdfFontContext.currentOrCreate()) {
+            return generateInternal(pageConfig, templateResource, report, document);
+        }
+    }
+
+    private DocumentWithResources generateInternal(PdfPageLayout pageConfig, Resource templateResource, PdfReportStructure report, PDDocument document) throws IOException {
         final DocumentWithResources documentWithResources = new DocumentWithResources(document);
         PrintData printData = new PrintData(templateResource, pageConfig);
         PrintCursor cursor = new PrintCursor();
