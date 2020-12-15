@@ -6,14 +6,10 @@ import com.google.common.collect.Streams;
 import org.apache.pdfbox.pdmodel.font.PDFont;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.slf4j.Logger;
-import org.springframework.util.StringUtils;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -130,7 +126,7 @@ public class PdfFont {
     public static PDFont getInternalFont(String name) {
         return type1Fonts.values().stream()
                 .flatMap(it -> it.styles.values().stream())
-                .filter(it ->Objects.equal(name, it.getName())).findFirst()
+                .filter(it -> Objects.equal(name, it.getName())).findFirst()
                 .orElse(null);
     }
 
