@@ -104,6 +104,28 @@ public class RichTextTest {
     }
 
     @Test
+    public void bulletListTest() throws Exception {
+        String text = "Bullet list test:\n" +
+                "- dashes test1\n" +
+                "- dashes test2\n" +
+                "- dashes test3\n";
+        pdfReportBuilder.addElement(new ReportRichTextBox(textStyle, 1.f, text));
+
+        printReport("rt-listTest.pdf");
+    }
+
+    @Test
+    public void symbolsTest() throws Exception {
+        String text = "Symbols test:\n" +
+                "Ampersand: &\n" +
+                "Quote: \"\n" +
+                "Less and greater: < >\n";
+        pdfReportBuilder.addElement(new ReportRichTextBox(textStyle, 1.f, text));
+
+        printReport("rt-symbols.pdf");
+    }
+
+    @Test
     public void longText() throws Exception {
         String text = "Loremipsumdolorsitametconsetetursadipscingelitrseddiamnonumyeirmodtemporinviduntutlaboreetdoloremagnamagnaaliquyameratseddiamvoluptua.";
         pdfReportBuilder.addElement(new ReportRichTextBox(textStyle, 1.f, text));
